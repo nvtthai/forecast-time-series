@@ -13,9 +13,9 @@ namespace Arima
     {
         static void Main(string[] args)
         {
-
+            //require R 2.15, package forecast on R
             var envPath = Environment.GetEnvironmentVariable("PATH");
-            var rBinPath = GetRPath();
+            var rBinPath = GetRPath(); //C:\Program Files\R\R-2.15.1\bin\i386
             Environment.SetEnvironmentVariable("PATH", envPath + Path.PathSeparator + rBinPath);
             REngine engine = REngine.CreateInstance("RDotNet");
             engine.Initialize();
