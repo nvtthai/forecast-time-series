@@ -1,0 +1,8 @@
+E:\PROJECT\FINAL PROJECT\Other\Tool\Neural\Neural\bin\Debug\Neural.exe.config
+E:\PROJECT\FINAL PROJECT\Other\Tool\Neural\Neural\obj\Debug\Neural.csproj.GenerateResource.Cache
+E:\PROJECT\FINAL PROJECT\Other\Tool\Neural\Neural\bin\Debug\Neural.exe
+E:\PROJECT\FINAL PROJECT\Other\Tool\Neural\Neural\bin\Debug\Neural.pdb
+E:\PROJECT\FINAL PROJECT\Other\Tool\Neural\Neural\obj\Debug\Neural.exe
+E:\PROJECT\FINAL PROJECT\Other\Tool\Neural\Neural\obj\Debug\Neural.pdb
+E:\PROJECT\FINAL PROJECT\Other\Tool\Neural\Neural\obj\Debug\NeuralNetwork.Train_Result.resources
+E:\PROJECT\FINAL PROJECT\Other\Tool\Neural\Neural\obj\Debug\Neural.csprojResolveAssemblyReference.cache
