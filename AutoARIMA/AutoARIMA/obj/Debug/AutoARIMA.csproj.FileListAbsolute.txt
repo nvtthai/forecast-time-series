@@ -5,3 +5,10 @@ E:\PROJECT\FINAL PROJECT\Other\Tool\AutoARIMA\AutoARIMA\obj\Debug\AutoARIMA.exe
 E:\PROJECT\FINAL PROJECT\Other\Tool\AutoARIMA\AutoARIMA\obj\Debug\AutoARIMA.pdb
 E:\PROJECT\FINAL PROJECT\Other\Tool\AutoARIMA\AutoARIMA\obj\Debug\AutoARIMA.Plot_Form.resources
 E:\PROJECT\FINAL PROJECT\Other\Tool\AutoARIMA\AutoARIMA\obj\Debug\AutoARIMA.csproj.GenerateResource.Cache
+E:\PROJECT\FINAL PROJECT\forecast-time-series\AutoARIMA\AutoARIMA\bin\Debug\AutoARIMA.exe.config
+E:\PROJECT\FINAL PROJECT\forecast-time-series\AutoARIMA\AutoARIMA\obj\Debug\AutoARIMA.exe
+E:\PROJECT\FINAL PROJECT\forecast-time-series\AutoARIMA\AutoARIMA\obj\Debug\AutoARIMA.pdb
+E:\PROJECT\FINAL PROJECT\forecast-time-series\AutoARIMA\AutoARIMA\bin\Debug\AutoARIMA.exe
+E:\PROJECT\FINAL PROJECT\forecast-time-series\AutoARIMA\AutoARIMA\bin\Debug\AutoARIMA.pdb
+E:\PROJECT\FINAL PROJECT\forecast-time-series\AutoARIMA\AutoARIMA\obj\Debug\AutoARIMA.Plot_Form.resources
+E:\PROJECT\FINAL PROJECT\forecast-time-series\AutoARIMA\AutoARIMA\obj\Debug\AutoARIMA.csproj.GenerateResource.Cache
