@@ -11,7 +11,12 @@ namespace AutoARIMA
     {
         SLOW_DECAY,
         EXPONENTIAL_DECAY,
-        ABRUPT_DEAY
+        ABRUPT_DECAY
+    }
+
+    public static class Configuration
+    {
+        public static int MAX_ARMA_ORDER = 25;
     }
 
     class Program
@@ -20,7 +25,7 @@ namespace AutoARIMA
         {
             string fileName = @"E:\PROJECT\FINAL PROJECT\Other\Test\airpass.dat";
             List<double> series = new List<double>();
-            List<double> test = new List<double>();
+            List<double> errorsSeason = new List<double>();
             List<double> errors = new List<double>();
             System.IO.StreamReader file = null;
             string line = null;
@@ -30,7 +35,7 @@ namespace AutoARIMA
                 while ((line = file.ReadLine()) != null)
                 {
                     series.Add(Double.Parse(line));
-                    test.Add(Double.Parse(line));
+                    errorsSeason.Add(Double.Parse(line));
                     errors.Add(0);
                 }
             }
@@ -40,19 +45,23 @@ namespace AutoARIMA
             }
 
             List<double> listAutocorrelation = new List<double>();
+            List<double> listPartialAutocorrelation = new List<double>();
             List<double> listConfidenceLimit = new List<double>();
+            List<double> listArimaCoeff = new List<double>();
+            List<double> listSeasonArimaCoeff = new List<double>();
             int regularDifferencingLevel = 0;
             int seasonPartern = 0;
             int seasonDifferencingLevel = 0;
             int dataSize = series.Count;
+            int p,q,P,Q;
 
-            //RemoveNonstationarity(series, ref dataSize, out regularDifferencingLevel);
-            //RemoveSeasonality(series, ref dataSize, out seasonPartern, out seasonDifferencingLevel);     
-            //ComputeDifference(series, 0, 1, 12);
-            DrawSeriesData(series, dataSize);
-            ComputeAutocorrelation(series, listAutocorrelation);
-            ComputeConfidenceLimit(listAutocorrelation, dataSize, listConfidenceLimit);
-            DrawAutocorrelation(listAutocorrelation, 0.3);
+            RemoveNonstationarity(series, ref dataSize, out regularDifferencingLevel);
+            RemoveSeasonality(series, ref dataSize, out seasonPartern, out seasonDifferencingLevel);
+            ComputeArima(series, dataSize, seasonPartern, out p, out q, out P, out Q);
+
+            ComputeARMA(series, errors, p, q, listArimaCoeff);
+            ComputeARMA(series, errorsSeason, P, Q, listSeasonArimaCoeff);
+
             int x = 0;
         }
 
@@ -82,7 +91,7 @@ namespace AutoARIMA
             Console.WriteLine(Matrix.PrintMat(coefMatrix));
         }
 
-        public static void ComputeARMA(List<double> series, List<double> errors, int pCoef, int qCoef)
+        public static void ComputeARMA(List<double> series, List<double> errors, int pCoef, int qCoef, List<double> listArimaCoeff)
         {
             int dataSize = series.Count;
             Matrix observationVector = new Matrix(1 + pCoef + qCoef, 1);
@@ -132,6 +141,11 @@ namespace AutoARIMA
                 posterioriPredictionError = series[i] - (Matrix.Transpose(observationVector) * parameterVector)[0, 0];
                 invertedCovarianceMatrix = invertedCovarianceMatrix - gainFactor * Matrix.Transpose(observationVector) * invertedCovarianceMatrix;
                 errors[i] = posterioriPredictionError;
+            }
+
+            for (int i = 0; i < 1 + pCoef + qCoef; i++)
+            {
+                listArimaCoeff.Add(parameterVector[i, 0]);
             }
         }
 
@@ -306,9 +320,9 @@ namespace AutoARIMA
             listPartialCorrelation[index] = value;
         }
 
-        public static void ComputePartialAutocorrelation(List<double> series, List<double> listAutocorrelation, List<double> listPartialAutocorrelation)
+        public static void ComputePartialAutocorrelation(List<double> listAutocorrelation, int dataSize, List<double> listPartialAutocorrelation)
         {
-            int lag = (series.Count / 4 > 50 ? 50 : series.Count / 4);
+            int lag = (dataSize / 4 > 50 ? 50 : dataSize / 4);
             int numPartialCorrelation = (int)(lag * (lag + 1) / 2) + 1;
             for (int i = 0; i < numPartialCorrelation; i++)
             {
@@ -353,54 +367,64 @@ namespace AutoARIMA
             }
         }
 
-        public static void ComputeSeason(List<double> listAutocorrelation, double limitAutocorrelation, ref int seasonPartern)
+        public static void ComputeSeason(List<double> listAutocorrelation, List<double> listConfidenceLimit, out int seasonPartern)
         {
-            List<int> listAutocorrelationLocation = new List<int>();
-            List<int> levelLocation = new List<int>();
-            int newSeasonPartern = 0;
+            List<int> listHightFreLocation = new List<int>();
+            List<int> listHightPosFreLocation = new List<int>();
+            List<int> listHightNegFreLocation = new List<int>();
+            List<int> levelOneLocation = new List<int>();
+            seasonPartern = 0;
 
-            for(int i=0; i<listAutocorrelation.Count; i++)
+            for (int i = 0; i < listAutocorrelation.Count; i++)
             {
-                if(listAutocorrelation[i]>limitAutocorrelation)
+                if (listAutocorrelation[i] > listConfidenceLimit[i]*1.2)
                 {
-                    listAutocorrelationLocation.Add(i);
-                }               
-            }
-
-            List<int> tempList = new List<int>();
-            for (int i = 0; i < listAutocorrelationLocation.Count - 1; i++)
-            {
-                levelLocation.Add(listAutocorrelationLocation[i + 1] - listAutocorrelationLocation[i]);
-                if (listAutocorrelationLocation[i + 1] - listAutocorrelationLocation[i] != 1)
+                    listHightFreLocation.Add(i);
+                    listHightPosFreLocation.Add(i);
+                }
+                else if (listAutocorrelation[i] < -listConfidenceLimit[i]*1.2)
                 {
-                    tempList.Add(listAutocorrelationLocation[i + 1] - listAutocorrelationLocation[i]);
+                    listHightFreLocation.Add(i);
+                    listHightNegFreLocation.Add(i);
                 }
             }
 
-            List<int> tempList1 = tempList.Distinct().ToList();
-            if (tempList1.Count == 0)
+            List<int> listSignificantDistance = new List<int>();
+            for (int i = 0; i < listHightPosFreLocation.Count - 1; i++)
+            {
+                if (listHightPosFreLocation[i + 1] - listHightPosFreLocation[i] != 1)
+                {
+                    listSignificantDistance.Add(listHightPosFreLocation[i + 1] - listHightPosFreLocation[i]);
+                }
+            }
+            for (int i = 0; i < listHightNegFreLocation.Count - 1; i++)
+            {
+                if (listHightNegFreLocation[i + 1] - listHightNegFreLocation[i] != 1)
+                {
+                    listSignificantDistance.Add(listHightNegFreLocation[i + 1] - listHightNegFreLocation[i]);
+                }
+            }
+
+            List<int> listDistinctSignificantLocation = listSignificantDistance.Distinct().ToList();
+            if (listDistinctSignificantLocation.Count == 0)
             {
                 return;
             }
-            int hightFrequencyValue = tempList1.ElementAt(0);
-            int frequency = tempList.Count(item => item == hightFrequencyValue);
-            for (int i = 1; i < tempList1.Count; i++)
+            int hightFrequencyDistance = listDistinctSignificantLocation.ElementAt(0);
+            int frequency = listSignificantDistance.Count(item => item == hightFrequencyDistance);
+            for (int i = 1; i < listDistinctSignificantLocation.Count; i++)
             {
-                int newFrequency = tempList.Count(item => item == tempList1[i]);
-                if (newFrequency > frequency)
+                int newFrequency = listSignificantDistance.Count(item => item == listDistinctSignificantLocation[i]);
+                if ((newFrequency > frequency) || (newFrequency == frequency && listDistinctSignificantLocation[i] > hightFrequencyDistance))
                 {
-                    hightFrequencyValue = i;
+                    hightFrequencyDistance = listDistinctSignificantLocation[i];
                     frequency = newFrequency;
                 }
             }
 
-            if (1.0 * frequency / tempList1.Count > 0.5)
+            if (1.0 * frequency / listDistinctSignificantLocation.Count > 0.5)
             {
-                newSeasonPartern = hightFrequencyValue;
-                if(seasonPartern == 0 || (seasonPartern != 0 && newSeasonPartern == seasonPartern))
-                {
-                    seasonPartern = newSeasonPartern;
-                }
+                seasonPartern = hightFrequencyDistance;
                 return;
             }
 
@@ -441,24 +465,27 @@ namespace AutoARIMA
 
         }
 
-        public static DecayPartern ComputeDecayParterb(List<double> listAutocorrelation, double confidenceLimit)
+        public static DecayPartern ComputeDecayPartern(List<double> listAutocorrelation, double confidenceLimit)
         {
             DecayPartern decayPartern;
             List<double> listHighAutocorrelation = new List<double>();
-            listHighAutocorrelation = listAutocorrelation.FindAll(item => item > confidenceLimit).ToList();
+            listHighAutocorrelation = listAutocorrelation.FindAll(item => Math.Abs(item) > confidenceLimit).ToList();
             double averageRateExchange = 0;
+            if (listHighAutocorrelation.Count <= 1)
+            {
+                decayPartern = DecayPartern.ABRUPT_DECAY;
+                return decayPartern;
+            }
+
             for (int i = 0; i < listHighAutocorrelation.Count-1; i++)
             {
                 averageRateExchange += Math.Abs(Math.Abs(listHighAutocorrelation[i]) - Math.Abs(listHighAutocorrelation[i + 1])) / Math.Abs(listHighAutocorrelation[i]);
             }
-            averageRateExchange /= listHighAutocorrelation.Count;
-            if (listHighAutocorrelation.Count == 1)
+            averageRateExchange /= (listHighAutocorrelation.Count -1);
+
+            if (averageRateExchange > 0.65)
             {
-                decayPartern = DecayPartern.ABRUPT_DEAY;
-            }
-            else if (averageRateExchange > 0.65)
-            {
-                decayPartern = DecayPartern.ABRUPT_DEAY;
+                decayPartern = DecayPartern.ABRUPT_DECAY;
             }
             else if (averageRateExchange < 0.1)
             {
@@ -471,30 +498,33 @@ namespace AutoARIMA
             return decayPartern;
         }
 
-        public static DecayPartern ComputeDecayParterb(List<double> listAutocorrelation, List<double> listConfidenceLimit)
+        public static DecayPartern ComputeDecayPartern(List<double> listAutocorrelation, List<double> listConfidenceLimit)
         {
             DecayPartern decayPartern;
             List<double> listHighAutocorrelation = new List<double>();
             for (int i = 0; i < listAutocorrelation.Count; i++)
             {
-                if (listAutocorrelation[i] > listConfidenceLimit[i])
+                if (Math.Abs(listAutocorrelation[i]) > Math.Abs(listConfidenceLimit[i]))
                 {
                     listHighAutocorrelation.Add(listAutocorrelation[i]);
                 }
             }
+            if (listHighAutocorrelation.Count <= 1)
+            {
+                decayPartern = DecayPartern.ABRUPT_DECAY;
+                return decayPartern;
+            }
+
             double averageRateExchange = 0;
             for (int i = 0; i < listHighAutocorrelation.Count - 1; i++)
             {
                 averageRateExchange += Math.Abs(Math.Abs(listHighAutocorrelation[i]) - Math.Abs(listHighAutocorrelation[i + 1])) / Math.Abs(listHighAutocorrelation[i]);
             }
-            averageRateExchange /= listHighAutocorrelation.Count;
-            if (listHighAutocorrelation.Count == 1)
+            averageRateExchange /= (listHighAutocorrelation.Count -1);
+
+            if (averageRateExchange > 0.65)
             {
-                decayPartern = DecayPartern.ABRUPT_DEAY;
-            }
-            else if (averageRateExchange > 0.65)
-            {
-                decayPartern = DecayPartern.ABRUPT_DEAY;
+                decayPartern = DecayPartern.ABRUPT_DECAY;
             }
             else if (averageRateExchange < 0.1)
             {
@@ -509,16 +539,18 @@ namespace AutoARIMA
 
         public static void RemoveNonstationarity(List<double> series, ref int dataSize, out int regularDifferencingLevel)
         {
-            regularDifferencingLevel = 0;
+            int endIndex = dataSize;           
             List<double> listAutocorrelation = new List<double>();
-            double limitAutocorrelation = 1.96 * Math.Sqrt(1.0 / series.Count);
-            int endIndex = dataSize;
+            List<double> listConfidenceLimit = new List<double>();
 
+            regularDifferencingLevel = 0;
             while (true)
             {
                 listAutocorrelation.Clear();
+                listConfidenceLimit.Clear();
                 ComputeAutocorrelation(series, listAutocorrelation);
-                DecayPartern decayPartern = ComputeDecayParterb(listAutocorrelation, limitAutocorrelation);
+                ComputeConfidenceLimit(listAutocorrelation, endIndex, listConfidenceLimit);
+                DecayPartern decayPartern = ComputeDecayPartern(listAutocorrelation, listConfidenceLimit);
                 if (decayPartern != DecayPartern.SLOW_DECAY)
                 {
                     break;
@@ -540,21 +572,25 @@ namespace AutoARIMA
             seasonPartern = 0;
             seasonDifferencingLevel = 0;
             List<double> listAutocorrelation = new List<double>();
+            List<double> listConfidenceLimit = new List<double>();
             List<int> listAutocorrelationLocation = new List<int>();
             List<int> levelLocation = new List<int>();
 
-            double limitAutocorrelation = 1.96 * Math.Sqrt(1.0 / series.Count);
             int endIndex = dataSize;
 
             while (true)
             {
                 listAutocorrelation.Clear();
+                listConfidenceLimit.Clear();
                 ComputeAutocorrelation(series, listAutocorrelation);
-                ComputeSeason(listAutocorrelation, limitAutocorrelation, ref seasonPartern);
-                if (seasonPartern == 0)
+                ComputeConfidenceLimit(listAutocorrelation, endIndex, listConfidenceLimit);
+                int newSeasonPartern;
+                ComputeSeason(listAutocorrelation, listConfidenceLimit, out newSeasonPartern);
+                if (newSeasonPartern == 0)
                 {
                     break;
                 }
+                seasonPartern = newSeasonPartern;
                 seasonDifferencingLevel++;
                 endIndex -= seasonPartern;
                 for (int j = 0; j < endIndex; j++)
@@ -566,5 +602,100 @@ namespace AutoARIMA
             dataSize -= seasonPartern * seasonDifferencingLevel;
         }
 
+        public static void GetLastSignificant(List<double> listAutocorrelation, List<double> listConfidenceLimit, out int lag)
+        {
+            lag = 0;
+            for (int i = 1; i < listAutocorrelation.Count; i++)
+            {
+                if (listAutocorrelation[i] > listConfidenceLimit[i] || listAutocorrelation[i] <- listConfidenceLimit[i])
+                {
+                    lag = i + 1;
+                }
+            }
+        }
+
+        public static void GetLastSignificant(List<double> listAutocorrelation, double confidenceLimit, out int lag)
+        {
+            lag = 0;
+            for (int i = 1; i < listAutocorrelation.Count; i++)
+            {
+                if (listAutocorrelation[i] > confidenceLimit || listAutocorrelation[i] < -confidenceLimit)
+                {
+                    lag = i + 1;
+                }
+            }
+        }
+
+        public static void ComputeArima(List<double> series, int dataSize, int seasonPartern, out int p, out int q, out int P, out int Q)
+        {
+            p = q = P = Q = 0;
+
+            List<double> listConfidenceLimit = new List<double>();
+            List<double> listAutocorrelation = new List<double>();
+            List<double> listPartialAutocorrelation = new List<double>();
+
+            List<double> listSeasonConfidenceLimit = new List<double>();
+            List<double> listSeasonAutocorrelation = new List<double>();
+            List<double> listSeasonPartialCorrelation = new List<double>();
+
+            List<double> listRegularConfidenceLimit = new List<double>();
+            List<double> listRegularAutocorrelation = new List<double>();
+            List<double> listRegularPartialCorrelation = new List<double>();
+
+            ComputeAutocorrelation(series, listAutocorrelation);
+            ComputePartialAutocorrelation(listAutocorrelation, dataSize, listPartialAutocorrelation);
+            ComputeConfidenceLimit(listAutocorrelation, dataSize, listConfidenceLimit);
+            double confidenceLimit = 1.96 / Math.Sqrt(dataSize);
+
+            for (int i = 0; i < seasonPartern; i++)
+            {
+                listRegularAutocorrelation.Add(listAutocorrelation[i]);
+                listRegularConfidenceLimit.Add(listConfidenceLimit[i]);
+                listRegularPartialCorrelation.Add(listPartialAutocorrelation[i]);
+            }
+
+            for (int i = 0; i < Math.Floor(1.0 * listAutocorrelation.Count / seasonPartern); i++)
+            {
+                listSeasonAutocorrelation.Add(listAutocorrelation[i * seasonPartern]);
+                listSeasonConfidenceLimit.Add(listConfidenceLimit[i * seasonPartern]);
+                listSeasonPartialCorrelation.Add(listPartialAutocorrelation[i * seasonPartern]);
+            }
+
+            //DrawAutocorrelation(listRegularAutocorrelation, listRegularConfidenceLimit);
+            //DrawAutocorrelation(listRegularPartialCorrelation, confidenceLimit);
+            //DrawAutocorrelation(listSeasonAutocorrelation, listSeasonConfidenceLimit);
+            //DrawAutocorrelation(listSeasonPartialCorrelation, confidenceLimit);
+
+            DecayPartern decayACF = ComputeDecayPartern(listRegularAutocorrelation, listRegularConfidenceLimit);
+            DecayPartern decayPACF = ComputeDecayPartern(listRegularPartialCorrelation, confidenceLimit);
+            DecayPartern decaySeasonACF = ComputeDecayPartern(listSeasonAutocorrelation, listSeasonConfidenceLimit);
+            DecayPartern decaySeasonPACF = ComputeDecayPartern(listSeasonPartialCorrelation, confidenceLimit);
+
+            if (decayACF == DecayPartern.ABRUPT_DECAY)
+            {
+                GetLastSignificant(listRegularAutocorrelation, listRegularConfidenceLimit, out p);
+            }
+            if (decayPACF == DecayPartern.ABRUPT_DECAY)
+            {
+                GetLastSignificant(listRegularPartialCorrelation, confidenceLimit, out q);
+            }
+            if (decayACF != DecayPartern.ABRUPT_DECAY && decayPACF != DecayPartern.ABRUPT_DECAY && p * q != 0)
+            {
+                p = q = 1;
+            }
+            if (decaySeasonACF == DecayPartern.ABRUPT_DECAY)
+            {
+                GetLastSignificant(listSeasonAutocorrelation, listSeasonConfidenceLimit, out P);
+            }
+            if (decaySeasonPACF == DecayPartern.ABRUPT_DECAY)
+            {
+                GetLastSignificant(listSeasonPartialCorrelation, confidenceLimit, out Q);
+            }
+            if (decaySeasonACF != DecayPartern.ABRUPT_DECAY && decaySeasonPACF != DecayPartern.ABRUPT_DECAY && P * Q != 0)
+            {
+                P = Q = 1;
+            }
+            int test = 0;
+        }
     }
 }
