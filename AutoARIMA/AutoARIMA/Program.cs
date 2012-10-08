@@ -370,7 +370,7 @@ namespace AutoARIMA
 
                 for (int j = 1; j < i; j++)
                 {
-                    temp = GetPartialCorrelationAt(listPartialAutocorrelation, i - 1, j) - GetPartialCorrelationAt(listPartialAutocorrelation, i, i) * GetPartialCorrelationAt(listPartialAutocorrelation, i - 1, i - j + 1);
+                    temp = GetPartialCorrelationAt(listPartialAutocorrelation, i - 1, j) - GetPartialCorrelationAt(listPartialAutocorrelation, i, i) * GetPartialCorrelationAt(listPartialAutocorrelation, i - 1, i - j);
                     SetPartialCorrelationAt(listPartialAutocorrelation, i, j, temp);
                 }
             }
