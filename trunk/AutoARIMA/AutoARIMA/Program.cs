@@ -55,45 +55,68 @@ namespace AutoARIMA
             int dataSize = series.Count;
             int p,q,P,Q;
 
-            RemoveNonstationarity(series, ref dataSize, out regularDifferencingLevel);
-            RemoveSeasonality(series, ref dataSize, out seasonPartern, out seasonDifferencingLevel);
-            ComputeArima(series, dataSize, seasonPartern, out p, out q, out P, out Q);
+            //RemoveNonstationarity(series, ref dataSize, out regularDifferencingLevel);
+            //RemoveSeasonality(series, ref dataSize, out seasonPartern, out seasonDifferencingLevel);
+            //ComputeArima(series, dataSize, seasonPartern, out p, out q, out P, out Q);
 
-            ComputeARMA(series, errors, p, q, listArimaCoeff);
-            ComputeARMA(series, errorsSeason, P, Q, listSeasonArimaCoeff);
+            //ComputeARMA(series, errors, p, q, listArimaCoeff);
+            //ComputeARMA(series, errorsSeason, P, Q, listSeasonArimaCoeff);
+
+            List<double> testSeries = new List<double> { 1.0, 2.3, 3.5, 4.4, 5.4, 15.2, 16.4, 17.5, 18.5, 19.8, 30.0, 31.4, 32.6, 33.5, 34.8, 45.2 };
+            int startIndex = 0;
+            ComputeDifference(testSeries, ref startIndex, 1, 1, 5);
+            RevertDifference(testSeries, ref startIndex, 1, 1, 5);
 
             int x = 0;
         }
 
-        public static void ComputeAR(List<double> series, int pCoef)
+        //Tested : OK
+        public static void ComputeDifference(List<double> series, ref int startIndex, int d, int D, int s)
         {
-            int dataSize = series.Count;
-            int nPredict = dataSize - pCoef;
-            Matrix obMatrix = new Matrix(dataSize - pCoef, 1);
-            Matrix coefMatrix = new Matrix(pCoef + 1, 1);
-            Matrix paraMatrix = new Matrix(pCoef + 1, dataSize - pCoef);
-
-            for (int i = 0; i < dataSize - pCoef; i++)
+            for (int i = 0; i < d; i++)
             {
-                obMatrix[i, 0] = series[dataSize - i - 1];
-            }
-
-            for (int j = 0; j < dataSize - pCoef; j++)
-            {
-                for (int i = 0; i <= pCoef; i++)
+                startIndex += 1;
+                for (int j = series.Count-1; j >= startIndex; j--)
                 {
-                    paraMatrix[i, j] = series[dataSize - j - i - 1];
+                    series[j] = series[j] - series[j-1];
                 }
-                paraMatrix[0, j] = 1;
             }
 
-            coefMatrix = Matrix.Inverse((paraMatrix * Matrix.Transpose(paraMatrix))) * paraMatrix * obMatrix;
-            Console.WriteLine(Matrix.PrintMat(coefMatrix));
+            for (int i = 0; i < D; i++)
+            {
+                startIndex += s;
+                for (int j = series.Count - 1; j >= startIndex; j--)
+                {
+                    series[j] = series[j] - series[j-s];
+                }
+            }
         }
 
-        public static void ComputeARMA(List<double> series, List<double> errors, int pCoef, int qCoef, List<double> listArimaCoeff)
+        //Tested : OK
+        public static void RevertDifference(List<double> series, ref int startIndex, int d, int D, int s)
         {
-            int dataSize = series.Count;
+            for (int i = 0; i < D; i++)
+            {
+                for (int j = startIndex; j < series.Count; j++)
+                {
+                    series[j] = series[j] + series[j-s];
+                }
+                startIndex -= s;
+            }
+
+            //for (int i = 0; i < d; i++)
+            {
+                for (int j = startIndex; j < series.Count; j++)
+                {
+                    series[j] = series[j] + series[j-1];
+                }
+                startIndex -= 1;
+            }
+        }
+
+        //season = 1 represent for regular ARIMA, season > 0 represent for seson ARIMA
+        public static void ComputeARMA(List<double> series, List<double> errors, int startIndex, int season, int pCoef, int qCoef, List<double> listArimaCoeff)
+        {
             Matrix observationVector = new Matrix(1 + pCoef + qCoef, 1);
             Matrix parameterVector = new Matrix(1 + pCoef + qCoef, 1);
             Matrix gainFactor = new Matrix(1 + pCoef + qCoef, 1);
@@ -104,15 +127,15 @@ namespace AutoARIMA
             //Phase 1 - Set Initial Conditions
             //the observation vector
             observationVector[0, 0] = 1;
-            for (int i = 1; i <= pCoef; i++)
+            for (int i = 1; i < pCoef + 1; i++)
             {
-                observationVector[i, 0] = series[i - 1];
+                observationVector[i, 0] = series[(i - 1)*season];
             }
-            for (int i = 1; i <= qCoef; i++)
+            for (int i = 1; i < qCoef + 1; i++)
             {
                 observationVector[pCoef + i, 0] = 0;
             }
-            for (int i = 0; i <= pCoef + qCoef; i++)
+            for (int i = 0; i < pCoef + qCoef + 1; i++)
             {
                 invertedCovarianceMatrix[i, i] = Math.Pow(10, 6);
             }
@@ -146,48 +169,6 @@ namespace AutoARIMA
             for (int i = 0; i < 1 + pCoef + qCoef; i++)
             {
                 listArimaCoeff.Add(parameterVector[i, 0]);
-            }
-        }
-
-        public static void ComputeDifference(List<double> series, int d, int D, int s)
-        {
-            int endIndex = series.Count;
-            for (int i = 0; i < d; i++)
-            {
-                endIndex -= 1;
-                for (int j = 0; j < endIndex; j++)
-                {
-                    series[j] = series[j + 1] - series[j];
-                }
-            }
-            for (int i = 0; i < D; i++)
-            {
-                endIndex -= s;
-                for (int j = 0; j < endIndex; j++)
-                {
-                    series[j] = series[j + s] - series[j];
-                }
-            }
-        }
-
-        public static void RevertDifference(List<double> series, int d, int D, int s)
-        {
-            int endIndex = series.Count - d - s * D;
-            for (int i = 0; i < D; i++)
-            {
-                for (int j = endIndex - 1; j >= 0; j--)
-                {
-                    series[j] = series[j + s] - series[j];
-                }
-                endIndex += s;
-            }
-            for (int i = 0; i < d; i++)
-            {
-                for (int j = endIndex - 1; j >= 0; j--)
-                {
-                    series[j] = series[j + 1] - series[j];
-                }
-                endIndex += 1;
             }
         }
 
