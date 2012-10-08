@@ -58,9 +58,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="TextFile1.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Plot_Form.resx">
       <DependentUpon>Plot_Form.cs</DependentUpon>
     </EmbeddedResource>
