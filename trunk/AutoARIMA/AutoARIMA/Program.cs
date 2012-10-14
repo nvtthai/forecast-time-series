@@ -860,7 +860,7 @@ namespace AutoARIMA
             {
                 GetLastSignificant(listRegularPartialCorrelation, confidenceLimit, out p);
             }
-            if (decayACF != DecayPartern.ABRUPT_DECAY && decayPACF != DecayPartern.ABRUPT_DECAY && p * q != 0)
+            if (decayACF != DecayPartern.ABRUPT_DECAY && decayPACF != DecayPartern.ABRUPT_DECAY)
             {
                 p = q = 1;
             }
@@ -890,7 +890,7 @@ namespace AutoARIMA
             {
                 GetLastSignificant(listSeasonPartialCorrelation, confidenceLimit, out P);
             }
-            if (decaySeasonACF != DecayPartern.ABRUPT_DECAY && decaySeasonPACF != DecayPartern.ABRUPT_DECAY && P * Q != 0)
+            if (decaySeasonACF != DecayPartern.ABRUPT_DECAY && decaySeasonPACF != DecayPartern.ABRUPT_DECAY)
             {
                 P = Q = 1;
             }
