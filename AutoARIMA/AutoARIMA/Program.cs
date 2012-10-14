@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace AutoARIMA
 {
@@ -24,7 +25,7 @@ namespace AutoARIMA
 
         static void Main(string[] args)
         {
-            string fileName = @"E:\PROJECT\FINAL PROJECT\Other\Test\sunspot.dat";
+            string fileName = @"E:\PROJECT\FINAL PROJECT\Other\Test\maxtemp.dat";
             List<double> originSeries = new List<double>();
             List<double> errorsSeason = new List<double>();
             List<double> errors = new List<double>();
@@ -36,7 +37,7 @@ namespace AutoARIMA
                 while ((line = file.ReadLine()) != null)
                 {
                     originSeries.Add(Double.Parse(line));
-                    errorsSeason.Add(Double.Parse(line));
+                    errorsSeason.Add(0);
                     errors.Add(0);
                 }
             }
@@ -59,51 +60,143 @@ namespace AutoARIMA
             double confidenceLimit;
 
             List<double> series = originSeries.FindAll(item => true);
-            DrawSeriesData(series, startIndex);
+            WriteLogSeries("Original data");
+            WriteLogSeries(series);
 
             RemoveNonstationarity(series, ref startIndex, out regularDifferencingLevel);
+
             RemoveSeasonality(series, ref startIndex, out seasonPartern, out seasonDifferencingLevel);
+
             ComputeArima(series, startIndex, seasonPartern, out p, out q, out P, out Q);
+
             EstimateRegularARMA(series, startIndex, p, q, listArimaCoeff);
             EstimateSeasonARMA(series, startIndex, seasonPartern, P, Q, listSeasonArimaCoeff);
 
             TestARMA(series, startIndex, regularDifferencingLevel, seasonDifferencingLevel, p, q, seasonPartern, P, Q, listArimaCoeff, listSeasonArimaCoeff);
-            //ForecastRegularARMA(series, errors, startIndex, 
 
             int x = 0;
+        }
+
+        public static int ComputeMax(params int[] data)
+        {
+            int max = data.Max();
+            return max;
+        }
+
+        public static void WriteLogSeries(List<double> series)
+        {
+            StreamWriter file = new StreamWriter("result_test.dat", true);
+            foreach (double data in series)
+            {
+                file.Write(String.Format("{0:0.00}", data) + "\t");
+            }
+            file.WriteLine("");
+            file.Flush();
+            file.Close();
+        }
+
+        public static void WriteLogSeries(string log)
+        {
+            StreamWriter file = new StreamWriter("result_test.dat", true);
+            file.WriteLine(log);
+            file.Flush();
+            file.Close();
         }
 
         public static void TestARMA(List<double> series, int startIndex, int diff, int seasonDiff, int pCoef, int qCoef, int season, int PCoef, int QCoef, List<double> listArimaCoeff, List<double> listSeasonArimaCoeff)
         {
             List<double> originSeries = series.FindAll(item => true);
+            List<double> regularSeries = new List<double>();
+            List<double> seasonSeries = new List<double>();
             List<double> testSeries = new List<double>();
-            for (int i = 0; i < startIndex; i++)
+
+            int startTest = ComputeMax(pCoef, qCoef, PCoef * season, QCoef * season, startIndex);
+
+            for (int i = 0; i < startTest; i++)
             {
-                testSeries.Add(originSeries[i]);
+                regularSeries.Add(series[i]);
             }
 
-            for (int i = startIndex; i < series.Count; i++)
+            for (int i = startTest; i < series.Count; i++)
             {
-                double temp = 0;
-                if (i < pCoef || i < qCoef)
+                double temp = listArimaCoeff[0];
+                for (int j = 1; j <= pCoef; j++)
                 {
-                    testSeries.Add(series[i]);
+                    temp += listArimaCoeff[j] * series[i - j];
+                }
+                regularSeries.Add(temp); 
+
+            }
+
+            if (seasonDiff != 0)
+            {
+                for (int i = 0; i < startTest; i++)
+                {
+                    seasonSeries.Add(series[i]);
+                }
+
+                for (int i = startTest; i < series.Count; i++)
+                {
+                    double temp = listSeasonArimaCoeff[0];
+                    for (int j = 1; j <= PCoef; j++)
+                    {
+                        temp += listSeasonArimaCoeff[j] * series[i - j * season];
+                    }
+                    seasonSeries.Add(temp);
+                }
+            }
+
+
+            for (int i = 0; i < startTest; i++)
+            {
+                testSeries.Add(series[i]);
+            }
+            for (int i = startTest; i < series.Count; i++)
+            {
+                if (seasonDiff != 0)
+                {
+                    testSeries.Add((regularSeries[i] + seasonSeries[i]) / 2);
                 }
                 else
                 {
-                    temp = listArimaCoeff[0];
-                    for (int j = 1; j <= pCoef; j++)
-                    {
-                        temp += listArimaCoeff[j] * series[i - j];
-                    }
-                    testSeries.Add(temp); 
-                }
+                    testSeries.Add(regularSeries[i]);
+                }               
             }
+
             int originIndex = startIndex;
             int testIndex = startIndex;
+
+            WriteLogSeries("Original series before revert diff");
+            WriteLogSeries(originSeries);
+            WriteLogSeries("Regular series before revert diff");
+            WriteLogSeries(regularSeries);
+            WriteLogSeries("Season series before revert diff");
+            WriteLogSeries(seasonSeries);
+            WriteLogSeries("Test series before revert diff");
+            WriteLogSeries(testSeries);
+
             RevertDifference(originSeries, ref originIndex, diff, seasonDiff, season);
-            RevertDifference(testSeries, ref testIndex, diff, seasonDiff, season);
-            DrawTwoSeriesData(originSeries, originIndex, testSeries, testIndex);
+            RevertDifference(seasonSeries, ref testIndex, diff, seasonDiff, season);
+            DrawTwoSeriesData(originSeries, originIndex, seasonSeries, testIndex);
+        }
+
+        public static void ForecastARMA(List<double> series, List<double> errors, int startIndex, int diff, int seasonDiff, int pCoef, int qCoef, int season, int PCoef, int QCoef, List<double> listArimaCoeff, List<double> listSeasonArimaCoeff, int nHead)
+        {
+            List<double> regularSeries = new List<double>();
+            List<double> seasonSeries = new List<double>();
+            List<double> forecastSeries = series.FindAll(item => true);
+
+            int begin = series.Count;
+
+            for (int i = 0; i < nHead; i++)
+            {
+                forecastSeries.Add(0);
+                errors.Add(0);
+            }
+
+            for (int i = begin; i < forecastSeries.Count; i++)
+            {
+            }
         }
 
         public static void ForecastRegularARMA(List<double> series, List<double> errors, int startIndex, int season, int pCoef, int qCoef, List<double> listArimaCoeff, int nHead)
@@ -241,7 +334,7 @@ namespace AutoARIMA
             lag = 0;
             for (int i = 1; i < listAutocorrelation.Count; i++)
             {
-                if (listAutocorrelation[i] > confidenceLimit || listAutocorrelation[i] < -confidenceLimit)
+                if (Math.Abs(listAutocorrelation[i]) > Math.Abs(confidenceLimit) * 1.3)
                 {
                     lag = i + 1;
                 }
@@ -846,8 +939,8 @@ namespace AutoARIMA
                 listRegularConfidenceLimit.Add(listConfidenceLimit[i]);
                 listRegularPartialCorrelation.Add(listPartialAutocorrelation[i]);
             }
-            DrawAutocorrelation(listRegularAutocorrelation, listRegularConfidenceLimit);
-            DrawPartialAutocorrelation(listRegularPartialCorrelation, confidenceLimit);
+            //DrawAutocorrelation(listRegularAutocorrelation, listRegularConfidenceLimit);
+            //DrawPartialAutocorrelation(listRegularPartialCorrelation, confidenceLimit);
 
             DecayPartern decayACF = ComputeDecayPartern(listRegularAutocorrelation, listRegularConfidenceLimit);
             DecayPartern decayPACF = ComputeDecayPartern(listRegularPartialCorrelation, confidenceLimit);
