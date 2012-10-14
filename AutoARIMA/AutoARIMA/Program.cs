@@ -25,7 +25,7 @@ namespace AutoARIMA
 
         static void Main(string[] args)
         {
-            string fileName = @"E:\PROJECT\FINAL PROJECT\Other\Test\maxtemp.dat";
+            string fileName = @"E:\PROJECT\FINAL PROJECT\Other\Test\airpass.dat";
             List<double> originSeries = new List<double>();
             List<double> errorsSeason = new List<double>();
             List<double> errors = new List<double>();
@@ -58,6 +58,7 @@ namespace AutoARIMA
             int dataSize = originSeries.Count;
             int p, q, P, Q;
             double confidenceLimit;
+            int nHead = 70;
 
             List<double> series = originSeries.FindAll(item => true);
             WriteLogSeries("Original data");
@@ -65,14 +66,17 @@ namespace AutoARIMA
 
             RemoveNonstationarity(series, ref startIndex, out regularDifferencingLevel);
 
-            RemoveSeasonality(series, ref startIndex, out seasonPartern, out seasonDifferencingLevel);
+            //RemoveSeasonality(series, ref startIndex, out seasonPartern, out seasonDifferencingLevel);
 
             ComputeArima(series, startIndex, seasonPartern, out p, out q, out P, out Q);
 
-            EstimateRegularARMA(series, startIndex, p, q, listArimaCoeff);
-            EstimateSeasonARMA(series, startIndex, seasonPartern, P, Q, listSeasonArimaCoeff);
+            //p = q = 4;
 
-            TestARMA(series, startIndex, regularDifferencingLevel, seasonDifferencingLevel, p, q, seasonPartern, P, Q, listArimaCoeff, listSeasonArimaCoeff);
+            EstimateRegularARMA(series, startIndex, p, q, listArimaCoeff);
+            //EstimateSeasonARMA(series, startIndex, seasonPartern, P, Q, listSeasonArimaCoeff);
+
+            TestRegularARMA(series, errors, startIndex, regularDifferencingLevel, p, q, listArimaCoeff);
+            ForecastRegularARMA(series, errors, startIndex, regularDifferencingLevel, p, q, listArimaCoeff, nHead);
 
             int x = 0;
         }
@@ -176,8 +180,8 @@ namespace AutoARIMA
             WriteLogSeries(testSeries);
 
             RevertDifference(originSeries, ref originIndex, diff, seasonDiff, season);
-            RevertDifference(seasonSeries, ref testIndex, diff, seasonDiff, season);
-            DrawTwoSeriesData(originSeries, originIndex, seasonSeries, testIndex);
+            RevertDifference(testSeries, ref testIndex, diff, seasonDiff, season);
+            DrawTwoSeriesData(originSeries, originIndex, testSeries, testIndex);
         }
 
         public static void ForecastARMA(List<double> series, List<double> errors, int startIndex, int diff, int seasonDiff, int pCoef, int qCoef, int season, int PCoef, int QCoef, List<double> listArimaCoeff, List<double> listSeasonArimaCoeff, int nHead)
@@ -199,26 +203,97 @@ namespace AutoARIMA
             }
         }
 
-        public static void ForecastRegularARMA(List<double> series, List<double> errors, int startIndex, int season, int pCoef, int qCoef, List<double> listArimaCoeff, int nHead)
+        //Don't change series, errors, listArimaCoeff
+        //errors is compute and return
+        public static void ForecastRegularARMA(List<double> series, List<double> errors, int startIndex, int diff, int pCoef, int qCoef, List<double> listArimaCoeff, int nHead)
         {
+            List<double> originSeries = series.FindAll(item => true);
+            List<double> forecastSeries = series.FindAll(item => true);
+            List<double> forecastErrors = errors.FindAll(item => true);
+            int originIndex = startIndex;
+            int forecastIndex = startIndex;
             int begin = series.Count;
             for (int i = 0; i < nHead; i++)
             {
-                series.Add(0);
-                errors.Add(0);
+                forecastSeries.Add(0);
+                forecastErrors.Add(0);
             }
-            for (int i = begin; i < series.Count; i++)
+            for (int i = begin; i < forecastSeries.Count; i++)
             {
-                series[i] = listArimaCoeff[0];
+                forecastSeries[i] = listArimaCoeff[0];
                 for (int j = 1; j <= pCoef; j++)
                 {
-                    series[i] += series[i - j] * listArimaCoeff[j];
+                    forecastSeries[i] += forecastSeries[i - j] * listArimaCoeff[j];
                 }
                 for (int j = 1; j <= qCoef; j++)
                 {
-                    series[i] += errors[i - j] * listArimaCoeff[j];
+                    forecastSeries[i] += forecastErrors[i - j] * listArimaCoeff[j+pCoef];
                 }
                 //errors.Add(series[i] - temp);
+            }
+            RevertDifference(originSeries, ref originIndex, diff, 0, 0);
+            RevertDifference(forecastSeries, ref forecastIndex, diff, 0, 0);
+            DrawTwoSeriesData(originSeries, originIndex, forecastSeries, forecastIndex);
+        }
+
+        //Don't change series, listArimaCoeff 
+        //errors is compute and return
+        public static void TestRegularARMA(List<double> series, List<double> errors, int startIndex, int diff, int pCoef, int qCoef, List<double> listArimaCoeff)
+        {
+            errors.Clear();
+            List<double> originSeries = series.FindAll(item => true);
+            List<double> testSeries = new List<double>();
+
+            int originIndex = startIndex;
+            int testIndex = startIndex;
+            int begin = ComputeMax(startIndex, pCoef, qCoef);
+
+            for (int i = 0; i < begin; i++)
+            {
+                testSeries.Add(originSeries[i]);
+            }
+            for (int i = begin; i < originSeries.Count; i++)
+            {
+                double temp = listArimaCoeff[0];
+                for (int j = 1; j <= pCoef; j++)
+                {
+                    temp += originSeries[i - j] * listArimaCoeff[j];
+                }
+                //In test mode all priori error is 0
+                //for (int j = 1; j <= qCoef; j++)
+                //{
+                //    temp += testErrors[i - j] * listArimaCoeff[j + pCoef];
+                //}
+                testSeries.Add(temp);
+            }
+            RevertDiffTestSeries(originSeries, testSeries, ref originIndex, diff, 0, 0);
+            for (int i = 0; i < originSeries.Count; i++)
+            {
+                errors.Add(originSeries[i] - testSeries[i]);
+            }
+            DrawTwoSeriesData(originSeries, originIndex, testSeries, testIndex);
+        }
+
+        public static void RevertDiffTestSeries(List<double> series, List<double> testSeries, ref int startIndex, int d, int D, int s)
+        {
+            for (int i = 0; i < D; i++)
+            {
+                for (int j = startIndex; j < series.Count; j++)
+                {
+                    series[j] = series[j] + series[j - s];
+                    testSeries[j] = testSeries[j] + series[j - s];
+                }
+                startIndex -= s;
+            }
+
+            for (int i = 0; i < d; i++)
+            {
+                for (int j = startIndex; j < series.Count; j++)
+                {
+                    series[j] = series[j] + series[j - 1];
+                    testSeries[j] = testSeries[j] + series[j - 1];
+                }
+                startIndex -= 1;
             }
         }
 
