@@ -40,6 +40,8 @@ namespace ForecastTimeSeries
             processSeries = new List<double>();
         }
 
+        #region library
+
         public void ComputeAutocorrelation(List<double> series, int startIndex, out List<double> listAutocorrelation)
         {
             listAutocorrelation = new List<double>();
@@ -223,6 +225,25 @@ namespace ForecastTimeSeries
             form.ShowDialog();
         }
 
+        public void DrawAutocorrelation()
+        {
+            List<double> listAutocorrelation = new List<double>();
+            List<double> listConfidenceLimit = new List<double>();
+            ComputeAutocorrelation(processSeries, startIndex, out listAutocorrelation);
+            ComputeConfidenceLimit(listAutocorrelation, processSeries.Count, out listConfidenceLimit);
+            DrawAutocorrelation(listAutocorrelation, listConfidenceLimit);
+        }
+
+        public void DrawPartialAutocorrelation()
+        {
+            List<double> listAutocorrelation = new List<double>();
+            List<double> listPartialAutocorrelation = new List<double>();
+            ComputeAutocorrelation(processSeries, startIndex, out listAutocorrelation);
+            ComputePartialAutocorrelation(listAutocorrelation, out listPartialAutocorrelation);
+            double confidenceLimit = 1.96 / Math.Sqrt(processSeries.Count);
+            DrawPartialAutocorrelation(listPartialAutocorrelation, confidenceLimit);
+        }
+
         public void DrawSeriesData(List<double> series, int startIndex)
         {
             Plot_Form form = new Plot_Form();
@@ -234,6 +255,11 @@ namespace ForecastTimeSeries
                 form.chart1.Series["Data"].Points.AddXY(i + 1, series.ElementAt(i));
             }
             form.ShowDialog();
+        }
+
+        public void DrawSeriesData()
+        {
+            DrawSeriesData(processSeries, startIndex);
         }
 
         public void DrawTwoSeriesData(List<double> firstSeries, int firstStartIndex, List<double> secondSeries, int secondStartIndex)
@@ -311,6 +337,8 @@ namespace ForecastTimeSeries
                 startIndex -= 1;
             }
         }
+
+        #endregion
 
         public DecayPartern ComputeDecayPartern(List<double> listAutocorrelation, double confidenceLimit)
         {
@@ -801,7 +829,7 @@ namespace ForecastTimeSeries
             DrawTwoSeriesData(originSeries, originIndex, testSeries, testIndex);
         }
 
-        public void RevertDiffTestSeries(List<double> series, List<double> testSeries, ref int startIndex, int d, int D, int s)
+        public void RevertDiffTestSeries(ref List<double> series, ref List<double> testSeries, ref int startIndex, int d, int D, int s)
         {
             for (int i = 0; i < D; i++)
             {
@@ -827,7 +855,7 @@ namespace ForecastTimeSeries
         public void TestRegularARIMA(List<double> processSeries, int startIndex, int diff, int pCoef, int qCoef, List<double> listArimaCoeff, out List<double> error)
         {
             error = new List<double>();
-            List<double> originSeries = processSeries.FindAll(item => true);
+            List<double> currentSeries = processSeries.FindAll(item => true);
             List<double> regularSeries = new List<double>();
 
             int startTest = ComputeMax(pCoef, qCoef, startIndex);
@@ -850,51 +878,64 @@ namespace ForecastTimeSeries
 
             int originIndex = startIndex;
             int testIndex = startIndex;
-            for (int i = 0; i < originSeries.Count; i++)
+            for (int i = 0; i < currentSeries.Count; i++)
             {
-                error.Add(regularSeries[i] - originSeries[i]);
+                error.Add(regularSeries[i] - currentSeries[i]);
             }
-            RevertDiffTestSeries(originSeries, regularSeries, ref originIndex, diff, 0, 0);
-            DrawTwoSeriesData(originSeries, originIndex, regularSeries, testIndex);
+            RevertDiffTestSeries(ref currentSeries, ref regularSeries, ref originIndex, diff, 0, 0);
+            DrawTwoSeriesData(currentSeries, originIndex, regularSeries, testIndex);
         }
 
-        public void ForecastRegularARIMA(List<double> series, List<double> errors, int startIndex, int diff, int pCoef, int qCoef, List<double> listArimaCoeff, int nHead)
+        public void ForecastRegularARIMA(List<double> processSeries, List<double> errors, int startIndex, int diff, int pCoef, int qCoef, List<double> listArimaCoeff, int nHead, out List<double> forecastSeries)
         {
-            List<double> originSeries = series.FindAll(item => true);
-            List<double> forecastSeries = series.FindAll(item => true);
-            List<double> forecastErrors = errors.FindAll(item => true);
+            List<double> currentSeries = processSeries.FindAll(item => true);
+            List<double> currentErrors = errors.FindAll(item => true);
             int originIndex = startIndex;
             int forecastIndex = startIndex;
-            int begin = series.Count;
+            int begin = processSeries.Count;
             for (int i = 0; i < nHead; i++)
             {
-                forecastSeries.Add(0);
-                forecastErrors.Add(0);
+                currentSeries.Add(0);
+                currentErrors.Add(0);
             }
-            for (int i = begin; i < forecastSeries.Count; i++)
+            for (int i = begin; i < currentSeries.Count; i++)
             {
-                forecastSeries[i] = listArimaCoeff[0];
+                currentSeries[i] = listArimaCoeff[0];
                 for (int j = 1; j <= pCoef; j++)
                 {
-                    forecastSeries[i] += forecastSeries[i - j] * listArimaCoeff[j];
+                    currentSeries[i] += currentSeries[i - j] * listArimaCoeff[j];
                 }
                 for (int j = 1; j <= qCoef; j++)
                 {
-                    forecastSeries[i] += forecastErrors[i - j] * listArimaCoeff[j + pCoef];
+                    currentSeries[i] += currentErrors[i - j] * listArimaCoeff[j + pCoef];
                 }
                 //errors.Add(series[i] - temp);
             }
-            RevertDifference(originSeries, ref originIndex, diff, 0, 0);
-            RevertDifference(forecastSeries, ref forecastIndex, diff, 0, 0);
-            DrawTwoSeriesData(originSeries, originIndex, forecastSeries, forecastIndex);
+            RevertDifference(currentSeries, ref startIndex, diff, 0, 0);
+            forecastSeries = new List<double>();
+            for (int i = begin; i < currentSeries.Count; i++)
+            {
+                forecastSeries.Add(currentSeries[i]);
+            }
         }
 
         public void SetData(List<double> series)
         {
+            originSeries.Clear();
+            processSeries.Clear();
             for (int i = 0; i < series.Count; i++)
             {
                 originSeries.Add(series[i]);
                 processSeries.Add(series[i]);
+            }
+        }
+
+        public void GetError(out List<double> errors)
+        {
+            errors = new List<double>();
+            for (int i = 0; i < errorSeries.Count; i++)
+            {
+                errors.Add(errorSeries[i]);
             }
         }
 
@@ -908,7 +949,12 @@ namespace ForecastTimeSeries
             //EstimateSeasonARIMAModel(processSeries, startIndex, seasonPartern, P, Q, out listSeasonArimaCoeff);
 
             TestRegularARIMA(processSeries, startIndex, regularDifferencingLevel, p, q, listArimaCoeff, out errorSeries);
-            ForecastRegularARIMA(processSeries, errorSeries, startIndex, regularDifferencingLevel, p, q, listArimaCoeff, 30);
+            //ForecastRegularARIMA(processSeries, errorSeries, startIndex, regularDifferencingLevel, p, q, listArimaCoeff, 30);
+        }
+
+        public void Forecast(int nHead, out List<double> forecastSeries)
+        {
+            ForecastRegularARIMA(processSeries, errorSeries, startIndex, regularDifferencingLevel, p, q, listArimaCoeff, nHead, out forecastSeries);
         }
 
     }

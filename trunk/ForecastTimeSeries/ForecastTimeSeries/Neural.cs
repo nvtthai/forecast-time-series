@@ -9,6 +9,10 @@ namespace ForecastTimeSeries
 {
     public class Neural
     {
+
+        public List<double> originSeries;
+        public List<double> processSeries;
+
         //use hommology, the last perception in each level is Bias 
         public int m_iNumInputNodes;
         public int m_iNumHiddenNodes;
@@ -26,6 +30,9 @@ namespace ForecastTimeSeries
 
         private Neural()
         {
+            originSeries = new List<double>();
+            processSeries = new List<double>();
+
             m_iNumInputNodes = 0;
             m_iNumHiddenNodes = 0;
             m_iNumOutputNodes = 0;
@@ -33,6 +40,9 @@ namespace ForecastTimeSeries
 
         public Neural(int inputNodes, int hiddenNodes, int outputNodes)
         {
+            originSeries = new List<double>();
+            processSeries = new List<double>();
+
             m_iNumInputNodes = inputNodes;
             m_iNumHiddenNodes = hiddenNodes;
             m_iNumOutputNodes = outputNodes;
@@ -79,14 +89,36 @@ namespace ForecastTimeSeries
             }
         }
 
-        public void CalculateOutput(double[] input)
+        public void SetData(List<double> series)
+        {
+            originSeries.Clear();
+            processSeries.Clear();
+            for (int i = 0; i < series.Count; i++)
+            {
+                originSeries.Add(series[i]);
+            }
+
+            double max = originSeries.Max();
+            double min = originSeries.Min();
+            int count = originSeries.Count;
+            for (int i = 0; i < count; i++)
+            {
+                double a = originSeries.ElementAt(i);
+                double b = (a - min) / (max - min) * (0.99 - 0.01) + 0.01;
+                processSeries.Add(b);
+            }
+            int x = 0;
+        }
+
+        public double CalculateOutput(double[] input)
         {
             int i, j, k;
+            double temp = 0;
             for (i = 0; i < m_iNumInputNodes; i++)
                 m_arInputNodes[i].SetInput(input[i]);
             for (j = 0; j < m_iNumHiddenNodes; j++)
             {
-                double temp = 0;
+                temp = 0;
                 for (i = 0; i <= m_iNumInputNodes; i++)
                 {
                     temp += m_arInputHiddenConn[i, j] * m_arInputNodes[i].GetOutput();
@@ -95,13 +127,14 @@ namespace ForecastTimeSeries
             }
             for (k = 0; k < m_iNumOutputNodes; k++)
             {
-                double temp = 0;
+                temp = 0;
                 for (j = 0; j <= m_iNumHiddenNodes; j++)
                 {
                     temp += m_arHiddenOutputConn[j, k] * m_arHiddenNodes[j].GetOutput();
                 }
                 m_arOutputNodes[k].SetInput(temp);
             }
+            return temp;
         }
 
         public static Neural Import(string pathFile)
@@ -259,7 +292,7 @@ namespace ForecastTimeSeries
             BackUp();
         }
 
-        public void Bp_Run(List<double> sampleSeries, List<double> validateSeries, double learnRate, double momentum, double theEpoches = 10000, double residual = 1.0E-5)
+        public void Bp_Run(double learnRate, double momentum, double theEpoches = 10000, double residual = 1.0E-5)
         {
             InitForTrain();
 
@@ -294,18 +327,18 @@ namespace ForecastTimeSeries
             while (epoch < theEpoches)
             {
                 MAE = 0.0;
-                for (n = m_iNumInputNodes; n < sampleSeries.Count; n++)
+                for (n = m_iNumInputNodes; n < processSeries.Count; n++)
                 {
                     // forward
                     double[] lstTemp = new double[m_iNumInputNodes];
                     for (i = m_iNumInputNodes; i > 0; i--)
                     {
-                        lstTemp[m_iNumInputNodes - i] = sampleSeries[n - i];
+                        lstTemp[m_iNumInputNodes - i] = processSeries[n - i];
                     }
                     CalculateOutput(lstTemp);
                     for (k = 0; k < m_iNumOutputNodes; k++)
                     {
-                        MAE += Math.Abs(sampleSeries.ElementAt(n + k) - m_arOutputNodes[k].GetOutput());
+                        MAE += Math.Abs(processSeries.ElementAt(n + k) - m_arOutputNodes[k].GetOutput());
                     }
 
                     // backward
@@ -314,7 +347,7 @@ namespace ForecastTimeSeries
                     {
                         for (j = 0; j <= m_iNumHiddenNodes; j++)
                         {
-                            double parDerv = -m_arOutputNodes[k].GetOutput() * (1 - m_arOutputNodes[k].GetOutput()) * m_arHiddenNodes[j].GetOutput() * (sampleSeries.ElementAt(n) - m_arOutputNodes[k].GetOutput());
+                            double parDerv = -m_arOutputNodes[k].GetOutput() * (1 - m_arOutputNodes[k].GetOutput()) * m_arHiddenNodes[j].GetOutput() * (processSeries.ElementAt(n) - m_arOutputNodes[k].GetOutput());
                             deltaHiddenOutput[j, k] = -learnRate * parDerv + momentum * lagDeltaHiddenOutput[j, k];
                             lagDeltaHiddenOutput[j, k] = deltaHiddenOutput[j, k];
                         }
@@ -325,7 +358,7 @@ namespace ForecastTimeSeries
                         double temp = 0.0;
                         for (k = 0; k < m_iNumOutputNodes; k++)
                         {
-                            temp += -(sampleSeries.ElementAt(n) - m_arOutputNodes[k].GetOutput()) * m_arOutputNodes[k].GetOutput() * (1 - m_arOutputNodes[k].GetOutput()) * m_arHiddenOutputConn[j, k];
+                            temp += -(processSeries.ElementAt(n) - m_arOutputNodes[k].GetOutput()) * m_arOutputNodes[k].GetOutput() * (1 - m_arOutputNodes[k].GetOutput()) * m_arHiddenOutputConn[j, k];
                         }
                         for (i = 0; i <= m_iNumInputNodes; i++)
                         {
@@ -352,7 +385,7 @@ namespace ForecastTimeSeries
                     }
 
                 } // end outer for
-                MAE = MAE / (sampleSeries.Count - m_iNumInputNodes); // caculate mean square error
+                MAE = MAE / (processSeries.Count - m_iNumInputNodes); // caculate mean square error
                 if (Math.Abs(MAE - LastError) < residual) // if the Error is not improved significantly, halt training process and rollback
                 {
                     RollBack();
@@ -385,7 +418,7 @@ namespace ForecastTimeSeries
             result.ShowDialog();
         }
 
-        public void Rprop_Run(List<double> sampleSeries, List<double> validateSeries, double defaultDeltaValue = 0.0001, double maxDelta = 50.0, double theEpoches = 10000, double residual = 1.0E-5)
+        public void Rprop_Run(double defaultDeltaValue = 0.0001, double maxDelta = 50.0, double theEpoches = 10000, double residual = 1.0E-5)
         {
             InitForTrain();
 
@@ -439,20 +472,20 @@ namespace ForecastTimeSeries
             {
                 MAE = 0.0;
                 //training for each epoch
-                for (n = m_iNumInputNodes; n < sampleSeries.Count; n++)
+                for (n = m_iNumInputNodes; n < processSeries.Count; n++)
                 {
                     //forward
                     double[] lstTemp = new double[m_iNumInputNodes];
                     for (i = m_iNumInputNodes; i > 0; i--)
                     {
-                        lstTemp[m_iNumInputNodes - i] = sampleSeries[n - i];
+                        lstTemp[m_iNumInputNodes - i] = processSeries[n - i];
                     }
                     CalculateOutput(lstTemp);
 
                     /*calculate abs error*/
                     for (k = 0; k < m_iNumOutputNodes; k++)
                     {
-                        MAE += Math.Abs(sampleSeries.ElementAt(n) - m_arOutputNodes[k].GetOutput());
+                        MAE += Math.Abs(processSeries.ElementAt(n) - m_arOutputNodes[k].GetOutput());
                     }
                     // backward
                     /*calculate weight-step for weights connecting from hidden nodes to output nodes*/
@@ -460,7 +493,7 @@ namespace ForecastTimeSeries
                     {
                         for (j = 0; j <= m_iNumHiddenNodes; j++)
                         {
-                            newGradientHiddenOutput[j, k] += -m_arOutputNodes[k].GetOutput() * (1 - m_arOutputNodes[k].GetOutput()) * m_arHiddenNodes[j].GetOutput() * (sampleSeries[n] - m_arOutputNodes[k].GetOutput());
+                            newGradientHiddenOutput[j, k] += -m_arOutputNodes[k].GetOutput() * (1 - m_arOutputNodes[k].GetOutput()) * m_arHiddenNodes[j].GetOutput() * (processSeries[n] - m_arOutputNodes[k].GetOutput());
                         }
                     }
                     /*calculate weight-step for weights connecting from input nodes to hidden nodes*/
@@ -469,7 +502,7 @@ namespace ForecastTimeSeries
                         double temp = 0.0;
                         for (k = 0; k < m_iNumOutputNodes; k++)
                         {
-                            temp += -(sampleSeries.ElementAt(n) - m_arOutputNodes[k].GetOutput()) * m_arOutputNodes[k].GetOutput() * (1 - m_arOutputNodes[k].GetOutput()) * m_arHiddenOutputConn[j, k];
+                            temp += -(processSeries.ElementAt(n) - m_arOutputNodes[k].GetOutput()) * m_arOutputNodes[k].GetOutput() * (1 - m_arOutputNodes[k].GetOutput()) * m_arHiddenOutputConn[j, k];
                         }
                         for (i = 0; i <= m_iNumInputNodes; i++)
                         {
@@ -538,7 +571,7 @@ namespace ForecastTimeSeries
                         newGradientInputHidden[i, j] = 0.0;
                     }
                 }
-                MAE = MAE / (sampleSeries.Count); // caculate mean square error
+                MAE = MAE / (processSeries.Count); // caculate mean square error
                 if (Math.Abs(MAE - LastError) < residual) // if the Error is not improved significantly, halt training process and rollback
                 {
                     RollBack();
@@ -607,6 +640,25 @@ namespace ForecastTimeSeries
                 {
                     Backup_m_arHiddenOutputConn[j, k] = m_arHiddenOutputConn[j, k];
                 }
+            }
+        }
+
+        public void Forecast(int nHead, out List<double> forecastSeries)
+        {
+            forecastSeries = new List<double>();
+            double max = processSeries.Max();
+            double min = processSeries.Min();
+            List<double> currentSeries = processSeries.FindAll(item => true);
+            for (int i = 0; i < nHead; i++)
+            {
+                double[] input = new double[m_iNumInputNodes];
+                for (int j = 0; j < m_iNumInputNodes; j++)
+                {
+                    input[j] = currentSeries[currentSeries.Count - m_iNumInputNodes + j];
+                }
+                double temp = CalculateOutput(input);
+                currentSeries.Add(temp);
+                forecastSeries.Add(temp);
             }
         }
     }
