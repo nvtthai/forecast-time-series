@@ -28,14 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.btnManualARIMA = new System.Windows.Forms.RadioButton();
-            this.button6 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
+            this.btnSaveARIMA = new System.Windows.Forms.Button();
+            this.btnLoadARIMA = new System.Windows.Forms.Button();
             this.labelTrainDataNumRows = new System.Windows.Forms.Label();
             this.labelTrainDataNumColumns = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btnTrainARIMA = new System.Windows.Forms.Button();
             this.groupBoxARIMAParameter = new System.Windows.Forms.GroupBox();
             this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
@@ -56,10 +59,10 @@
             this.btnAutomaticARIMA = new System.Windows.Forms.RadioButton();
             this.label2 = new System.Windows.Forms.Label();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnPartialCorrelation = new System.Windows.Forms.Button();
             this.btnCorrelogram = new System.Windows.Forms.Button();
-            this.btnPlot = new System.Windows.Forms.Button();
-            this.richTextProprocessData = new System.Windows.Forms.RichTextBox();
+            this.btnPlotData = new System.Windows.Forms.Button();
+            this.richTextProcessData = new System.Windows.Forms.RichTextBox();
             this.btnGetData = new System.Windows.Forms.Button();
             this.txtTrainDataColumn = new System.Windows.Forms.TextBox();
             this.txtTrainDataToRow = new System.Windows.Forms.TextBox();
@@ -71,6 +74,7 @@
             this.btnChooseData = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.btnTrainNeural = new System.Windows.Forms.Button();
             this.groupBoxAlgorithmConfig = new System.Windows.Forms.GroupBox();
             this.txtConfigErrors = new System.Windows.Forms.TextBox();
             this.txtConfig2 = new System.Windows.Forms.TextBox();
@@ -81,35 +85,41 @@
             this.labelConfig2 = new System.Windows.Forms.Label();
             this.labelConfig1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.radioRPROP = new System.Windows.Forms.RadioButton();
+            this.radioBackPropagation = new System.Windows.Forms.RadioButton();
             this.groupBoxNetworkConfig = new System.Windows.Forms.GroupBox();
             this.btnNetworkClear = new System.Windows.Forms.Button();
             this.btnNetworkSave = new System.Windows.Forms.Button();
             this.btnNetworkLoad = new System.Windows.Forms.Button();
             this.btnNetworkNew = new System.Windows.Forms.Button();
-            this.txtNumLag = new System.Windows.Forms.TextBox();
-            this.label10 = new System.Windows.Forms.Label();
             this.txtNumOutput = new System.Windows.Forms.TextBox();
             this.txtNumHidden = new System.Windows.Forms.TextBox();
             this.txtNumInput = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.radioRPROP = new System.Windows.Forms.RadioButton();
-            this.radioBackPropagation = new System.Windows.Forms.RadioButton();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.buttonForecast = new System.Windows.Forms.Button();
+            this.textBoxNHead = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.chartForecast = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBoxARIMAParameter.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.groupBoxAlgorithmConfig.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            this.groupBoxNetworkConfig.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.groupBoxNetworkConfig.SuspendLayout();
+            this.tabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chartForecast)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Location = new System.Drawing.Point(2, 2);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -120,19 +130,19 @@
             // 
             this.tabPage1.BackColor = System.Drawing.Color.SeaGreen;
             this.tabPage1.Controls.Add(this.btnManualARIMA);
-            this.tabPage1.Controls.Add(this.button6);
-            this.tabPage1.Controls.Add(this.button5);
+            this.tabPage1.Controls.Add(this.btnSaveARIMA);
+            this.tabPage1.Controls.Add(this.btnLoadARIMA);
             this.tabPage1.Controls.Add(this.labelTrainDataNumRows);
             this.tabPage1.Controls.Add(this.labelTrainDataNumColumns);
-            this.tabPage1.Controls.Add(this.button2);
+            this.tabPage1.Controls.Add(this.btnTrainARIMA);
             this.tabPage1.Controls.Add(this.groupBoxARIMAParameter);
             this.tabPage1.Controls.Add(this.btnAutomaticARIMA);
             this.tabPage1.Controls.Add(this.label2);
             this.tabPage1.Controls.Add(this.richTextBox1);
-            this.tabPage1.Controls.Add(this.button1);
+            this.tabPage1.Controls.Add(this.btnPartialCorrelation);
             this.tabPage1.Controls.Add(this.btnCorrelogram);
-            this.tabPage1.Controls.Add(this.btnPlot);
-            this.tabPage1.Controls.Add(this.richTextProprocessData);
+            this.tabPage1.Controls.Add(this.btnPlotData);
+            this.tabPage1.Controls.Add(this.richTextProcessData);
             this.tabPage1.Controls.Add(this.btnGetData);
             this.tabPage1.Controls.Add(this.txtTrainDataColumn);
             this.tabPage1.Controls.Add(this.txtTrainDataToRow);
@@ -153,6 +163,7 @@
             // btnManualARIMA
             // 
             this.btnManualARIMA.AutoSize = true;
+            this.btnManualARIMA.ForeColor = System.Drawing.Color.Red;
             this.btnManualARIMA.Location = new System.Drawing.Point(499, 9);
             this.btnManualARIMA.Name = "btnManualARIMA";
             this.btnManualARIMA.Size = new System.Drawing.Size(89, 17);
@@ -162,23 +173,25 @@
             this.btnManualARIMA.UseVisualStyleBackColor = true;
             this.btnManualARIMA.CheckedChanged += new System.EventHandler(this.btnManualARIMA_CheckedChanged);
             // 
-            // button6
+            // btnSaveARIMA
             // 
-            this.button6.Location = new System.Drawing.Point(748, 241);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(112, 23);
-            this.button6.TabIndex = 47;
-            this.button6.Text = "Save ARIMA";
-            this.button6.UseVisualStyleBackColor = true;
+            this.btnSaveARIMA.ForeColor = System.Drawing.Color.Red;
+            this.btnSaveARIMA.Location = new System.Drawing.Point(748, 241);
+            this.btnSaveARIMA.Name = "btnSaveARIMA";
+            this.btnSaveARIMA.Size = new System.Drawing.Size(112, 23);
+            this.btnSaveARIMA.TabIndex = 47;
+            this.btnSaveARIMA.Text = "Save ARIMA";
+            this.btnSaveARIMA.UseVisualStyleBackColor = true;
             // 
-            // button5
+            // btnLoadARIMA
             // 
-            this.button5.Location = new System.Drawing.Point(562, 241);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(113, 23);
-            this.button5.TabIndex = 46;
-            this.button5.Text = "Load ARIMA";
-            this.button5.UseVisualStyleBackColor = true;
+            this.btnLoadARIMA.ForeColor = System.Drawing.Color.Red;
+            this.btnLoadARIMA.Location = new System.Drawing.Point(562, 241);
+            this.btnLoadARIMA.Name = "btnLoadARIMA";
+            this.btnLoadARIMA.Size = new System.Drawing.Size(113, 23);
+            this.btnLoadARIMA.TabIndex = 46;
+            this.btnLoadARIMA.Text = "Load ARIMA";
+            this.btnLoadARIMA.UseVisualStyleBackColor = true;
             // 
             // labelTrainDataNumRows
             // 
@@ -196,14 +209,15 @@
             this.labelTrainDataNumColumns.Size = new System.Drawing.Size(0, 13);
             this.labelTrainDataNumColumns.TabIndex = 44;
             // 
-            // button2
+            // btnTrainARIMA
             // 
-            this.button2.Location = new System.Drawing.Point(391, 241);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(123, 23);
-            this.button2.TabIndex = 43;
-            this.button2.Text = "Training ARIMA";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btnTrainARIMA.Location = new System.Drawing.Point(391, 241);
+            this.btnTrainARIMA.Name = "btnTrainARIMA";
+            this.btnTrainARIMA.Size = new System.Drawing.Size(123, 23);
+            this.btnTrainARIMA.TabIndex = 43;
+            this.btnTrainARIMA.Text = "Training ARIMA";
+            this.btnTrainARIMA.UseVisualStyleBackColor = true;
+            this.btnTrainARIMA.Click += new System.EventHandler(this.btnTrainARIMA_Click);
             // 
             // groupBoxARIMAParameter
             // 
@@ -391,15 +405,16 @@
             this.richTextBox1.TabIndex = 39;
             this.richTextBox1.Text = "";
             // 
-            // button1
+            // btnPartialCorrelation
             // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(691, 398);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(204, 51);
-            this.button1.TabIndex = 38;
-            this.button1.Text = "Partial Correlogram";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnPartialCorrelation.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPartialCorrelation.Location = new System.Drawing.Point(691, 398);
+            this.btnPartialCorrelation.Name = "btnPartialCorrelation";
+            this.btnPartialCorrelation.Size = new System.Drawing.Size(204, 51);
+            this.btnPartialCorrelation.TabIndex = 38;
+            this.btnPartialCorrelation.Text = "Partial Correlogram";
+            this.btnPartialCorrelation.UseVisualStyleBackColor = true;
+            this.btnPartialCorrelation.Click += new System.EventHandler(this.btnPartialCorrelation_Click);
             // 
             // btnCorrelogram
             // 
@@ -410,26 +425,28 @@
             this.btnCorrelogram.TabIndex = 35;
             this.btnCorrelogram.Text = "Correlogram";
             this.btnCorrelogram.UseVisualStyleBackColor = true;
+            this.btnCorrelogram.Click += new System.EventHandler(this.btnCorrelogram_Click);
             // 
-            // btnPlot
+            // btnPlotData
             // 
-            this.btnPlot.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnPlot.Location = new System.Drawing.Point(367, 398);
-            this.btnPlot.Name = "btnPlot";
-            this.btnPlot.Size = new System.Drawing.Size(138, 51);
-            this.btnPlot.TabIndex = 34;
-            this.btnPlot.Text = "Plot";
-            this.btnPlot.UseVisualStyleBackColor = true;
+            this.btnPlotData.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPlotData.Location = new System.Drawing.Point(367, 398);
+            this.btnPlotData.Name = "btnPlotData";
+            this.btnPlotData.Size = new System.Drawing.Size(138, 51);
+            this.btnPlotData.TabIndex = 34;
+            this.btnPlotData.Text = "Plot";
+            this.btnPlotData.UseVisualStyleBackColor = true;
+            this.btnPlotData.Click += new System.EventHandler(this.btnPlotData_Click);
             // 
-            // richTextProprocessData
+            // richTextProcessData
             // 
-            this.richTextProprocessData.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.richTextProprocessData.Location = new System.Drawing.Point(6, 166);
-            this.richTextProprocessData.Name = "richTextProprocessData";
-            this.richTextProprocessData.ReadOnly = true;
-            this.richTextProprocessData.Size = new System.Drawing.Size(347, 284);
-            this.richTextProprocessData.TabIndex = 33;
-            this.richTextProprocessData.Text = "";
+            this.richTextProcessData.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.richTextProcessData.Location = new System.Drawing.Point(6, 166);
+            this.richTextProcessData.Name = "richTextProcessData";
+            this.richTextProcessData.ReadOnly = true;
+            this.richTextProcessData.Size = new System.Drawing.Size(347, 284);
+            this.richTextProcessData.TabIndex = 33;
+            this.richTextProcessData.Text = "";
             // 
             // btnGetData
             // 
@@ -523,6 +540,7 @@
             // tabPage2
             // 
             this.tabPage2.BackColor = System.Drawing.Color.SeaGreen;
+            this.tabPage2.Controls.Add(this.btnTrainNeural);
             this.tabPage2.Controls.Add(this.groupBoxAlgorithmConfig);
             this.tabPage2.Controls.Add(this.groupBox2);
             this.tabPage2.Controls.Add(this.groupBoxNetworkConfig);
@@ -532,6 +550,16 @@
             this.tabPage2.Size = new System.Drawing.Size(909, 456);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Neural Network";
+            // 
+            // btnTrainNeural
+            // 
+            this.btnTrainNeural.Location = new System.Drawing.Point(419, 276);
+            this.btnTrainNeural.Name = "btnTrainNeural";
+            this.btnTrainNeural.Size = new System.Drawing.Size(75, 23);
+            this.btnTrainNeural.TabIndex = 5;
+            this.btnTrainNeural.Text = "Train Neural";
+            this.btnTrainNeural.UseVisualStyleBackColor = true;
+            this.btnTrainNeural.Click += new System.EventHandler(this.btnTrainNeural_Click);
             // 
             // groupBoxAlgorithmConfig
             // 
@@ -630,14 +658,58 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Training Config";
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Location = new System.Drawing.Point(9, 100);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(348, 109);
+            this.groupBox4.TabIndex = 1;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Validate";
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.radioRPROP);
+            this.groupBox3.Controls.Add(this.radioBackPropagation);
+            this.groupBox3.Location = new System.Drawing.Point(9, 19);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(348, 75);
+            this.groupBox3.TabIndex = 0;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Algorithm";
+            // 
+            // radioRPROP
+            // 
+            this.radioRPROP.AutoSize = true;
+            this.radioRPROP.Checked = true;
+            this.radioRPROP.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.radioRPROP.Location = new System.Drawing.Point(62, 39);
+            this.radioRPROP.Name = "radioRPROP";
+            this.radioRPROP.Size = new System.Drawing.Size(75, 21);
+            this.radioRPROP.TabIndex = 16;
+            this.radioRPROP.TabStop = true;
+            this.radioRPROP.Text = "RPROP";
+            this.radioRPROP.UseVisualStyleBackColor = true;
+            this.radioRPROP.CheckedChanged += new System.EventHandler(this.radioRPROP_CheckedChanged);
+            // 
+            // radioBackPropagation
+            // 
+            this.radioBackPropagation.AutoSize = true;
+            this.radioBackPropagation.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.radioBackPropagation.Location = new System.Drawing.Point(62, 15);
+            this.radioBackPropagation.Name = "radioBackPropagation";
+            this.radioBackPropagation.Size = new System.Drawing.Size(138, 21);
+            this.radioBackPropagation.TabIndex = 15;
+            this.radioBackPropagation.Text = "Back Propagation";
+            this.radioBackPropagation.UseVisualStyleBackColor = true;
+            this.radioBackPropagation.CheckedChanged += new System.EventHandler(this.radioBackPropagation_CheckedChanged);
+            // 
             // groupBoxNetworkConfig
             // 
             this.groupBoxNetworkConfig.Controls.Add(this.btnNetworkClear);
             this.groupBoxNetworkConfig.Controls.Add(this.btnNetworkSave);
             this.groupBoxNetworkConfig.Controls.Add(this.btnNetworkLoad);
             this.groupBoxNetworkConfig.Controls.Add(this.btnNetworkNew);
-            this.groupBoxNetworkConfig.Controls.Add(this.txtNumLag);
-            this.groupBoxNetworkConfig.Controls.Add(this.label10);
             this.groupBoxNetworkConfig.Controls.Add(this.txtNumOutput);
             this.groupBoxNetworkConfig.Controls.Add(this.txtNumHidden);
             this.groupBoxNetworkConfig.Controls.Add(this.txtNumInput);
@@ -654,6 +726,7 @@
             // 
             this.btnNetworkClear.Enabled = false;
             this.btnNetworkClear.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnNetworkClear.ForeColor = System.Drawing.Color.Red;
             this.btnNetworkClear.Location = new System.Drawing.Point(755, 25);
             this.btnNetworkClear.Name = "btnNetworkClear";
             this.btnNetworkClear.Size = new System.Drawing.Size(71, 38);
@@ -665,6 +738,7 @@
             // 
             this.btnNetworkSave.Enabled = false;
             this.btnNetworkSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnNetworkSave.ForeColor = System.Drawing.Color.Red;
             this.btnNetworkSave.Location = new System.Drawing.Point(628, 25);
             this.btnNetworkSave.Name = "btnNetworkSave";
             this.btnNetworkSave.Size = new System.Drawing.Size(85, 38);
@@ -675,6 +749,7 @@
             // btnNetworkLoad
             // 
             this.btnNetworkLoad.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnNetworkLoad.ForeColor = System.Drawing.Color.Red;
             this.btnNetworkLoad.Location = new System.Drawing.Point(476, 25);
             this.btnNetworkLoad.Name = "btnNetworkLoad";
             this.btnNetworkLoad.Size = new System.Drawing.Size(81, 38);
@@ -691,23 +766,7 @@
             this.btnNetworkNew.TabIndex = 7;
             this.btnNetworkNew.Text = "New";
             this.btnNetworkNew.UseVisualStyleBackColor = true;
-            // 
-            // txtNumLag
-            // 
-            this.txtNumLag.Location = new System.Drawing.Point(156, 49);
-            this.txtNumLag.Name = "txtNumLag";
-            this.txtNumLag.Size = new System.Drawing.Size(149, 23);
-            this.txtNumLag.TabIndex = 6;
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.Location = new System.Drawing.Point(6, 52);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(57, 17);
-            this.label10.TabIndex = 5;
-            this.label10.Text = "I-O lags";
+            this.btnNetworkNew.Click += new System.EventHandler(this.btnNetworkNew_Click);
             // 
             // txtNumOutput
             // 
@@ -742,51 +801,62 @@
             this.label11.TabIndex = 1;
             this.label11.Text = "Input-Hidden-Output";
             // 
-            // groupBox3
+            // tabPage3
             // 
-            this.groupBox3.Controls.Add(this.radioRPROP);
-            this.groupBox3.Controls.Add(this.radioBackPropagation);
-            this.groupBox3.Location = new System.Drawing.Point(9, 19);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(348, 75);
-            this.groupBox3.TabIndex = 0;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Algorithm";
+            this.tabPage3.BackColor = System.Drawing.Color.SeaGreen;
+            this.tabPage3.Controls.Add(this.buttonForecast);
+            this.tabPage3.Controls.Add(this.textBoxNHead);
+            this.tabPage3.Controls.Add(this.label10);
+            this.tabPage3.Controls.Add(this.chartForecast);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(909, 456);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Forecast";
             // 
-            // groupBox4
+            // buttonForecast
             // 
-            this.groupBox4.Location = new System.Drawing.Point(9, 100);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(348, 109);
-            this.groupBox4.TabIndex = 1;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Validate";
+            this.buttonForecast.Location = new System.Drawing.Point(287, 23);
+            this.buttonForecast.Name = "buttonForecast";
+            this.buttonForecast.Size = new System.Drawing.Size(75, 23);
+            this.buttonForecast.TabIndex = 3;
+            this.buttonForecast.Text = "Forecast";
+            this.buttonForecast.UseVisualStyleBackColor = true;
+            this.buttonForecast.Click += new System.EventHandler(this.buttonForecast_Click);
             // 
-            // radioRPROP
+            // textBoxNHead
             // 
-            this.radioRPROP.AutoSize = true;
-            this.radioRPROP.Checked = true;
-            this.radioRPROP.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.radioRPROP.Location = new System.Drawing.Point(62, 39);
-            this.radioRPROP.Name = "radioRPROP";
-            this.radioRPROP.Size = new System.Drawing.Size(75, 21);
-            this.radioRPROP.TabIndex = 16;
-            this.radioRPROP.TabStop = true;
-            this.radioRPROP.Text = "RPROP";
-            this.radioRPROP.UseVisualStyleBackColor = true;
-            this.radioRPROP.CheckedChanged += new System.EventHandler(this.radioRPROP_CheckedChanged);
+            this.textBoxNHead.Location = new System.Drawing.Point(135, 26);
+            this.textBoxNHead.Name = "textBoxNHead";
+            this.textBoxNHead.Size = new System.Drawing.Size(100, 20);
+            this.textBoxNHead.TabIndex = 2;
             // 
-            // radioBackPropagation
+            // label10
             // 
-            this.radioBackPropagation.AutoSize = true;
-            this.radioBackPropagation.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.radioBackPropagation.Location = new System.Drawing.Point(62, 15);
-            this.radioBackPropagation.Name = "radioBackPropagation";
-            this.radioBackPropagation.Size = new System.Drawing.Size(138, 21);
-            this.radioBackPropagation.TabIndex = 15;
-            this.radioBackPropagation.Text = "Back Propagation";
-            this.radioBackPropagation.UseVisualStyleBackColor = true;
-            this.radioBackPropagation.CheckedChanged += new System.EventHandler(this.radioBackPropagation_CheckedChanged);
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(41, 29);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(48, 13);
+            this.label10.TabIndex = 1;
+            this.label10.Text = "N ahead";
+            // 
+            // chartForecast
+            // 
+            chartArea3.Name = "ChartArea1";
+            this.chartForecast.ChartAreas.Add(chartArea3);
+            legend3.Name = "Legend1";
+            this.chartForecast.Legends.Add(legend3);
+            this.chartForecast.Location = new System.Drawing.Point(6, 82);
+            this.chartForecast.Name = "chartForecast";
+            series3.ChartArea = "ChartArea1";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series3.Legend = "Legend1";
+            series3.Name = "Series";
+            this.chartForecast.Series.Add(series3);
+            this.chartForecast.Size = new System.Drawing.Size(894, 368);
+            this.chartForecast.TabIndex = 0;
+            this.chartForecast.Text = "chart1";
             // 
             // MainInterface
             // 
@@ -805,10 +875,13 @@
             this.groupBoxAlgorithmConfig.ResumeLayout(false);
             this.groupBoxAlgorithmConfig.PerformLayout();
             this.groupBox2.ResumeLayout(false);
-            this.groupBoxNetworkConfig.ResumeLayout(false);
-            this.groupBoxNetworkConfig.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.groupBoxNetworkConfig.ResumeLayout(false);
+            this.groupBoxNetworkConfig.PerformLayout();
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chartForecast)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -828,10 +901,10 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Button btnChooseData;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.RichTextBox richTextProprocessData;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.RichTextBox richTextProcessData;
+        private System.Windows.Forms.Button btnPartialCorrelation;
         private System.Windows.Forms.Button btnCorrelogram;
-        private System.Windows.Forms.Button btnPlot;
+        private System.Windows.Forms.Button btnPlotData;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.RadioButton btnAutomaticARIMA;
@@ -850,14 +923,12 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TextBox textBox6;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnTrainARIMA;
         private System.Windows.Forms.GroupBox groupBoxNetworkConfig;
         private System.Windows.Forms.Button btnNetworkClear;
         private System.Windows.Forms.Button btnNetworkSave;
         private System.Windows.Forms.Button btnNetworkLoad;
         private System.Windows.Forms.Button btnNetworkNew;
-        private System.Windows.Forms.TextBox txtNumLag;
-        private System.Windows.Forms.Label label10;
         private System.Windows.Forms.TextBox txtNumOutput;
         private System.Windows.Forms.TextBox txtNumHidden;
         private System.Windows.Forms.TextBox txtNumInput;
@@ -866,8 +937,8 @@
         private System.Windows.Forms.Label labelTrainDataNumColumns;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button6;
-        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button btnSaveARIMA;
+        private System.Windows.Forms.Button btnLoadARIMA;
         private System.Windows.Forms.RadioButton btnManualARIMA;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBoxAlgorithmConfig;
@@ -883,5 +954,11 @@
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.RadioButton radioRPROP;
         private System.Windows.Forms.RadioButton radioBackPropagation;
+        private System.Windows.Forms.Button btnTrainNeural;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chartForecast;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.TextBox textBoxNHead;
+        private System.Windows.Forms.Button buttonForecast;
     }
 }
