@@ -333,9 +333,6 @@ namespace NeuralNetwork
             result.ShowDialog();
         }
 
-        /*
-         * rollback weights of neural to last value
-         */
         public void RollBack()
         {
             int i, j, k;
@@ -355,9 +352,6 @@ namespace NeuralNetwork
             }
         }
 
-        /*
-         * backup weights of neural 
-         */
         public void BackUp()
         {
             int i, j, k;

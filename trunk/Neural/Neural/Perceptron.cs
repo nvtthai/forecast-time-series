@@ -70,4 +70,5 @@ namespace NeuralNetwork
             return m_dOutput;
         }
     }
+
 }
