@@ -9,26 +9,27 @@ namespace ForecastTimeSeries
 {
     public class Neural
     {
-
-        public List<double> originSeries;
-        public List<double> processSeries;
+        //data is received from outer
+        private List<double> originSeries;
+        //data is used for training
+        private List<double> processSeries;
 
         //use hommology, the last perception in each level is Bias 
-        public int m_iNumInputNodes;
-        public int m_iNumHiddenNodes;
-        public int m_iNumOutputNodes;
+        private int m_iNumInputNodes;
+        private int m_iNumHiddenNodes;
+        private int m_iNumOutputNodes;
 
-        public Perceptron[] m_arInputNodes;
-        public Perceptron[] m_arHiddenNodes;
-        public Perceptron[] m_arOutputNodes;
+        private Perceptron[] m_arInputNodes;
+        private Perceptron[] m_arHiddenNodes;
+        private Perceptron[] m_arOutputNodes;
 
-        public double[,] m_arInputHiddenConn;
-        public double[,] m_arHiddenOutputConn;
+        private double[,] m_arInputHiddenConn;
+        private double[,] m_arHiddenOutputConn;
 
-        public double[,] Backup_m_arInputHiddenConn;
-        public double[,] Backup_m_arHiddenOutputConn;
+        private double[,] Backup_m_arInputHiddenConn;
+        private double[,] Backup_m_arHiddenOutputConn;
 
-        private Neural()
+        public Neural()
         {
             originSeries = new List<double>();
             processSeries = new List<double>();
@@ -89,28 +90,53 @@ namespace ForecastTimeSeries
             }
         }
 
-        public void SetData(List<double> series)
+        private void InitForTrain()
         {
-            originSeries.Clear();
-            processSeries.Clear();
-            for (int i = 0; i < series.Count; i++)
-            {
-                originSeries.Add(series[i]);
-            }
-
-            double max = originSeries.Max();
-            double min = originSeries.Min();
-            int count = originSeries.Count;
-            for (int i = 0; i < count; i++)
-            {
-                double a = originSeries.ElementAt(i);
-                double b = (a - min) / (max - min) * (0.99 - 0.01) + 0.01;
-                processSeries.Add(b);
-            }
-            int x = 0;
+            Backup_m_arInputHiddenConn = new double[m_iNumInputNodes + 1, m_iNumHiddenNodes];
+            Backup_m_arHiddenOutputConn = new double[m_iNumHiddenNodes + 1, m_iNumOutputNodes];
+            BackUp();
         }
 
-        public double CalculateOutput(double[] input)
+        private void RollBack()
+        {
+            int i, j, k;
+            for (j = 0; j < m_iNumHiddenNodes; j++)
+            {
+                for (i = 0; i <= m_iNumInputNodes; i++)
+                {
+                    m_arInputHiddenConn[i, j] = Backup_m_arInputHiddenConn[i, j];
+                }
+            }
+            for (k = 0; k < m_iNumOutputNodes; k++)
+            {
+                for (j = 0; j <= m_iNumHiddenNodes; j++)
+                {
+                    m_arHiddenOutputConn[j, k] = Backup_m_arHiddenOutputConn[j, k];
+                }
+            }
+        }
+
+        private void BackUp()
+        {
+            int i, j, k;
+
+            for (j = 0; j < m_iNumHiddenNodes; j++)
+            {
+                for (i = 0; i <= m_iNumInputNodes; i++)
+                {
+                    Backup_m_arInputHiddenConn[i, j] = m_arInputHiddenConn[i, j];
+                }
+            }
+            for (k = 0; k < m_iNumOutputNodes; k++)
+            {
+                for (j = 0; j <= m_iNumHiddenNodes; j++)
+                {
+                    Backup_m_arHiddenOutputConn[j, k] = m_arHiddenOutputConn[j, k];
+                }
+            }
+        }
+
+        private double CalculateOutput(double[] input)
         {
             int i, j, k;
             double temp = 0;
@@ -135,6 +161,26 @@ namespace ForecastTimeSeries
                 m_arOutputNodes[k].SetInput(temp);
             }
             return temp;
+        }
+
+        public void SetData(List<double> series)
+        {
+            originSeries.Clear();
+            processSeries.Clear();
+            for (int i = 0; i < series.Count; i++)
+            {
+                originSeries.Add(series[i]);
+            }
+
+            double max = originSeries.Max();
+            double min = originSeries.Min();
+            int count = originSeries.Count;
+            for (int i = 0; i < count; i++)
+            {
+                double a = originSeries.ElementAt(i);
+                double b = (a - min) / (max - min) * (0.99 - 0.01) + 0.01;
+                processSeries.Add(b);
+            }
         }
 
         public static Neural Import(string pathFile)
@@ -283,13 +329,6 @@ namespace ForecastTimeSeries
             root.AppendChild(OutputNodes);
             doc.Save(pathFile);
             return true;
-        }
-
-        private void InitForTrain()
-        {
-            Backup_m_arInputHiddenConn = new double[m_iNumInputNodes + 1, m_iNumHiddenNodes];
-            Backup_m_arHiddenOutputConn = new double[m_iNumHiddenNodes + 1, m_iNumOutputNodes];
-            BackUp();
         }
 
         public void Bp_Run(double learnRate, double momentum, double theEpoches = 10000, double residual = 1.0E-5)
@@ -602,45 +641,6 @@ namespace ForecastTimeSeries
             }
             result.label1.Text = "Algorithm: RPROP";
             result.ShowDialog();
-        }
-
-        public void RollBack()
-        {
-            int i, j, k;
-            for (j = 0; j < m_iNumHiddenNodes; j++)
-            {
-                for (i = 0; i <= m_iNumInputNodes; i++)
-                {
-                    m_arInputHiddenConn[i, j] = Backup_m_arInputHiddenConn[i, j];
-                }
-            }
-            for (k = 0; k < m_iNumOutputNodes; k++)
-            {
-                for (j = 0; j <= m_iNumHiddenNodes; j++)
-                {
-                    m_arHiddenOutputConn[j, k] = Backup_m_arHiddenOutputConn[j, k];
-                }
-            }
-        }
-
-        public void BackUp()
-        {
-            int i, j, k;
-
-            for (j = 0; j < m_iNumHiddenNodes; j++)
-            {
-                for (i = 0; i <= m_iNumInputNodes; i++)
-                {
-                    Backup_m_arInputHiddenConn[i, j] = m_arInputHiddenConn[i, j];
-                }
-            }
-            for (k = 0; k < m_iNumOutputNodes; k++)
-            {
-                for (j = 0; j <= m_iNumHiddenNodes; j++)
-                {
-                    Backup_m_arHiddenOutputConn[j, k] = m_arHiddenOutputConn[j, k];
-                }
-            }
         }
 
         public void Forecast(int nHead, out List<double> forecastSeries)
