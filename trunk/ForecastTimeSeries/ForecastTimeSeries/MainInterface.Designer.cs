@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea9 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend9 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series9 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.btnManualARIMA = new System.Windows.Forms.RadioButton();
@@ -40,25 +40,17 @@
             this.labelTrainDataNumColumns = new System.Windows.Forms.Label();
             this.btnTrainARIMA = new System.Windows.Forms.Button();
             this.groupBoxARIMAParameter = new System.Windows.Forms.GroupBox();
-            this.button4 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.textBox7 = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.textBox6 = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.btnManualRestoreARIMA = new System.Windows.Forms.Button();
+            this.btnManualTrainingARIMA = new System.Windows.Forms.Button();
+            this.txtMAorder = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.txtAROrder = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
+            this.txtRegularDifferencing = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.btnAutomaticARIMA = new System.Windows.Forms.RadioButton();
             this.label2 = new System.Windows.Forms.Label();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.richARIMAModel = new System.Windows.Forms.RichTextBox();
             this.btnPartialCorrelation = new System.Windows.Forms.Button();
             this.btnCorrelogram = new System.Windows.Forms.Button();
             this.btnPlotData = new System.Windows.Forms.Button();
@@ -138,7 +130,7 @@
             this.tabPage1.Controls.Add(this.groupBoxARIMAParameter);
             this.tabPage1.Controls.Add(this.btnAutomaticARIMA);
             this.tabPage1.Controls.Add(this.label2);
-            this.tabPage1.Controls.Add(this.richTextBox1);
+            this.tabPage1.Controls.Add(this.richARIMAModel);
             this.tabPage1.Controls.Add(this.btnPartialCorrelation);
             this.tabPage1.Controls.Add(this.btnCorrelogram);
             this.tabPage1.Controls.Add(this.btnPlotData);
@@ -163,7 +155,7 @@
             // btnManualARIMA
             // 
             this.btnManualARIMA.AutoSize = true;
-            this.btnManualARIMA.ForeColor = System.Drawing.Color.Red;
+            this.btnManualARIMA.ForeColor = System.Drawing.Color.Black;
             this.btnManualARIMA.Location = new System.Drawing.Point(499, 9);
             this.btnManualARIMA.Name = "btnManualARIMA";
             this.btnManualARIMA.Size = new System.Drawing.Size(89, 17);
@@ -175,7 +167,7 @@
             // 
             // btnSaveARIMA
             // 
-            this.btnSaveARIMA.ForeColor = System.Drawing.Color.Red;
+            this.btnSaveARIMA.ForeColor = System.Drawing.Color.Black;
             this.btnSaveARIMA.Location = new System.Drawing.Point(748, 241);
             this.btnSaveARIMA.Name = "btnSaveARIMA";
             this.btnSaveARIMA.Size = new System.Drawing.Size(112, 23);
@@ -185,7 +177,7 @@
             // 
             // btnLoadARIMA
             // 
-            this.btnLoadARIMA.ForeColor = System.Drawing.Color.Red;
+            this.btnLoadARIMA.ForeColor = System.Drawing.Color.Black;
             this.btnLoadARIMA.Location = new System.Drawing.Point(562, 241);
             this.btnLoadARIMA.Name = "btnLoadARIMA";
             this.btnLoadARIMA.Size = new System.Drawing.Size(113, 23);
@@ -221,21 +213,13 @@
             // 
             // groupBoxARIMAParameter
             // 
-            this.groupBoxARIMAParameter.Controls.Add(this.button4);
-            this.groupBoxARIMAParameter.Controls.Add(this.button3);
-            this.groupBoxARIMAParameter.Controls.Add(this.textBox7);
-            this.groupBoxARIMAParameter.Controls.Add(this.label9);
-            this.groupBoxARIMAParameter.Controls.Add(this.textBox6);
-            this.groupBoxARIMAParameter.Controls.Add(this.label8);
-            this.groupBoxARIMAParameter.Controls.Add(this.textBox5);
+            this.groupBoxARIMAParameter.Controls.Add(this.btnManualRestoreARIMA);
+            this.groupBoxARIMAParameter.Controls.Add(this.btnManualTrainingARIMA);
+            this.groupBoxARIMAParameter.Controls.Add(this.txtMAorder);
             this.groupBoxARIMAParameter.Controls.Add(this.label7);
-            this.groupBoxARIMAParameter.Controls.Add(this.textBox4);
+            this.groupBoxARIMAParameter.Controls.Add(this.txtAROrder);
             this.groupBoxARIMAParameter.Controls.Add(this.label6);
-            this.groupBoxARIMAParameter.Controls.Add(this.textBox3);
-            this.groupBoxARIMAParameter.Controls.Add(this.textBox2);
-            this.groupBoxARIMAParameter.Controls.Add(this.textBox1);
-            this.groupBoxARIMAParameter.Controls.Add(this.label5);
-            this.groupBoxARIMAParameter.Controls.Add(this.label4);
+            this.groupBoxARIMAParameter.Controls.Add(this.txtRegularDifferencing);
             this.groupBoxARIMAParameter.Controls.Add(this.label3);
             this.groupBoxARIMAParameter.Enabled = false;
             this.groupBoxARIMAParameter.Location = new System.Drawing.Point(370, 32);
@@ -245,131 +229,69 @@
             this.groupBoxARIMAParameter.TabStop = false;
             this.groupBoxARIMAParameter.Text = "ARIMA Coef";
             // 
-            // button4
+            // btnManualRestoreARIMA
             // 
-            this.button4.Location = new System.Drawing.Point(386, 50);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 23);
-            this.button4.TabIndex = 15;
-            this.button4.Text = "Restore";
-            this.button4.UseVisualStyleBackColor = true;
+            this.btnManualRestoreARIMA.Location = new System.Drawing.Point(301, 145);
+            this.btnManualRestoreARIMA.Name = "btnManualRestoreARIMA";
+            this.btnManualRestoreARIMA.Size = new System.Drawing.Size(75, 23);
+            this.btnManualRestoreARIMA.TabIndex = 15;
+            this.btnManualRestoreARIMA.Text = "Restore";
+            this.btnManualRestoreARIMA.UseVisualStyleBackColor = true;
+            this.btnManualRestoreARIMA.Click += new System.EventHandler(this.btnManualRestoreARIMA_Click);
             // 
-            // button3
+            // btnManualTrainingARIMA
             // 
-            this.button3.Location = new System.Drawing.Point(386, 16);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
-            this.button3.TabIndex = 14;
-            this.button3.Text = "Process";
-            this.button3.UseVisualStyleBackColor = true;
+            this.btnManualTrainingARIMA.Location = new System.Drawing.Point(109, 145);
+            this.btnManualTrainingARIMA.Name = "btnManualTrainingARIMA";
+            this.btnManualTrainingARIMA.Size = new System.Drawing.Size(75, 23);
+            this.btnManualTrainingARIMA.TabIndex = 14;
+            this.btnManualTrainingARIMA.Text = "Process";
+            this.btnManualTrainingARIMA.UseVisualStyleBackColor = true;
+            this.btnManualTrainingARIMA.Click += new System.EventHandler(this.btnManualTrainingARIMA_Click);
             // 
-            // textBox7
+            // txtMAorder
             // 
-            this.textBox7.Location = new System.Drawing.Point(390, 159);
-            this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(100, 20);
-            this.textBox7.TabIndex = 13;
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(283, 166);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(87, 13);
-            this.label9.TabIndex = 12;
-            this.label9.Text = "MA season order";
-            // 
-            // textBox6
-            // 
-            this.textBox6.Location = new System.Drawing.Point(129, 159);
-            this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(100, 20);
-            this.textBox6.TabIndex = 11;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(18, 166);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(86, 13);
-            this.label8.TabIndex = 10;
-            this.label8.Text = "AR season order";
-            // 
-            // textBox5
-            // 
-            this.textBox5.Location = new System.Drawing.Point(390, 117);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(100, 20);
-            this.textBox5.TabIndex = 9;
+            this.txtMAorder.Location = new System.Drawing.Point(242, 112);
+            this.txtMAorder.Name = "txtMAorder";
+            this.txtMAorder.Size = new System.Drawing.Size(100, 20);
+            this.txtMAorder.TabIndex = 9;
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(283, 119);
+            this.label7.Location = new System.Drawing.Point(55, 112);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(50, 13);
             this.label7.TabIndex = 8;
             this.label7.Text = "MA order";
             // 
-            // textBox4
+            // txtAROrder
             // 
-            this.textBox4.Location = new System.Drawing.Point(129, 117);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(100, 20);
-            this.textBox4.TabIndex = 7;
+            this.txtAROrder.Location = new System.Drawing.Point(242, 69);
+            this.txtAROrder.Name = "txtAROrder";
+            this.txtAROrder.Size = new System.Drawing.Size(100, 20);
+            this.txtAROrder.TabIndex = 7;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(18, 119);
+            this.label6.Location = new System.Drawing.Point(55, 72);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(52, 13);
             this.label6.TabIndex = 6;
             this.label6.Text = "AR  order";
             // 
-            // textBox3
+            // txtRegularDifferencing
             // 
-            this.textBox3.Location = new System.Drawing.Point(205, 79);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(100, 20);
-            this.textBox3.TabIndex = 5;
-            // 
-            // textBox2
-            // 
-            this.textBox2.Location = new System.Drawing.Point(205, 45);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(100, 20);
-            this.textBox2.TabIndex = 4;
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(205, 18);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 20);
-            this.textBox1.TabIndex = 3;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(18, 81);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(80, 13);
-            this.label5.TabIndex = 2;
-            this.label5.Text = "Season Partern";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(18, 50);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(101, 13);
-            this.label4.TabIndex = 1;
-            this.label4.Text = "Season differencing";
+            this.txtRegularDifferencing.Location = new System.Drawing.Point(242, 19);
+            this.txtRegularDifferencing.Name = "txtRegularDifferencing";
+            this.txtRegularDifferencing.Size = new System.Drawing.Size(100, 20);
+            this.txtRegularDifferencing.TabIndex = 3;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(18, 20);
+            this.label3.Location = new System.Drawing.Point(55, 26);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(102, 13);
             this.label3.TabIndex = 0;
@@ -397,13 +319,14 @@
             this.label2.TabIndex = 40;
             this.label2.Text = "ARIMA model";
             // 
-            // richTextBox1
+            // richARIMAModel
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(367, 293);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(533, 96);
-            this.richTextBox1.TabIndex = 39;
-            this.richTextBox1.Text = "";
+            this.richARIMAModel.Location = new System.Drawing.Point(367, 293);
+            this.richARIMAModel.Name = "richARIMAModel";
+            this.richARIMAModel.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
+            this.richARIMAModel.Size = new System.Drawing.Size(533, 96);
+            this.richARIMAModel.TabIndex = 39;
+            this.richARIMAModel.Text = "";
             // 
             // btnPartialCorrelation
             // 
@@ -726,36 +649,39 @@
             // 
             this.btnNetworkClear.Enabled = false;
             this.btnNetworkClear.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnNetworkClear.ForeColor = System.Drawing.Color.Red;
+            this.btnNetworkClear.ForeColor = System.Drawing.Color.Black;
             this.btnNetworkClear.Location = new System.Drawing.Point(755, 25);
             this.btnNetworkClear.Name = "btnNetworkClear";
             this.btnNetworkClear.Size = new System.Drawing.Size(71, 38);
             this.btnNetworkClear.TabIndex = 10;
             this.btnNetworkClear.Text = "Clear";
             this.btnNetworkClear.UseVisualStyleBackColor = true;
+            this.btnNetworkClear.Click += new System.EventHandler(this.btnNetworkClear_Click);
             // 
             // btnNetworkSave
             // 
             this.btnNetworkSave.Enabled = false;
             this.btnNetworkSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnNetworkSave.ForeColor = System.Drawing.Color.Red;
+            this.btnNetworkSave.ForeColor = System.Drawing.Color.Black;
             this.btnNetworkSave.Location = new System.Drawing.Point(628, 25);
             this.btnNetworkSave.Name = "btnNetworkSave";
             this.btnNetworkSave.Size = new System.Drawing.Size(85, 38);
             this.btnNetworkSave.TabIndex = 9;
             this.btnNetworkSave.Text = "Save";
             this.btnNetworkSave.UseVisualStyleBackColor = true;
+            this.btnNetworkSave.Click += new System.EventHandler(this.btnNetworkSave_Click);
             // 
             // btnNetworkLoad
             // 
             this.btnNetworkLoad.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnNetworkLoad.ForeColor = System.Drawing.Color.Red;
+            this.btnNetworkLoad.ForeColor = System.Drawing.Color.Black;
             this.btnNetworkLoad.Location = new System.Drawing.Point(476, 25);
             this.btnNetworkLoad.Name = "btnNetworkLoad";
             this.btnNetworkLoad.Size = new System.Drawing.Size(81, 38);
             this.btnNetworkLoad.TabIndex = 8;
             this.btnNetworkLoad.Text = "Load";
             this.btnNetworkLoad.UseVisualStyleBackColor = true;
+            this.btnNetworkLoad.Click += new System.EventHandler(this.btnNetworkLoad_Click);
             // 
             // btnNetworkNew
             // 
@@ -843,17 +769,17 @@
             // 
             // chartForecast
             // 
-            chartArea3.Name = "ChartArea1";
-            this.chartForecast.ChartAreas.Add(chartArea3);
-            legend3.Name = "Legend1";
-            this.chartForecast.Legends.Add(legend3);
+            chartArea9.Name = "ChartArea1";
+            this.chartForecast.ChartAreas.Add(chartArea9);
+            legend9.Name = "Legend1";
+            this.chartForecast.Legends.Add(legend9);
             this.chartForecast.Location = new System.Drawing.Point(6, 82);
             this.chartForecast.Name = "chartForecast";
-            series3.ChartArea = "ChartArea1";
-            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series3.Legend = "Legend1";
-            series3.Name = "Series";
-            this.chartForecast.Series.Add(series3);
+            series9.ChartArea = "ChartArea1";
+            series9.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series9.Legend = "Legend1";
+            series9.Name = "Series";
+            this.chartForecast.Series.Add(series9);
             this.chartForecast.Size = new System.Drawing.Size(894, 368);
             this.chartForecast.TabIndex = 0;
             this.chartForecast.Text = "chart1";
@@ -906,23 +832,15 @@
         private System.Windows.Forms.Button btnCorrelogram;
         private System.Windows.Forms.Button btnPlotData;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.RichTextBox richARIMAModel;
         private System.Windows.Forms.RadioButton btnAutomaticARIMA;
         private System.Windows.Forms.GroupBox groupBoxARIMAParameter;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox textBox3;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtRegularDifferencing;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox textBox4;
-        private System.Windows.Forms.TextBox textBox5;
-        private System.Windows.Forms.TextBox textBox7;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.TextBox textBox6;
-        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TextBox txtAROrder;
+        private System.Windows.Forms.TextBox txtMAorder;
         private System.Windows.Forms.Button btnTrainARIMA;
         private System.Windows.Forms.GroupBox groupBoxNetworkConfig;
         private System.Windows.Forms.Button btnNetworkClear;
@@ -935,8 +853,8 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label labelTrainDataNumRows;
         private System.Windows.Forms.Label labelTrainDataNumColumns;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button btnManualRestoreARIMA;
+        private System.Windows.Forms.Button btnManualTrainingARIMA;
         private System.Windows.Forms.Button btnSaveARIMA;
         private System.Windows.Forms.Button btnLoadARIMA;
         private System.Windows.Forms.RadioButton btnManualARIMA;

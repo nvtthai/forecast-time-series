@@ -16,28 +16,32 @@ namespace ForecastTimeSeries
 
     public static class Configuration
     {
-        public static int MAX_ARMA_ORDER = 25;
+        public static int MAX_ARMA_ORDER = 5;
     }
+
     public class ARIMA
     {
         public List<double> originSeries;
         public List<double> processSeries;
-        public int startIndex; // use for processSeries
         public List<double> errorSeries;
+        public int startIndex; 
         public int p;
         public int q;
+        public int regularDifferencingLevel;
+        List<double> listRegularArimaCoeff;
+
+        //Use for future extension
         public int P;
         public int Q;
         public int seasonPartern;
-        public int regularDifferencingLevel;
         public int seasonDifferencingLevel;
-        List<double> listArimaCoeff;
         List<double> listSeasonArimaCoeff;
 
         public ARIMA()
         {
             originSeries = new List<double>();
             processSeries = new List<double>();
+            errorSeries = new List<double>();
         }
 
         #region statistic library
@@ -500,6 +504,9 @@ namespace ForecastTimeSeries
                 p = q = 1;
             }
 
+            p = Math.Min(p, Configuration.MAX_ARMA_ORDER);
+            q = Math.Min(q, Configuration.MAX_ARMA_ORDER);
+
             if (seasonPartern == 0)
             {
                 return;
@@ -529,6 +536,9 @@ namespace ForecastTimeSeries
             {
                 P = Q = 1;
             }
+
+            P = Math.Min(P, Configuration.MAX_ARMA_ORDER);
+            Q = Math.Min(Q, Configuration.MAX_ARMA_ORDER);
         }
 
         private void EstimateRegularARIMAModel(List<double> series, int startIndex, int pCoef, int qCoef, out List<double> listArimaCoeff)
@@ -928,22 +938,48 @@ namespace ForecastTimeSeries
             }
         }
 
-        public void Run()
+        public void GetModel(out int regularDifferencing, out int pOrder, out int qOrder, out List<double> listARIMACoef)
         {
+            regularDifferencing = this.regularDifferencingLevel;
+            pOrder = this.p;
+            qOrder = this.q;
+            listARIMACoef = this.listRegularArimaCoeff.FindAll(item => true);
+        }
+
+        public void AutomaticTraining()
+        {
+            RestoreTraining();
             RemoveNonstationarity(ref processSeries, ref startIndex, out regularDifferencingLevel);
-            //RemoveSeasonality(ref processSeries, ref startIndex, out seasonPartern, out seasonDifferencingLevel);
-
             EstimateArimaCoef(processSeries, startIndex, seasonPartern, out p, out q, out P, out Q);
-            EstimateRegularARIMAModel(processSeries, startIndex, p, q, out listArimaCoeff);
-            //EstimateSeasonARIMAModel(processSeries, startIndex, seasonPartern, P, Q, out listSeasonArimaCoeff);
+            EstimateRegularARIMAModel(processSeries, startIndex, p, q, out listRegularArimaCoeff);
+            TestRegularARIMA(processSeries, startIndex, regularDifferencingLevel, p, q, listRegularArimaCoeff, out errorSeries);
+        }
 
-            TestRegularARIMA(processSeries, startIndex, regularDifferencingLevel, p, q, listArimaCoeff, out errorSeries);
-            //ForecastRegularARIMA(processSeries, errorSeries, startIndex, regularDifferencingLevel, p, q, listArimaCoeff, 30);
+        public void ManualTraining(int regularDifferencing, int pOrder, int qOrder)
+        {
+            RestoreTraining();
+            this.regularDifferencingLevel = regularDifferencing;
+            this.p = pOrder;
+            this.q = qOrder;
+            ComputeDifference(processSeries, ref startIndex, regularDifferencingLevel, 0, 0);
+            EstimateRegularARIMAModel(processSeries, startIndex, p, q, out listRegularArimaCoeff);
+            TestRegularARIMA(processSeries, startIndex, regularDifferencingLevel, p, q, listRegularArimaCoeff, out errorSeries);
+        }
+
+        public void RestoreTraining()
+        {
+            regularDifferencingLevel = p = q = startIndex = 0;
+            processSeries = new List<double>();
+            errorSeries = new List<double>();
+            listRegularArimaCoeff = new List<double>();
+
+            processSeries = originSeries.FindAll(item => true);
+
         }
 
         public void Forecast(int nHead, out List<double> forecastSeries)
         {
-            ForecastRegularARIMA(processSeries, errorSeries, startIndex, regularDifferencingLevel, p, q, listArimaCoeff, nHead, out forecastSeries);
+            ForecastRegularARIMA(processSeries, errorSeries, startIndex, regularDifferencingLevel, p, q, listRegularArimaCoeff, nHead, out forecastSeries);
         }
 
         public void DrawSeriesData()
