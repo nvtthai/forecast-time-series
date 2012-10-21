@@ -280,7 +280,7 @@ namespace ForecastTimeSeries
                 for (int j = 0; j < network.m_iNumHiddenNodes; j++)
                 {
                     XmlElement aWeight = doc.CreateElement("InHid" + Convert.ToString(i + 1) + Convert.ToString(j + 1));
-                    aWeight.InnerText = Convert.ToString(network.m_arInputHiddenConn[j, i]);
+                    aWeight.InnerText = Convert.ToString(network.m_arInputHiddenConn[i, j]);
                     aInputNode.AppendChild(aWeight);
                 }
                 InputNodes.AppendChild(aInputNode);
@@ -304,7 +304,7 @@ namespace ForecastTimeSeries
                 for (int j = 0; j < network.m_iNumOutputNodes; j++)
                 {
                     XmlElement aWeight = doc.CreateElement("HidOut" + Convert.ToString(i + 1) + Convert.ToString(j + 1));
-                    aWeight.InnerText = Convert.ToString(network.m_arHiddenOutputConn[j, i]);
+                    aWeight.InnerText = Convert.ToString(network.m_arHiddenOutputConn[i, j]);
                     aHiddenNode.AppendChild(aWeight);
                 }
                 HiddenNodes.AppendChild(aHiddenNode);

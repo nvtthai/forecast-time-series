@@ -164,7 +164,7 @@ namespace ForecastTimeSeries
             {
                 //m_DemoDataSeries.loadData(sample);
                 ARIMAModel.SetData(dataSeries);
-                showing();
+                showData();
                 //this.m_DemoDataSeries.preProcessList.Clear(); //clear for new data
             }
             else
@@ -173,7 +173,7 @@ namespace ForecastTimeSeries
             }
         }
 
-        private void showing()
+        private void showData()
         {
             this.richTextProcessData.Clear();
             //List<double> data = this.m_DemoDataSeries.getProcessedSeries();
@@ -187,6 +187,37 @@ namespace ForecastTimeSeries
                 this.richTextProcessData.AppendText(String.Format("{0,10}", "[" + (t + 1) + "]"));
                 this.richTextProcessData.AppendText(String.Format("{0,20}", dataSeries.ElementAt(t)) + "\n");
             }
+        }
+
+        private void showARIMAModel()
+        {
+            int regularDifferencing, pOrder, qOrder;
+            List<double> listARIMACoef;
+            ARIMAModel.GetModel(out regularDifferencing, out pOrder, out qOrder, out listARIMACoef);
+
+            StringBuilder result = new StringBuilder();
+            result.Append(String.Format("ARIMA({0}, {1}, {2})\n", pOrder, regularDifferencing, qOrder));
+            result.Append(String.Format("Order\t|"));
+            for (int i = 0; i < Math.Max(pOrder, qOrder); i++)
+            {
+                result.Append(String.Format("  {0}\t|", i+1));
+            }
+            result.Append("\n");
+
+            result.Append(String.Format("AR coef\t|"));
+            for(int i=0; i<pOrder; i++)
+            {
+                result.Append(String.Format("  {0:0.000}\t|", listARIMACoef[i]));
+            }
+            result.Append("\n");
+
+            result.Append(String.Format("MA coef\t|"));
+            for (int i = 0; i < qOrder; i++)
+            {
+                result.Append(String.Format("  {0:0.000}\t|", listARIMACoef[i+pOrder]));
+            }
+            this.richARIMAModel.Text = result.ToString();
+            this.richARIMAModel.ScrollToCaret();
         }
 
         private void radioBackPropagation_CheckedChanged(object sender, EventArgs e)
@@ -218,8 +249,9 @@ namespace ForecastTimeSeries
         private void btnTrainARIMA_Click(object sender, EventArgs e)
         {
             ARIMAModel.SetData(dataSeries);
-            ARIMAModel.Run();
+            ARIMAModel.AutomaticTraining();
             ARIMAModel.GetError(out errorSeries);
+            showARIMAModel();
         }
 
         private void btnPlotData_Click(object sender, EventArgs e)
@@ -340,6 +372,58 @@ namespace ForecastTimeSeries
                 series2.Points.AddXY(dataSeries.Count + i +1, forecastSeries[i]);
             }
             chartForecast.Series.Add(series2);
+        }
+
+        private void btnManualTrainingARIMA_Click(object sender, EventArgs e)
+        {
+            int regularDifferencing, pOrder, qOrder;
+            try
+            {
+                regularDifferencing = Int32.Parse(txtRegularDifferencing.Text);
+                pOrder = Int32.Parse(txtAROrder.Text);
+                qOrder = Int32.Parse(txtMAorder.Text);
+                ARIMAModel.ManualTraining(regularDifferencing, pOrder, qOrder);
+                showARIMAModel();
+            }
+            catch
+            {
+            }
+        }
+
+        private void btnManualRestoreARIMA_Click(object sender, EventArgs e)
+        {
+            txtRegularDifferencing.Text = "";
+            txtAROrder.Text = "";
+            txtMAorder.Text = "";
+            ARIMAModel.RestoreTraining();
+        }
+
+        private void btnNetworkClear_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnNetworkLoad_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnNetworkSave_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveDialog = new SaveFileDialog();
+            saveDialog.Title = "Save Network Config File";
+            saveDialog.DefaultExt = "xml";
+            DialogResult result = saveDialog.ShowDialog();
+            string dataFile = "";
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                dataFile = saveDialog.FileName;
+                bool exportResult = Neural.Export(neuralModel, dataFile);
+            }
+            else
+            {
+                return;
+            }
         }
     
     }
