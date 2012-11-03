@@ -16,7 +16,7 @@ namespace ForecastTimeSeries
 
     public static class Configuration
     {
-        public static int MAX_ARMA_ORDER = 5;
+        public static int MAX_ARMA_ORDER = 12;
     }
 
     public class ARIMA
@@ -577,37 +577,39 @@ namespace ForecastTimeSeries
                 invertedCovarianceMatrix[i, i] = Math.Pow(10, 6);
             }
 
-
-            for (int i = pCoef * season; i < series.Count; i++)
+            for (int k = 0; k < 10; k++)
             {
-                //Phase 1
-                observationVector[0, 0] = 1;
-                for (int j = 1; j < pCoef + 1; j++)
+                for (int i = pCoef * season; i < series.Count; i++)
                 {
-                    observationVector[j, 0] = series[i - j * season];
-                }
-                for (int j = 1; j < qCoef + 1; j++)
-                {
-                    if (i - j * season >= 0)
+                    //Phase 1
+                    observationVector[0, 0] = 1;
+                    for (int j = 1; j < pCoef + 1; j++)
                     {
-                        observationVector[pCoef + j, 0] = errors[i - j * season];
+                        observationVector[j, 0] = series[i - j * season];
                     }
-                    else
+                    for (int j = 1; j < qCoef + 1; j++)
                     {
-                        observationVector[pCoef + j, 0] = 0;
+                        if (i - j * season >= 0)
+                        {
+                            observationVector[pCoef + j, 0] = errors[i - j * season];
+                        }
+                        else
+                        {
+                            observationVector[pCoef + j, 0] = 0;
+                        }
                     }
+
+                    //Phase 2 - Estimate Parameters
+                    prioriPredictionError = series[i] - (Matrix.Transpose(observationVector) * parameterVector)[0, 0];
+                    double temp = 1 + (Matrix.Transpose(observationVector) * invertedCovarianceMatrix * observationVector)[0, 0];
+                    gainFactor = (invertedCovarianceMatrix * observationVector) / temp;
+                    parameterVector += gainFactor * prioriPredictionError;
+
+                    //Phase 3 - Prepare for Next Estimation 
+                    posterioriPredictionError = series[i] - (Matrix.Transpose(observationVector) * parameterVector)[0, 0];
+                    invertedCovarianceMatrix = invertedCovarianceMatrix - gainFactor * Matrix.Transpose(observationVector) * invertedCovarianceMatrix;
+                    errors[i] = posterioriPredictionError;
                 }
-
-                //Phase 2 - Estimate Parameters
-                prioriPredictionError = series[i] - (Matrix.Transpose(observationVector) * parameterVector)[0, 0];
-                double temp = 1 + (Matrix.Transpose(observationVector) * invertedCovarianceMatrix * observationVector)[0, 0];
-                gainFactor = (invertedCovarianceMatrix * observationVector) / temp;
-                parameterVector += gainFactor * prioriPredictionError;
-
-                //Phase 3 - Prepare for Next Estimation 
-                posterioriPredictionError = series[i] - (Matrix.Transpose(observationVector) * parameterVector)[0, 0];
-                invertedCovarianceMatrix = invertedCovarianceMatrix - gainFactor * Matrix.Transpose(observationVector) * invertedCovarianceMatrix;
-                errors[i] = posterioriPredictionError;
             }
 
             listArimaCoeff = new List<double>();
@@ -756,6 +758,7 @@ namespace ForecastTimeSeries
             for (int i = 0; i < startTest; i++)
             {
                 regularSeries.Add(processSeries[i]);
+                //error.Add(0);
             }
 
             for (int i = startTest; i < processSeries.Count; i++)
@@ -765,8 +768,12 @@ namespace ForecastTimeSeries
                 {
                     temp += listArimaCoeff[j] * processSeries[i - j];
                 }
+                //for (int j = 1; j <= qCoef; j++)
+                //{
+                //    temp += listArimaCoeff[j + p - 1] * error[i - j];
+                //}
                 regularSeries.Add(temp);
-
+                //error.Add(processSeries[i] - temp);
             }
 
             int originIndex = startIndex;
@@ -776,7 +783,16 @@ namespace ForecastTimeSeries
                 error.Add(regularSeries[i] - currentSeries[i]);
             }
             RevertDiffTestSeries(ref currentSeries, ref regularSeries, ref originIndex, diff, 0, 0);
+
+            List<double> forecastSeries;
+            Forecast(12, out forecastSeries);
+            foreach (double item in forecastSeries)
+            {
+                regularSeries.Add(item);
+            }
             DrawTwoSeriesData(currentSeries, originIndex, regularSeries, testIndex);
+            WriteLogSeries(error);
+
         }
 
         private void ForecastRegularARIMA(List<double> processSeries, List<double> errors, int startIndex, int diff, int pCoef, int qCoef, List<double> listArimaCoeff, int nHead, out List<double> forecastSeries)
@@ -800,7 +816,7 @@ namespace ForecastTimeSeries
                 }
                 for (int j = 1; j <= qCoef; j++)
                 {
-                    currentSeries[i] += currentErrors[i - j] * listArimaCoeff[j + pCoef];
+                    //currentSeries[i] += currentErrors[i - j] * listArimaCoeff[j + pCoef];
                 }
                 //errors.Add(series[i] - temp);
             }
@@ -901,7 +917,7 @@ namespace ForecastTimeSeries
             {
                 file.Write(String.Format("{0:0.00}", data) + "\t");
             }
-            file.WriteLine("");
+            file.WriteLine("\n");
             file.Flush();
             file.Close();
         }
@@ -910,6 +926,7 @@ namespace ForecastTimeSeries
         {
             StreamWriter file = new StreamWriter("result_test.dat", true);
             file.WriteLine(log);
+            file.WriteLine("\n");
             file.Flush();
             file.Close();
         }

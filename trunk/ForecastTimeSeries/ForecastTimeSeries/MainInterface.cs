@@ -197,6 +197,7 @@ namespace ForecastTimeSeries
 
             StringBuilder result = new StringBuilder();
             result.Append(String.Format("ARIMA({0}, {1}, {2})\n", pOrder, regularDifferencing, qOrder));
+            result.Append(String.Format("Perception\t|{0}\n", listARIMACoef[0]));
             result.Append(String.Format("Order\t|"));
             for (int i = 0; i < Math.Max(pOrder, qOrder); i++)
             {
@@ -207,7 +208,7 @@ namespace ForecastTimeSeries
             result.Append(String.Format("AR coef\t|"));
             for(int i=0; i<pOrder; i++)
             {
-                result.Append(String.Format("  {0:0.000}\t|", listARIMACoef[i]));
+                result.Append(String.Format("  {0:0.000}\t|", listARIMACoef[i+1]));
             }
             result.Append("\n");
 
@@ -405,7 +406,28 @@ namespace ForecastTimeSeries
 
         private void btnNetworkLoad_Click(object sender, EventArgs e)
         {
-
+            OpenFileDialog fileDialog = new OpenFileDialog();
+            fileDialog.Title = "Load Network Config File";
+            fileDialog.DefaultExt = "xml";
+            DialogResult result = fileDialog.ShowDialog();
+            string dataFile = "";
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                dataFile = fileDialog.FileName;
+                Neural temp = Neural.Import(dataFile);
+                if (temp == null)
+                {
+                    System.Windows.Forms.MessageBox.Show("The Input file is not correct format !!!", null, System.Windows.Forms.MessageBoxButtons.OK);
+                }
+                else
+                {
+                    neuralModel = temp;
+                    this.txtNumInput.Text = neuralModel.m_iNumInputNodes.ToString();
+                    this.txtNumHidden.Text = neuralModel.m_iNumHiddenNodes.ToString();
+                }
+            }
+            else
+                return;
         }
 
         private void btnNetworkSave_Click(object sender, EventArgs e)
@@ -424,6 +446,11 @@ namespace ForecastTimeSeries
             {
                 return;
             }
+        }
+
+        private void btnForecastARIMA_Click(object sender, EventArgs e)
+        {
+
         }
     
     }

@@ -15,9 +15,9 @@ namespace ForecastTimeSeries
         private List<double> processSeries;
 
         //use hommology, the last perception in each level is Bias 
-        private int m_iNumInputNodes;
-        private int m_iNumHiddenNodes;
-        private int m_iNumOutputNodes;
+        public int m_iNumInputNodes;
+        public int m_iNumHiddenNodes;
+        public int m_iNumOutputNodes;
 
         private Perceptron[] m_arInputNodes;
         private Perceptron[] m_arHiddenNodes;
@@ -195,7 +195,6 @@ namespace ForecastTimeSeries
                 int numInputNodes = Int32.Parse(root.SelectSingleNode("descendant::numInputNodes").InnerText);
                 int numHiddenNodes = Int32.Parse(root.SelectSingleNode("descendant::numHiddenNodes").InnerText);
                 int numOutputNodes = Int32.Parse(root.SelectSingleNode("descendant::numOutputNodes").InnerText);
-                string lags = root.SelectSingleNode("descendant::Lag").InnerText;
                 //create a network
                 loadedNetwork = new Neural(numInputNodes, numHiddenNodes, numOutputNodes);
                 //Get Input Nodes
@@ -225,6 +224,11 @@ namespace ForecastTimeSeries
                     if (activationFunc.Equals("SIGMOID_FUNCTION"))
                     {
                         loadedNetwork.m_arHiddenNodes[i].m_activeFuncType = ActionvationFunction.SIGMOID_FUNCTION;
+                    }
+
+                    for (int j = 0; j < loadedNetwork.m_iNumOutputNodes; j++)
+                    {
+                        loadedNetwork.m_arHiddenOutputConn[i, j] = Convert.ToDouble(tempNode.SelectSingleNode("descendant::HidOut" + Convert.ToString(i + 1) + Convert.ToString(j + 1)).InnerText);
                     }
                 }
                 //Get Output Nodes
