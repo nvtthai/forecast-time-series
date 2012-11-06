@@ -16,33 +16,31 @@ namespace ForecastTimeSeries
 
     public static class Configuration
     {
-        public static int MAX_ARMA_ORDER = 12;
+        public static int MAX_REGULAR_ARMA_ORDER = 10;
+        public static int MAX_SEASON_ARMA_ORDER = 2;
     }
 
     public class ARIMA
     {
-        public List<double> originSeries;
-        public List<double> processSeries;
-        public List<double> errorSeries;
-        public int startIndex; 
-        public int p;
-        public int q;
-        public int regularDifferencingLevel;
-        List<double> listRegularArimaCoeff;
+        public List<double> _originSeries;
+        public List<double> _processSeries;
+        public List<double> _errorSeries;
+        public int _startIndex; 
 
-        //Use for future extension
-        public int P;
-        public int Q;
-        public int seasonPartern;
-        public int seasonDifferencingLevel;
-        List<double> listSeasonArimaCoeff;
+        public int _pRegular;
+        public int _qRegular;
+        public int _regularDifferencingLevel;
 
-        public ARIMA()
-        {
-            originSeries = new List<double>();
-            processSeries = new List<double>();
-            errorSeries = new List<double>();
-        }
+        public int _pSeason;
+        public int _qSeason;
+        public int _seasonDifferencingLevel;
+        public int _seasonPartern;
+
+        List<double> _listArimaCoeff;
+
+        //Don't use
+        List<double> _listSeasonArimaCoeff;
+        List<double> _listRegularArimaCoeff;
 
         #region statistic library
 
@@ -161,9 +159,9 @@ namespace ForecastTimeSeries
             }
         }
 
-        private void ComputeDifference(List<double> series, ref int startIndex, int d, int D, int s)
+        private void ComputeDifference(ref List<double> series, ref int startIndex, int regularDifferencingLevel, int seasonDifferencingLevel, int seasonPartern)
         {
-            for (int i = 0; i < d; i++)
+            for (int i = 0; i < regularDifferencingLevel; i++)
             {
                 startIndex += 1;
                 for (int j = series.Count - 1; j >= startIndex; j--)
@@ -172,28 +170,28 @@ namespace ForecastTimeSeries
                 }
             }
 
-            for (int i = 0; i < D; i++)
+            for (int i = 0; i < seasonDifferencingLevel; i++)
             {
-                startIndex += s;
+                startIndex += seasonPartern;
                 for (int j = series.Count - 1; j >= startIndex; j--)
                 {
-                    series[j] = series[j] - series[j - s];
+                    series[j] = series[j] - series[j - seasonPartern];
                 }
             }
         }
 
-        private void RevertDifference(List<double> series, ref int startIndex, int d, int D, int s)
+        private void RevertDifference(ref List<double> series, ref int startIndex, int regularDifferencingLevel, int seasonDifferencingLevel, int seasonPartern)
         {
-            for (int i = 0; i < D; i++)
+            for (int i = 0; i < seasonDifferencingLevel; i++)
             {
                 for (int j = startIndex; j < series.Count; j++)
                 {
-                    series[j] = series[j] + series[j - s];
+                    series[j] = series[j] + series[j - seasonPartern];
                 }
-                startIndex -= s;
+                startIndex -= seasonPartern;
             }
 
-            for (int i = 0; i < d; i++)
+            for (int i = 0; i < regularDifferencingLevel; i++)
             {
                 for (int j = startIndex; j < series.Count; j++)
                 {
@@ -375,68 +373,72 @@ namespace ForecastTimeSeries
             return decayPartern;
         }
 
-        private void GetHighCorrelationLocation(List<double> listAutocorrelation, int startIndex, List<int> listHighestCorrelationIndex)
+        private void GetHighCorrelationLocation(List<double> listAutocorrelation, int begin, ref List<int> listHighestCorrelationIndex)
         {
-            if (startIndex >= listAutocorrelation.Count)
+            if (begin >= listAutocorrelation.Count)
             {
                 return;
             }
 
-            while (startIndex < listAutocorrelation.Count - 1)
+            while (begin < listAutocorrelation.Count - 1)
             {
-                if (listAutocorrelation[startIndex] <= 0)
+                if (listAutocorrelation[begin] <= 0)
                 {
-                    startIndex++;
+                    begin++;
                 }
-                else if (listAutocorrelation[startIndex + 1] >= listAutocorrelation[startIndex])
+                else if (listAutocorrelation[begin + 1] >= listAutocorrelation[begin])
                 {
-                    startIndex++;
+                    begin++;
                 }
                 else
                 {
-                    if ((startIndex + 2) == listAutocorrelation.Count || (listAutocorrelation[startIndex + 2] < listAutocorrelation[startIndex]))
+                    if ((begin + 2) == listAutocorrelation.Count || (listAutocorrelation[begin + 2] < listAutocorrelation[begin]))
                     {
-                        listHighestCorrelationIndex.Add(startIndex);
+                        listHighestCorrelationIndex.Add(begin);
                         break;
                     }
                     else
                     {
-                        startIndex = startIndex + 2;
+                        begin = begin + 2;
                     }
                 }
             }
 
-            while (startIndex < listAutocorrelation.Count - 1)
+            while (begin < listAutocorrelation.Count - 1)
             {
-                if (listAutocorrelation[startIndex + 1] < listAutocorrelation[startIndex])
+                if (listAutocorrelation[begin] <= 0)
                 {
-                    startIndex++;
+                    begin++;
+                }
+                else if (listAutocorrelation[begin + 1] < listAutocorrelation[begin])
+                {
+                    begin++;
                 }
                 else
                 {
-                    if ((startIndex + 2) == listAutocorrelation.Count || (listAutocorrelation[startIndex + 2] > listAutocorrelation[startIndex]))
+                    if ((begin + 2) == listAutocorrelation.Count || (listAutocorrelation[begin + 2] > listAutocorrelation[begin]))
                     {
                         break;
                     }
                     else
                     {
-                        startIndex = startIndex + 2;
+                        begin = begin + 2;
                     }
                 }
             }
 
-            GetHighCorrelationLocation(listAutocorrelation, startIndex + 1, listHighestCorrelationIndex);
+            GetHighCorrelationLocation(listAutocorrelation, begin + 1, ref listHighestCorrelationIndex);
 
         }
 
         private void GetLastSignificant(List<double> listAutocorrelation, List<double> listConfidenceLimit, out int lag)
         {
             lag = 0;
-            for (int i = 1; i < listAutocorrelation.Count; i++)
+            for (int i = 0; i < listAutocorrelation.Count; i++)
             {
-                if (Math.Abs(listAutocorrelation[i]) > Math.Abs(listConfidenceLimit[i]) * 1.3)
+                if (Math.Abs(listAutocorrelation[i]) > Math.Abs(listConfidenceLimit[i])*1.3)
                 {
-                    lag = i + 1;
+                    lag = i;
                 }
             }
         }
@@ -444,29 +446,29 @@ namespace ForecastTimeSeries
         private void GetLastSignificant(List<double> listAutocorrelation, double confidenceLimit, out int lag)
         {
             lag = 0;
-            for (int i = 1; i < listAutocorrelation.Count; i++)
+            for (int i = 0; i < listAutocorrelation.Count; i++)
             {
-                if (Math.Abs(listAutocorrelation[i]) > Math.Abs(confidenceLimit) * 1.3)
+                if (Math.Abs(listAutocorrelation[i]) > Math.Abs(confidenceLimit)*1.3)
                 {
                     lag = i + 1;
                 }
             }
         }
 
-        private void EstimateArimaCoef(List<double> series, int startIndex, int seasonPartern, out int p, out int q, out int P, out int Q)
+        private void EstimateARIMAModel(List<double> series, int startIndex, int seasonPartern, out int pRegular, out int qRegular, out int pSeason, out int qSeason)
         {
-            p = q = P = Q = 0;
+            pRegular = qRegular = pSeason = qSeason = 0;
 
-            List<double> listConfidenceLimit = new List<double>();
             List<double> listAutocorrelation = new List<double>();
+            List<double> listConfidenceLimit = new List<double>();
             List<double> listPartialAutocorrelation = new List<double>();
 
-            List<double> listSeasonConfidenceLimit = new List<double>();
             List<double> listSeasonAutocorrelation = new List<double>();
+            List<double> listSeasonConfidenceLimit = new List<double>();
             List<double> listSeasonPartialCorrelation = new List<double>();
 
-            List<double> listRegularConfidenceLimit = new List<double>();
             List<double> listRegularAutocorrelation = new List<double>();
+            List<double> listRegularConfidenceLimit = new List<double>();
             List<double> listRegularPartialCorrelation = new List<double>();
 
             ComputeAutocorrelation(series, startIndex, out listAutocorrelation);
@@ -474,12 +476,12 @@ namespace ForecastTimeSeries
             ComputeConfidenceLimit(listAutocorrelation, series.Count - startIndex, out listConfidenceLimit);
             double confidenceLimit = 1.96 / Math.Sqrt(series.Count - startIndex);
 
-            int autocorrelationLengh = seasonPartern;
+            int regularAutocorrelationLengh = seasonPartern;
             if (seasonPartern == 0)
             {
-                autocorrelationLengh = listAutocorrelation.Count;
+                regularAutocorrelationLengh = listAutocorrelation.Count;
             }
-            for (int i = 0; i < autocorrelationLengh; i++)
+            for (int i = 0; i < regularAutocorrelationLengh; i++)
             {
                 listRegularAutocorrelation.Add(listAutocorrelation[i]);
                 listRegularConfidenceLimit.Add(listConfidenceLimit[i]);
@@ -493,19 +495,19 @@ namespace ForecastTimeSeries
 
             if (decayACF == DecayPartern.ABRUPT_DECAY)
             {
-                GetLastSignificant(listRegularAutocorrelation, listRegularConfidenceLimit, out q);
+                GetLastSignificant(listRegularAutocorrelation, listRegularConfidenceLimit, out qRegular);
             }
             if (decayPACF == DecayPartern.ABRUPT_DECAY)
             {
-                GetLastSignificant(listRegularPartialCorrelation, confidenceLimit, out p);
+                GetLastSignificant(listRegularPartialCorrelation, confidenceLimit, out pRegular);
             }
             if (decayACF != DecayPartern.ABRUPT_DECAY && decayPACF != DecayPartern.ABRUPT_DECAY)
             {
-                p = q = 1;
+                pRegular = qRegular = 1;
             }
 
-            p = Math.Min(p, Configuration.MAX_ARMA_ORDER);
-            q = Math.Min(q, Configuration.MAX_ARMA_ORDER);
+            pRegular = Math.Min(pRegular, Configuration.MAX_REGULAR_ARMA_ORDER);
+            qRegular = Math.Min(qRegular, Configuration.MAX_REGULAR_ARMA_ORDER);
 
             if (seasonPartern == 0)
             {
@@ -526,27 +528,27 @@ namespace ForecastTimeSeries
 
             if (decaySeasonACF == DecayPartern.ABRUPT_DECAY)
             {
-                GetLastSignificant(listSeasonAutocorrelation, listSeasonConfidenceLimit, out Q);
+                GetLastSignificant(listSeasonAutocorrelation, listSeasonConfidenceLimit, out qSeason);
             }
             if (decaySeasonPACF == DecayPartern.ABRUPT_DECAY)
             {
-                GetLastSignificant(listSeasonPartialCorrelation, confidenceLimit, out P);
+                GetLastSignificant(listSeasonPartialCorrelation, confidenceLimit, out pSeason);
             }
             if (decaySeasonACF != DecayPartern.ABRUPT_DECAY && decaySeasonPACF != DecayPartern.ABRUPT_DECAY)
             {
-                P = Q = 1;
+                pSeason = qSeason = 1;
             }
 
-            P = Math.Min(P, Configuration.MAX_ARMA_ORDER);
-            Q = Math.Min(Q, Configuration.MAX_ARMA_ORDER);
+            pSeason = Math.Min(pSeason, Configuration.MAX_REGULAR_ARMA_ORDER);
+            qSeason = Math.Min(qSeason, Configuration.MAX_REGULAR_ARMA_ORDER);
         }
 
-        private void EstimateRegularARIMAModel(List<double> series, int startIndex, int pCoef, int qCoef, out List<double> listArimaCoeff)
+        private void EstimateRegularARIMACoef(List<double> series, int startIndex, int pCoef, int qCoef, out List<double> listArimaCoeff)
         {
-            EstimateSeasonARIMAModel(series, startIndex, 1, pCoef, qCoef, out listArimaCoeff);
+            EstimateSeasonARIMACoef(series, startIndex, 1, pCoef, qCoef, out listArimaCoeff);
         }
 
-        private void EstimateSeasonARIMAModel(List<double> series, int startIndex, int season, int pCoef, int qCoef, out List<double> listArimaCoeff)
+        private void EstimateSeasonARIMACoef(List<double> series, int startIndex, int season, int pCoef, int qCoef, out List<double> listArimaCoeff)
         {
             List<double> errors = new List<double>();
             for (int i = 0; i < series.Count; i++)
@@ -619,6 +621,89 @@ namespace ForecastTimeSeries
             }
         }
 
+        private void EstimateARIMACoef(List<double> series, int startIndex, int pRegular, int qRegular, int seasonPartern, int pSeason, int qSeason, out List<double> listArimaCoeff)
+        {
+            List<double> errors = new List<double>();
+            for (int i = 0; i < series.Count; i++)
+            {
+                errors.Add(0);
+            }
+
+            Matrix observationVector = new Matrix(1 + pRegular + qRegular + pSeason + qSeason, 1);
+            Matrix parameterVector = new Matrix(1 + pRegular + qRegular + pSeason + qSeason, 1);
+            Matrix gainFactor = new Matrix(1 + pRegular + qRegular + pSeason + qSeason, 1);
+            Matrix invertedCovarianceMatrix = new Matrix(1 + pRegular + qRegular + pSeason + qSeason, 1 + pRegular + qRegular + pSeason + qSeason);
+            double prioriPredictionError;
+            double posterioriPredictionError;
+
+            //Phase 1 - Set Initial Conditions
+            //the observation vector
+            observationVector[0, 0] = 1;
+            for (int i = 1; i < pRegular + 1; i++)
+            {
+                observationVector[i, 0] = series[(i - 1)];
+            }
+            for (int i = 1; i < qRegular + 1; i++)
+            {
+                observationVector[pRegular + i, 0] = 0;
+            }
+            for (int i = 1; i < pSeason + 1; i++)
+            {
+                observationVector[pRegular + qRegular + i, 0] = series[(i - 1) * seasonPartern];
+            }
+            for (int i = 1; i < qSeason + 1; i++)
+            {
+                observationVector[pRegular + qRegular + pSeason + i, 0] = 0;
+            }
+
+            for (int i = 0; i < 1 + pRegular + qRegular + pSeason + qSeason; i++)
+            {
+                invertedCovarianceMatrix[i, i] = Math.Pow(10, 6);
+            }
+
+            int begin = ComputeMax(pRegular, qRegular, pSeason * seasonPartern, qSeason * seasonPartern, startIndex);
+
+            for (int i = begin; i < series.Count; i++)
+            {
+                //Phase 1
+                observationVector[0, 0] = 1;
+                for (int j = 1; j < pRegular + 1; j++)
+                {
+                    observationVector[j, 0] = series[i - j];
+                }
+                for (int j = 1; j < qRegular + 1; j++)
+                {
+                    observationVector[pRegular + j, 0] = errors[i - j];
+                }
+                for (int j = 1; j < pSeason + 1; j++)
+                {
+                    observationVector[j, 0] = series[i - j * seasonPartern];
+                }
+                for (int j = 1; j < qSeason + 1; j++)
+                {
+                    observationVector[pRegular + j, 0] = errors[i - j * seasonPartern];
+                }
+
+                //Phase 2 - Estimate Parameters
+                prioriPredictionError = series[i] - (Matrix.Transpose(observationVector) * parameterVector)[0, 0];
+                double temp = 1 + (Matrix.Transpose(observationVector) * invertedCovarianceMatrix * observationVector)[0, 0];
+                gainFactor = (invertedCovarianceMatrix * observationVector) / temp;
+                parameterVector += gainFactor * prioriPredictionError;
+
+                //Phase 3 - Prepare for Next Estimation 
+                posterioriPredictionError = series[i] - (Matrix.Transpose(observationVector) * parameterVector)[0, 0];
+                invertedCovarianceMatrix = invertedCovarianceMatrix - gainFactor * Matrix.Transpose(observationVector) * invertedCovarianceMatrix;
+                errors[i] = posterioriPredictionError;
+            }
+
+
+            listArimaCoeff = new List<double>();
+            for (int i = 0; i < 1 + pRegular + qRegular + pSeason + qSeason; i++)
+            {
+                listArimaCoeff.Add(parameterVector[i, 0]);
+            }
+        }
+
         private void RemoveNonstationarity(ref List<double> series, ref int startIndex, out int regularDifferencingLevel)
         {
             int dataSize = series.Count - startIndex;
@@ -656,72 +741,57 @@ namespace ForecastTimeSeries
             return max;
         }
 
-        private void TestARMA(List<double> series, int startIndex, int diff, int seasonDiff, int pCoef, int qCoef, int season, int PCoef, int QCoef, List<double> listArimaCoeff, List<double> listSeasonArimaCoeff)
+        private void TestARMA(List<double> processSeries, int startIndex, int regularDifferencingLevel, int seasonDifferencingLevel, int pRegular, int qRegular, int seasonPartern, int pSeason, int qSeason, List<double> listArimaCoeff, out List<double> error)
         {
-            List<double> originSeries = series.FindAll(item => true);
-            List<double> regularSeries = new List<double>();
-            List<double> seasonSeries = new List<double>();
+            error = new List<double>();
+            List<double> currentSeries = processSeries.FindAll(item => true);
             List<double> testSeries = new List<double>();
 
-            int startTest = ComputeMax(pCoef, qCoef, PCoef * season, QCoef * season, startIndex);
 
-            for (int i = 0; i < startTest; i++)
+            int begin = ComputeMax(pRegular, qRegular, pSeason * seasonPartern, qSeason * seasonPartern, startIndex);
+
+            for (int i = 0; i < begin; i++)
             {
-                regularSeries.Add(series[i]);
+                testSeries.Add(processSeries[i]);
             }
 
-            for (int i = startTest; i < series.Count; i++)
+            for (int i = begin; i < processSeries.Count; i++)
             {
                 double temp = listArimaCoeff[0];
-                for (int j = 1; j <= pCoef; j++)
+                for (int j = 1; j <= pRegular; j++)
                 {
-                    temp += listArimaCoeff[j] * series[i - j];
+                    temp += listArimaCoeff[j] * processSeries[i - j];
                 }
-                regularSeries.Add(temp);
+                for (int j = 1; j <= pSeason; j++)
+                {
+                    temp += listArimaCoeff[pRegular + qRegular + j] * processSeries[i - j * seasonPartern];
+                }
+                testSeries.Add(temp);
 
             }
 
-            if (seasonDiff != 0)
+            for (int i = 0; i < currentSeries.Count; i++)
             {
-                for (int i = 0; i < startTest; i++)
-                {
-                    seasonSeries.Add(series[i]);
-                }
-
-                for (int i = startTest; i < series.Count; i++)
-                {
-                    double temp = listSeasonArimaCoeff[0];
-                    for (int j = 1; j <= PCoef; j++)
-                    {
-                        temp += listSeasonArimaCoeff[j] * series[i - j * season];
-                    }
-                    seasonSeries.Add(temp);
-                }
-            }
-
-
-            for (int i = 0; i < startTest; i++)
-            {
-                testSeries.Add(series[i]);
-            }
-            for (int i = startTest; i < series.Count; i++)
-            {
-                if (seasonDiff != 0)
-                {
-                    testSeries.Add((regularSeries[i] + seasonSeries[i]) / 2);
-                }
-                else
-                {
-                    testSeries.Add(regularSeries[i]);
-                }
+                error.Add(testSeries[i] - currentSeries[i]);
             }
 
             int originIndex = startIndex;
             int testIndex = startIndex;
 
-            RevertDifference(originSeries, ref originIndex, diff, seasonDiff, season);
-            RevertDifference(testSeries, ref testIndex, diff, seasonDiff, season);
-            DrawTwoSeriesData(originSeries, originIndex, testSeries, testIndex);
+            //DrawTwoSeriesData(currentSeries, originIndex, testSeries, testIndex);
+
+            RevertDiffTestSeries(ref currentSeries, ref testSeries, ref originIndex, regularDifferencingLevel, seasonDifferencingLevel, seasonPartern);
+            List<double> forecastSeries;
+            Forecast(12, out forecastSeries);
+            foreach (double item in forecastSeries)
+            {
+                testSeries.Add(item);
+            }
+            DrawTwoSeriesData(currentSeries, originIndex, testSeries, originIndex);
+
+            //RevertDifference(currentSeries, ref startIndex, diff, seasonDiff, seasonPartern);
+            //DrawSeriesData(currentSeries, startIndex);
+            WriteLogSeries(error);
         }
 
         private void RevertDiffTestSeries(ref List<double> series, ref List<double> testSeries, ref int startIndex, int d, int D, int s)
@@ -820,7 +890,7 @@ namespace ForecastTimeSeries
                 }
                 //errors.Add(series[i] - temp);
             }
-            RevertDifference(currentSeries, ref startIndex, diff, 0, 0);
+            RevertDifference(ref currentSeries, ref startIndex, diff, 0, 0);
             forecastSeries = new List<double>();
             for (int i = begin; i < currentSeries.Count; i++)
             {
@@ -828,6 +898,38 @@ namespace ForecastTimeSeries
             }
         }
 
+        private void ForecastARIMA(List<double> processSeries, List<double> errors, int startIndex, int regularDifferencingLevel, int seasonDifferencingLevel, int pRegular, int qRegular, int seasonPartern, int pSeason, int qSeason, List<double> listArimaCoeff, int nHead, out List<double> forecastSeries)
+        {
+            List<double> currentSeries = processSeries.FindAll(item => true);
+            List<double> currentErrors = errors.FindAll(item => true);
+            int begin = processSeries.Count;
+            for (int i = 0; i < nHead; i++)
+            {
+                currentSeries.Add(0);
+                currentErrors.Add(0);
+            }
+            for (int i = begin; i < currentSeries.Count; i++)
+            {
+                currentSeries[i] = listArimaCoeff[0];
+
+                for (int j = 1; j <= pRegular; j++)
+                {
+                    currentSeries[i] += currentSeries[i - j] * listArimaCoeff[j];
+                }
+                for (int j = 1; j <= pSeason; j++)
+                {
+                    currentSeries[i] += currentSeries[i - j * seasonPartern] * listArimaCoeff[pRegular + qRegular + j];
+                }
+
+                // add error
+            }
+            RevertDifference(ref currentSeries, ref startIndex, regularDifferencingLevel, seasonDifferencingLevel, seasonPartern);
+            forecastSeries = new List<double>();
+            for (int i = begin; i < currentSeries.Count; i++)
+            {
+                forecastSeries.Add(currentSeries[i]);
+            }
+        }
         #endregion ARIMA algorithm
 
 
@@ -841,7 +943,7 @@ namespace ForecastTimeSeries
         {
             seasonPartern = 0;
             List<int> listHighestCorrelationIndex = new List<int>();
-            GetHighCorrelationLocation(listAutocorrelation, 0, listHighestCorrelationIndex);
+            GetHighCorrelationLocation(listAutocorrelation, 0, ref listHighestCorrelationIndex);
             List<int> levelOneDistance = new List<int>();
             for (int i = 0; i < listHighestCorrelationIndex.Count - 1; i++)
             {
@@ -873,7 +975,7 @@ namespace ForecastTimeSeries
             }
         }
 
-        private void RemoveSeasonality(ref List<double> series, ref int startIndex, out int seasonPartern, out int seasonDifferencingLevel)
+        private void RemoveSeasonality(ref List<double> processSeries, ref int startIndex, out int seasonPartern, out int seasonDifferencingLevel)
         {
             seasonPartern = 0;
             seasonDifferencingLevel = 0;
@@ -883,7 +985,7 @@ namespace ForecastTimeSeries
             while (true)
             {
                 listAutocorrelation.Clear();
-                ComputeAutocorrelation(series, startIndex, out listAutocorrelation);
+                ComputeAutocorrelation(processSeries, startIndex, out listAutocorrelation);
 
                 //DrawSeriesData(series, startIndex);
                 //DrawAutocorrelation(listAutocorrelation, listConfidenceLimit);
@@ -898,9 +1000,9 @@ namespace ForecastTimeSeries
                 seasonDifferencingLevel++;
                 startIndex += seasonPartern;
 
-                for (int j = series.Count - 1; j >= startIndex; j--)
+                for (int j = processSeries.Count - 1; j >= startIndex; j--)
                 {
-                    series[j] = series[j] - series[j - seasonPartern];
+                    processSeries[j] = processSeries[j] - processSeries[j - seasonPartern];
                 }
             }
         }
@@ -934,82 +1036,128 @@ namespace ForecastTimeSeries
 
         #endregion test
 
+        public ARIMA()
+        {
+            _originSeries = new List<double>();
+            _processSeries = new List<double>();
+            _errorSeries = new List<double>();
+            _listRegularArimaCoeff = new List<double>();
+            _listSeasonArimaCoeff = new List<double>();
+        }
+
+        public void InitTraining()
+        {
+            _startIndex = 0;
+            _seasonDifferencingLevel = _seasonPartern = _pSeason = _qSeason = 0;
+            _regularDifferencingLevel = _pRegular = _qRegular = 0;
+
+            _processSeries.Clear();
+            _errorSeries.Clear();
+            _listRegularArimaCoeff.Clear();
+            _listSeasonArimaCoeff.Clear();
+
+            _processSeries = _originSeries.FindAll(item => true);
+        }
 
         public void SetData(List<double> series)
         {
-            originSeries.Clear();
-            processSeries.Clear();
+            _originSeries.Clear();
+            _processSeries.Clear();
+            _errorSeries.Clear();
             for (int i = 0; i < series.Count; i++)
             {
-                originSeries.Add(series[i]);
-                processSeries.Add(series[i]);
+                _originSeries.Add(series[i]);
+                _processSeries.Add(series[i]);
             }
         }
 
         public void GetError(out List<double> errors)
         {
             errors = new List<double>();
-            for (int i = 0; i < errorSeries.Count; i++)
+            for (int i = 0; i < _errorSeries.Count; i++)
             {
-                errors.Add(errorSeries[i]);
+                errors.Add(_errorSeries[i]);
             }
         }
 
         public void GetModel(out int regularDifferencing, out int pOrder, out int qOrder, out List<double> listARIMACoef)
         {
-            regularDifferencing = this.regularDifferencingLevel;
-            pOrder = this.p;
-            qOrder = this.q;
-            listARIMACoef = this.listRegularArimaCoeff.FindAll(item => true);
+            regularDifferencing = this._regularDifferencingLevel;
+            pOrder = this._pRegular;
+            qOrder = this._qRegular;
+            listARIMACoef = this._listRegularArimaCoeff.FindAll(item => true);
         }
 
         public void AutomaticTraining()
         {
-            RestoreTraining();
-            RemoveNonstationarity(ref processSeries, ref startIndex, out regularDifferencingLevel);
-            EstimateArimaCoef(processSeries, startIndex, seasonPartern, out p, out q, out P, out Q);
-            EstimateRegularARIMAModel(processSeries, startIndex, p, q, out listRegularArimaCoeff);
-            TestRegularARIMA(processSeries, startIndex, regularDifferencingLevel, p, q, listRegularArimaCoeff, out errorSeries);
+            InitTraining();
+            RemoveNonstationarity(ref _processSeries, ref _startIndex, out _regularDifferencingLevel);
+            RemoveSeasonality(ref _processSeries, ref _startIndex, out _seasonPartern, out _seasonDifferencingLevel);
+
+            EstimateARIMAModel(_processSeries, _startIndex, _seasonPartern, out _pRegular, out _qRegular, out _pSeason, out _qSeason);
+            EstimateARIMACoef(_processSeries, _startIndex, _pRegular, _qRegular, _seasonPartern, _pSeason, _qSeason, out _listArimaCoeff);
+            TestARMA(_processSeries, _startIndex, _regularDifferencingLevel, _seasonDifferencingLevel, _pRegular, _qRegular, _seasonPartern, _pSeason , _qSeason, _listArimaCoeff, out _errorSeries);
+            //EstimateRegularARIMACoef(processSeries, startIndex, p, q, out listRegularArimaCoeff);
+            //TestRegularARIMA(processSeries, startIndex, regularDifferencingLevel, p, q, listRegularArimaCoeff, out errorSeries);
+            //RevertDifference(processSeries, ref startIndex, regularDifferencingLevel, seasonDifferencingLevel, seasonPartern);
+            //DrawSeriesData(processSeries, startIndex);
+        }
+
+        public void Test()
+        {
+            List<double> listAutocorrelation = new List<double>();
+            List<double> listConfidenceLimit = new List<double>();
+            List<double> listPartialAutocorrelation = new List<double>();
+
+            ComputeAutocorrelation(_processSeries, _startIndex, out listAutocorrelation);
+            ComputePartialAutocorrelation(listAutocorrelation, out listPartialAutocorrelation);
+            ComputeConfidenceLimit(listAutocorrelation, _processSeries.Count - _startIndex, out listConfidenceLimit);
+            double confidenceLimit = 1.96 / Math.Sqrt(_processSeries.Count - _startIndex);
+
+            DrawAutocorrelation(listAutocorrelation, listConfidenceLimit);
+            DrawPartialAutocorrelation(listPartialAutocorrelation, confidenceLimit);
+        }
+
+        public void Test1()
+        {
+            InitTraining();
+            RemoveNonstationarity(ref _processSeries, ref _startIndex, out _regularDifferencingLevel);
+        }
+
+        public void Test2()
+        {
+            RemoveSeasonality(ref _processSeries, ref _startIndex, out _seasonPartern, out _seasonDifferencingLevel);
         }
 
         public void ManualTraining(int regularDifferencing, int pOrder, int qOrder)
         {
-            RestoreTraining();
-            this.regularDifferencingLevel = regularDifferencing;
-            this.p = pOrder;
-            this.q = qOrder;
-            ComputeDifference(processSeries, ref startIndex, regularDifferencingLevel, 0, 0);
-            EstimateRegularARIMAModel(processSeries, startIndex, p, q, out listRegularArimaCoeff);
-            TestRegularARIMA(processSeries, startIndex, regularDifferencingLevel, p, q, listRegularArimaCoeff, out errorSeries);
+            InitTraining();
+            this._regularDifferencingLevel = regularDifferencing;
+            this._pRegular = pOrder;
+            this._qRegular = qOrder;
+            ComputeDifference(ref _processSeries, ref _startIndex, _regularDifferencingLevel, 0, 0);
+            EstimateRegularARIMACoef(_processSeries, _startIndex, _pRegular, _qRegular, out _listRegularArimaCoeff);
+            TestRegularARIMA(_processSeries, _startIndex, _regularDifferencingLevel, _pRegular, _qRegular, _listRegularArimaCoeff, out _errorSeries);
         }
 
-        public void RestoreTraining()
-        {
-            regularDifferencingLevel = p = q = startIndex = 0;
-            processSeries = new List<double>();
-            errorSeries = new List<double>();
-            listRegularArimaCoeff = new List<double>();
-
-            processSeries = originSeries.FindAll(item => true);
-
-        }
 
         public void Forecast(int nHead, out List<double> forecastSeries)
         {
-            ForecastRegularARIMA(processSeries, errorSeries, startIndex, regularDifferencingLevel, p, q, listRegularArimaCoeff, nHead, out forecastSeries);
+            ForecastARIMA(_processSeries, _errorSeries, _startIndex, _regularDifferencingLevel, _seasonDifferencingLevel,
+                _pRegular, _qRegular, _seasonPartern, _pSeason, _qSeason, _listArimaCoeff, nHead, out forecastSeries);
         }
 
         public void DrawSeriesData()
         {
-            DrawSeriesData(processSeries, startIndex);
+            DrawSeriesData(_processSeries, _startIndex);
         }
 
         public void DrawAutocorrelation()
         {
             List<double> listAutocorrelation;
             List<double> listConfidenceLimit;
-            ComputeAutocorrelation(processSeries, startIndex, out listAutocorrelation);
-            ComputeConfidenceLimit(listAutocorrelation, processSeries.Count, out listConfidenceLimit);
+            ComputeAutocorrelation(_processSeries, _startIndex, out listAutocorrelation);
+            ComputeConfidenceLimit(listAutocorrelation, _processSeries.Count, out listConfidenceLimit);
             DrawAutocorrelation(listAutocorrelation, listConfidenceLimit);
         }
 
@@ -1017,9 +1165,9 @@ namespace ForecastTimeSeries
         {
             List<double> listAutocorrelation;
             List<double> listPartialAutocorrelation;
-            ComputeAutocorrelation(processSeries, startIndex, out listAutocorrelation);
+            ComputeAutocorrelation(_processSeries, _startIndex, out listAutocorrelation);
             ComputePartialAutocorrelation(listAutocorrelation, out listPartialAutocorrelation);
-            double confidenceLimit = 1.96 / Math.Sqrt(processSeries.Count);
+            double confidenceLimit = 1.96 / Math.Sqrt(_processSeries.Count);
             DrawPartialAutocorrelation(listPartialAutocorrelation, confidenceLimit);
         }
 
