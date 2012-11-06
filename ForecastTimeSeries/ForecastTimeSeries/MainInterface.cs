@@ -191,33 +191,9 @@ namespace ForecastTimeSeries
 
         private void showARIMAModel()
         {
-            int regularDifferencing, pOrder, qOrder;
-            List<double> listARIMACoef;
-            ARIMAModel.GetModel(out regularDifferencing, out pOrder, out qOrder, out listARIMACoef);
-
-            StringBuilder result = new StringBuilder();
-            result.Append(String.Format("ARIMA({0}, {1}, {2})\n", pOrder, regularDifferencing, qOrder));
-            result.Append(String.Format("Perception\t|{0}\n", listARIMACoef[0]));
-            result.Append(String.Format("Order\t|"));
-            for (int i = 0; i < Math.Max(pOrder, qOrder); i++)
-            {
-                result.Append(String.Format("  {0}\t|", i+1));
-            }
-            result.Append("\n");
-
-            result.Append(String.Format("AR coef\t|"));
-            for(int i=0; i<pOrder; i++)
-            {
-                result.Append(String.Format("  {0:0.000}\t|", listARIMACoef[i+1]));
-            }
-            result.Append("\n");
-
-            result.Append(String.Format("MA coef\t|"));
-            for (int i = 0; i < qOrder; i++)
-            {
-                result.Append(String.Format("  {0:0.000}\t|", listARIMACoef[i+pOrder]));
-            }
-            this.richARIMAModel.Text = result.ToString();
+            string model;
+            ARIMAModel.GetModel(out model);
+            this.richARIMAModel.Text = model.ToString();
             this.richARIMAModel.ScrollToCaret();
         }
 
@@ -245,14 +221,21 @@ namespace ForecastTimeSeries
         private void btnManualARIMA_CheckedChanged(object sender, EventArgs e)
         {
             groupBoxARIMAParameter.Enabled = true;
+            txtRegularDifferencing.Text = "0";
+            txtSeasonDifferencing.Text = "0";
+            txtSeasonPartern.Text = "0";
+            txtARRegular.Text = "0";
+            txtMARegular.Text = "0";
+            txtARSeason.Text = "0";
+            txtMASeason.Text = "0";
         }
 
         private void btnTrainARIMA_Click(object sender, EventArgs e)
         {
             ARIMAModel.SetData(dataSeries);
             ARIMAModel.AutomaticTraining();
-            //ARIMAModel.GetError(out errorSeries);
-            //showARIMAModel();
+            ARIMAModel.GetError(out errorSeries);
+            showARIMAModel();
         }
 
         private void btnPlotData_Click(object sender, EventArgs e)
@@ -393,9 +376,13 @@ namespace ForecastTimeSeries
 
         private void btnManualRestoreARIMA_Click(object sender, EventArgs e)
         {
-            txtRegularDifferencing.Text = "";
-            txtARRegular.Text = "";
-            txtMARegular.Text = "";
+            txtRegularDifferencing.Text = "0";
+            txtSeasonDifferencing.Text = "0";
+            txtSeasonPartern.Text = "0";
+            txtARRegular.Text = "0";
+            txtMARegular.Text = "0";
+            txtARSeason.Text = "0";
+            txtMASeason.Text = "0";
             ARIMAModel.InitTraining();
         }
 
@@ -453,25 +440,27 @@ namespace ForecastTimeSeries
 
         }
 
-        private void btnTest_Click(object sender, EventArgs e)
-        {
-            ARIMAModel.SetData(dataSeries);
-            ARIMAModel.Test1();
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            ARIMAModel.Test2();
-        }
-
-        private void btnRemoveTrend_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void btnRemoveSeason_Click(object sender, EventArgs e)
         {
+            int regularDifferencingLevel = Int32.Parse(txtRegularDifferencing.Text);
+            int seasonDifferencingLevel = Int32.Parse(txtSeasonDifferencing.Text);
+            int seasonPartern = Int32.Parse(txtSeasonPartern.Text);
+            ARIMAModel.RemoveSeasonality(regularDifferencingLevel, seasonDifferencingLevel, seasonPartern);
+        }
 
+        private void btnTestArima_Click(object sender, EventArgs e)
+        {
+            ARIMAModel.Test();
+        }
+
+        private void btnPlotNeural_Click(object sender, EventArgs e)
+        {
+            neuralModel.Plot();
+        }
+
+        private void btnTestNeural_Click(object sender, EventArgs e)
+        {
+            neuralModel.Test();
         }
     
     }

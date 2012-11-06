@@ -33,8 +33,6 @@
             System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.button1 = new System.Windows.Forms.Button();
-            this.btnTest = new System.Windows.Forms.Button();
             this.btnForecastARIMA = new System.Windows.Forms.Button();
             this.btnManualARIMA = new System.Windows.Forms.RadioButton();
             this.btnSaveARIMA = new System.Windows.Forms.Button();
@@ -43,6 +41,15 @@
             this.labelTrainDataNumColumns = new System.Windows.Forms.Label();
             this.btnTrainARIMA = new System.Windows.Forms.Button();
             this.groupBoxARIMAParameter = new System.Windows.Forms.GroupBox();
+            this.txtSeasonPartern = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.btnRemoveSeason = new System.Windows.Forms.Button();
+            this.txtMASeason = new System.Windows.Forms.TextBox();
+            this.txtARSeason = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.txtSeasonDifferencing = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.btnManualRestoreARIMA = new System.Windows.Forms.Button();
             this.btnManualTrainingARIMA = new System.Windows.Forms.Button();
             this.txtMARegular = new System.Windows.Forms.TextBox();
@@ -96,14 +103,10 @@
             this.textBoxNHead = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.chartForecast = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.label4 = new System.Windows.Forms.Label();
-            this.txtSeasonDifferencing = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.txtARSeason = new System.Windows.Forms.TextBox();
-            this.txtMASeason = new System.Windows.Forms.TextBox();
-            this.btnRemoveTrend = new System.Windows.Forms.Button();
-            this.btnRemoveSeason = new System.Windows.Forms.Button();
+            this.btnTestArima = new System.Windows.Forms.Button();
+            this.btnPlotNeural = new System.Windows.Forms.Button();
+            this.btnTestNeural = new System.Windows.Forms.Button();
+            this.btnForecastNeural = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBoxARIMAParameter.SuspendLayout();
@@ -129,8 +132,7 @@
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.Color.SeaGreen;
-            this.tabPage1.Controls.Add(this.button1);
-            this.tabPage1.Controls.Add(this.btnTest);
+            this.tabPage1.Controls.Add(this.btnTestArima);
             this.tabPage1.Controls.Add(this.btnForecastARIMA);
             this.tabPage1.Controls.Add(this.btnManualARIMA);
             this.tabPage1.Controls.Add(this.btnSaveARIMA);
@@ -163,29 +165,9 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "ARIMA";
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(242, 126);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(87, 23);
-            this.button1.TabIndex = 51;
-            this.button1.Text = "removeSeason";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // btnTest
-            // 
-            this.btnTest.Location = new System.Drawing.Point(131, 126);
-            this.btnTest.Name = "btnTest";
-            this.btnTest.Size = new System.Drawing.Size(88, 23);
-            this.btnTest.TabIndex = 50;
-            this.btnTest.Text = "removeTrend";
-            this.btnTest.UseVisualStyleBackColor = true;
-            this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
-            // 
             // btnForecastARIMA
             // 
-            this.btnForecastARIMA.Location = new System.Drawing.Point(532, 242);
+            this.btnForecastARIMA.Location = new System.Drawing.Point(615, 241);
             this.btnForecastARIMA.Name = "btnForecastARIMA";
             this.btnForecastARIMA.Size = new System.Drawing.Size(75, 23);
             this.btnForecastARIMA.TabIndex = 49;
@@ -209,9 +191,9 @@
             // btnSaveARIMA
             // 
             this.btnSaveARIMA.ForeColor = System.Drawing.Color.Black;
-            this.btnSaveARIMA.Location = new System.Drawing.Point(783, 241);
+            this.btnSaveARIMA.Location = new System.Drawing.Point(808, 241);
             this.btnSaveARIMA.Name = "btnSaveARIMA";
-            this.btnSaveARIMA.Size = new System.Drawing.Size(112, 23);
+            this.btnSaveARIMA.Size = new System.Drawing.Size(87, 23);
             this.btnSaveARIMA.TabIndex = 47;
             this.btnSaveARIMA.Text = "Save ARIMA";
             this.btnSaveARIMA.UseVisualStyleBackColor = true;
@@ -219,9 +201,9 @@
             // btnLoadARIMA
             // 
             this.btnLoadARIMA.ForeColor = System.Drawing.Color.Black;
-            this.btnLoadARIMA.Location = new System.Drawing.Point(642, 241);
+            this.btnLoadARIMA.Location = new System.Drawing.Point(722, 241);
             this.btnLoadARIMA.Name = "btnLoadARIMA";
-            this.btnLoadARIMA.Size = new System.Drawing.Size(113, 23);
+            this.btnLoadARIMA.Size = new System.Drawing.Size(80, 23);
             this.btnLoadARIMA.TabIndex = 46;
             this.btnLoadARIMA.Text = "Load ARIMA";
             this.btnLoadARIMA.UseVisualStyleBackColor = true;
@@ -254,8 +236,9 @@
             // 
             // groupBoxARIMAParameter
             // 
+            this.groupBoxARIMAParameter.Controls.Add(this.txtSeasonPartern);
+            this.groupBoxARIMAParameter.Controls.Add(this.label9);
             this.groupBoxARIMAParameter.Controls.Add(this.btnRemoveSeason);
-            this.groupBoxARIMAParameter.Controls.Add(this.btnRemoveTrend);
             this.groupBoxARIMAParameter.Controls.Add(this.txtMASeason);
             this.groupBoxARIMAParameter.Controls.Add(this.txtARSeason);
             this.groupBoxARIMAParameter.Controls.Add(this.label8);
@@ -273,14 +256,88 @@
             this.groupBoxARIMAParameter.Enabled = false;
             this.groupBoxARIMAParameter.Location = new System.Drawing.Point(370, 32);
             this.groupBoxARIMAParameter.Name = "groupBoxARIMAParameter";
-            this.groupBoxARIMAParameter.Size = new System.Drawing.Size(533, 187);
+            this.groupBoxARIMAParameter.Size = new System.Drawing.Size(533, 203);
             this.groupBoxARIMAParameter.TabIndex = 42;
             this.groupBoxARIMAParameter.TabStop = false;
             this.groupBoxARIMAParameter.Text = "ARIMA Coef";
             // 
+            // txtSeasonPartern
+            // 
+            this.txtSeasonPartern.Location = new System.Drawing.Point(220, 75);
+            this.txtSeasonPartern.Name = "txtSeasonPartern";
+            this.txtSeasonPartern.Size = new System.Drawing.Size(100, 20);
+            this.txtSeasonPartern.TabIndex = 25;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(43, 73);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(80, 13);
+            this.label9.TabIndex = 24;
+            this.label9.Text = "Season Partern";
+            // 
+            // btnRemoveSeason
+            // 
+            this.btnRemoveSeason.Location = new System.Drawing.Point(385, 44);
+            this.btnRemoveSeason.Name = "btnRemoveSeason";
+            this.btnRemoveSeason.Size = new System.Drawing.Size(104, 23);
+            this.btnRemoveSeason.TabIndex = 23;
+            this.btnRemoveSeason.Text = "Remove Season";
+            this.btnRemoveSeason.UseVisualStyleBackColor = true;
+            this.btnRemoveSeason.Click += new System.EventHandler(this.btnRemoveSeason_Click);
+            // 
+            // txtMASeason
+            // 
+            this.txtMASeason.Location = new System.Drawing.Point(361, 140);
+            this.txtMASeason.Name = "txtMASeason";
+            this.txtMASeason.Size = new System.Drawing.Size(100, 20);
+            this.txtMASeason.TabIndex = 21;
+            // 
+            // txtARSeason
+            // 
+            this.txtARSeason.Location = new System.Drawing.Point(145, 140);
+            this.txtARSeason.Name = "txtARSeason";
+            this.txtARSeason.Size = new System.Drawing.Size(100, 20);
+            this.txtARSeason.TabIndex = 20;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(286, 140);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(62, 13);
+            this.label8.TabIndex = 19;
+            this.label8.Text = "MA Season";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(43, 139);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(61, 13);
+            this.label5.TabIndex = 18;
+            this.label5.Text = "AR Season";
+            // 
+            // txtSeasonDifferencing
+            // 
+            this.txtSeasonDifferencing.Location = new System.Drawing.Point(220, 46);
+            this.txtSeasonDifferencing.Name = "txtSeasonDifferencing";
+            this.txtSeasonDifferencing.Size = new System.Drawing.Size(100, 20);
+            this.txtSeasonDifferencing.TabIndex = 17;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(43, 49);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(101, 13);
+            this.label4.TabIndex = 16;
+            this.label4.Text = "Season differencing";
+            // 
             // btnManualRestoreARIMA
             // 
-            this.btnManualRestoreARIMA.Location = new System.Drawing.Point(289, 152);
+            this.btnManualRestoreARIMA.Location = new System.Drawing.Point(289, 168);
             this.btnManualRestoreARIMA.Name = "btnManualRestoreARIMA";
             this.btnManualRestoreARIMA.Size = new System.Drawing.Size(75, 23);
             this.btnManualRestoreARIMA.TabIndex = 15;
@@ -290,7 +347,7 @@
             // 
             // btnManualTrainingARIMA
             // 
-            this.btnManualTrainingARIMA.Location = new System.Drawing.Point(129, 152);
+            this.btnManualTrainingARIMA.Location = new System.Drawing.Point(129, 166);
             this.btnManualTrainingARIMA.Name = "btnManualTrainingARIMA";
             this.btnManualTrainingARIMA.Size = new System.Drawing.Size(75, 23);
             this.btnManualTrainingARIMA.TabIndex = 14;
@@ -300,7 +357,7 @@
             // 
             // txtMARegular
             // 
-            this.txtMARegular.Location = new System.Drawing.Point(362, 86);
+            this.txtMARegular.Location = new System.Drawing.Point(361, 105);
             this.txtMARegular.Name = "txtMARegular";
             this.txtMARegular.Size = new System.Drawing.Size(100, 20);
             this.txtMARegular.TabIndex = 9;
@@ -308,7 +365,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(286, 89);
+            this.label7.Location = new System.Drawing.Point(285, 108);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(63, 13);
             this.label7.TabIndex = 8;
@@ -316,7 +373,7 @@
             // 
             // txtARRegular
             // 
-            this.txtARRegular.Location = new System.Drawing.Point(146, 82);
+            this.txtARRegular.Location = new System.Drawing.Point(145, 101);
             this.txtARRegular.Name = "txtARRegular";
             this.txtARRegular.Size = new System.Drawing.Size(100, 20);
             this.txtARRegular.TabIndex = 7;
@@ -324,7 +381,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(58, 85);
+            this.label6.Location = new System.Drawing.Point(43, 104);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(65, 13);
             this.label6.TabIndex = 6;
@@ -340,7 +397,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(58, 24);
+            this.label3.Location = new System.Drawing.Point(43, 24);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(102, 13);
             this.label3.TabIndex = 0;
@@ -373,11 +430,10 @@
             this.richARIMAModel.Location = new System.Drawing.Point(367, 293);
             this.richARIMAModel.Name = "richARIMAModel";
             this.richARIMAModel.ReadOnly = true;
-            this.richARIMAModel.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedHorizontal;
+            this.richARIMAModel.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
             this.richARIMAModel.Size = new System.Drawing.Size(533, 96);
             this.richARIMAModel.TabIndex = 39;
             this.richARIMAModel.Text = "";
-            this.richARIMAModel.WordWrap = false;
             // 
             // btnPartialCorrelation
             // 
@@ -424,7 +480,7 @@
             // 
             // btnGetData
             // 
-            this.btnGetData.Location = new System.Drawing.Point(19, 124);
+            this.btnGetData.Location = new System.Drawing.Point(108, 124);
             this.btnGetData.Name = "btnGetData";
             this.btnGetData.Size = new System.Drawing.Size(95, 27);
             this.btnGetData.TabIndex = 32;
@@ -514,6 +570,9 @@
             // tabPage2
             // 
             this.tabPage2.BackColor = System.Drawing.Color.SeaGreen;
+            this.tabPage2.Controls.Add(this.btnForecastNeural);
+            this.tabPage2.Controls.Add(this.btnTestNeural);
+            this.tabPage2.Controls.Add(this.btnPlotNeural);
             this.tabPage2.Controls.Add(this.groupBox3);
             this.tabPage2.Controls.Add(this.btnTrainNeural);
             this.tabPage2.Controls.Add(this.groupBoxAlgorithmConfig);
@@ -564,7 +623,7 @@
             // 
             // btnTrainNeural
             // 
-            this.btnTrainNeural.Location = new System.Drawing.Point(83, 330);
+            this.btnTrainNeural.Location = new System.Drawing.Point(83, 284);
             this.btnTrainNeural.Name = "btnTrainNeural";
             this.btnTrainNeural.Size = new System.Drawing.Size(102, 38);
             this.btnTrainNeural.TabIndex = 5;
@@ -815,73 +874,44 @@
             this.chartForecast.TabIndex = 0;
             this.chartForecast.Text = "chart1";
             // 
-            // label4
+            // btnTestArima
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(58, 53);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(101, 13);
-            this.label4.TabIndex = 16;
-            this.label4.Text = "Season differencing";
+            this.btnTestArima.Location = new System.Drawing.Point(515, 241);
+            this.btnTestArima.Name = "btnTestArima";
+            this.btnTestArima.Size = new System.Drawing.Size(75, 23);
+            this.btnTestArima.TabIndex = 50;
+            this.btnTestArima.Text = "Test";
+            this.btnTestArima.UseVisualStyleBackColor = true;
+            this.btnTestArima.Click += new System.EventHandler(this.btnTestArima_Click);
             // 
-            // txtSeasonDifferencing
+            // btnPlotNeural
             // 
-            this.txtSeasonDifferencing.Location = new System.Drawing.Point(220, 48);
-            this.txtSeasonDifferencing.Name = "txtSeasonDifferencing";
-            this.txtSeasonDifferencing.Size = new System.Drawing.Size(100, 20);
-            this.txtSeasonDifferencing.TabIndex = 17;
+            this.btnPlotNeural.Location = new System.Drawing.Point(28, 357);
+            this.btnPlotNeural.Name = "btnPlotNeural";
+            this.btnPlotNeural.Size = new System.Drawing.Size(75, 23);
+            this.btnPlotNeural.TabIndex = 6;
+            this.btnPlotNeural.Text = "Plot";
+            this.btnPlotNeural.UseVisualStyleBackColor = true;
+            this.btnPlotNeural.Click += new System.EventHandler(this.btnPlotNeural_Click);
             // 
-            // label5
+            // btnTestNeural
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(63, 120);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(61, 13);
-            this.label5.TabIndex = 18;
-            this.label5.Text = "AR Season";
+            this.btnTestNeural.Location = new System.Drawing.Point(126, 357);
+            this.btnTestNeural.Name = "btnTestNeural";
+            this.btnTestNeural.Size = new System.Drawing.Size(75, 23);
+            this.btnTestNeural.TabIndex = 7;
+            this.btnTestNeural.Text = "Test";
+            this.btnTestNeural.UseVisualStyleBackColor = true;
+            this.btnTestNeural.Click += new System.EventHandler(this.btnTestNeural_Click);
             // 
-            // label8
+            // btnForecastNeural
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(287, 121);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(62, 13);
-            this.label8.TabIndex = 19;
-            this.label8.Text = "MA Season";
-            // 
-            // txtARSeason
-            // 
-            this.txtARSeason.Location = new System.Drawing.Point(146, 121);
-            this.txtARSeason.Name = "txtARSeason";
-            this.txtARSeason.Size = new System.Drawing.Size(100, 20);
-            this.txtARSeason.TabIndex = 20;
-            // 
-            // txtMASeason
-            // 
-            this.txtMASeason.Location = new System.Drawing.Point(362, 121);
-            this.txtMASeason.Name = "txtMASeason";
-            this.txtMASeason.Size = new System.Drawing.Size(100, 20);
-            this.txtMASeason.TabIndex = 21;
-            // 
-            // btnRemoveTrend
-            // 
-            this.btnRemoveTrend.Location = new System.Drawing.Point(385, 15);
-            this.btnRemoveTrend.Name = "btnRemoveTrend";
-            this.btnRemoveTrend.Size = new System.Drawing.Size(104, 23);
-            this.btnRemoveTrend.TabIndex = 22;
-            this.btnRemoveTrend.Text = "Remove Trend";
-            this.btnRemoveTrend.UseVisualStyleBackColor = true;
-            this.btnRemoveTrend.Click += new System.EventHandler(this.btnRemoveTrend_Click);
-            // 
-            // btnRemoveSeason
-            // 
-            this.btnRemoveSeason.Location = new System.Drawing.Point(385, 45);
-            this.btnRemoveSeason.Name = "btnRemoveSeason";
-            this.btnRemoveSeason.Size = new System.Drawing.Size(104, 23);
-            this.btnRemoveSeason.TabIndex = 23;
-            this.btnRemoveSeason.Text = "Remove Season";
-            this.btnRemoveSeason.UseVisualStyleBackColor = true;
-            this.btnRemoveSeason.Click += new System.EventHandler(this.btnRemoveSeason_Click);
+            this.btnForecastNeural.Location = new System.Drawing.Point(237, 357);
+            this.btnForecastNeural.Name = "btnForecastNeural";
+            this.btnForecastNeural.Size = new System.Drawing.Size(75, 23);
+            this.btnForecastNeural.TabIndex = 8;
+            this.btnForecastNeural.Text = "Forecast";
+            this.btnForecastNeural.UseVisualStyleBackColor = true;
             // 
             // MainInterface
             // 
@@ -975,8 +1005,6 @@
         private System.Windows.Forms.RadioButton radioRPROP;
         private System.Windows.Forms.RadioButton radioBackPropagation;
         private System.Windows.Forms.Button btnForecastARIMA;
-        private System.Windows.Forms.Button btnTest;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox txtSeasonDifferencing;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox txtARSeason;
@@ -984,6 +1012,11 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox txtMASeason;
         private System.Windows.Forms.Button btnRemoveSeason;
-        private System.Windows.Forms.Button btnRemoveTrend;
+        private System.Windows.Forms.TextBox txtSeasonPartern;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Button btnTestArima;
+        private System.Windows.Forms.Button btnPlotNeural;
+        private System.Windows.Forms.Button btnTestNeural;
+        private System.Windows.Forms.Button btnForecastNeural;
     }
 }
