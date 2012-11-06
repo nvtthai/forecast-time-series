@@ -251,8 +251,8 @@ namespace ForecastTimeSeries
         {
             ARIMAModel.SetData(dataSeries);
             ARIMAModel.AutomaticTraining();
-            ARIMAModel.GetError(out errorSeries);
-            showARIMAModel();
+            //ARIMAModel.GetError(out errorSeries);
+            //showARIMAModel();
         }
 
         private void btnPlotData_Click(object sender, EventArgs e)
@@ -381,8 +381,8 @@ namespace ForecastTimeSeries
             try
             {
                 regularDifferencing = Int32.Parse(txtRegularDifferencing.Text);
-                pOrder = Int32.Parse(txtAROrder.Text);
-                qOrder = Int32.Parse(txtMAorder.Text);
+                pOrder = Int32.Parse(txtARRegular.Text);
+                qOrder = Int32.Parse(txtMARegular.Text);
                 ARIMAModel.ManualTraining(regularDifferencing, pOrder, qOrder);
                 showARIMAModel();
             }
@@ -394,9 +394,9 @@ namespace ForecastTimeSeries
         private void btnManualRestoreARIMA_Click(object sender, EventArgs e)
         {
             txtRegularDifferencing.Text = "";
-            txtAROrder.Text = "";
-            txtMAorder.Text = "";
-            ARIMAModel.RestoreTraining();
+            txtARRegular.Text = "";
+            txtMARegular.Text = "";
+            ARIMAModel.InitTraining();
         }
 
         private void btnNetworkClear_Click(object sender, EventArgs e)
@@ -449,6 +449,27 @@ namespace ForecastTimeSeries
         }
 
         private void btnForecastARIMA_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnTest_Click(object sender, EventArgs e)
+        {
+            ARIMAModel.SetData(dataSeries);
+            ARIMAModel.Test1();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            ARIMAModel.Test2();
+        }
+
+        private void btnRemoveTrend_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnRemoveSeason_Click(object sender, EventArgs e)
         {
 
         }
