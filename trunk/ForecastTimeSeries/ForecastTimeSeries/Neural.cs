@@ -29,6 +29,76 @@ namespace ForecastTimeSeries
         private double[,] Backup_m_arInputHiddenConn;
         private double[,] Backup_m_arHiddenOutputConn;
 
+        private void DrawSeriesData(List<double> series, int startIndex)
+        {
+            Plot_Form form = new Plot_Form();
+            form.chart1.ChartAreas[0].AxisX.Interval = Math.Ceiling(1.0 * (series.Count - startIndex) / 20);
+            form.chart1.Titles["Title1"].Text = "Time series";
+            form.chart1.Series["Data"].Color = System.Drawing.Color.Blue;
+            for (int i = startIndex; i < series.Count; i++)
+            {
+                form.chart1.Series["Data"].Points.AddXY(i + 1, series.ElementAt(i));
+            }
+            form.ShowDialog();
+        }
+
+        private void DrawTwoSeriesData(List<double> firstSeries, int firstStartIndex, List<double> secondSeries, int secondStartIndex)
+        {
+            Plot_Form form = new Plot_Form();
+
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series1.Color = System.Drawing.Color.Blue;
+            series1.IsVisibleInLegend = false;
+
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series2.Color = System.Drawing.Color.Red;
+            series2.IsVisibleInLegend = false;
+
+            form.chart1.ChartAreas[0].AxisX.Interval = Math.Ceiling(1.0 * (firstSeries.Count - firstStartIndex) / 20);
+            form.chart1.Titles["Title1"].Text = "Time series";
+            form.chart1.Series["Data"].Color = System.Drawing.Color.Blue;
+            for (int i = firstStartIndex; i < firstSeries.Count; i++)
+            {
+                series1.Points.AddXY(i + 1, firstSeries[i]);
+            }
+            form.chart1.Series.Add(series1);
+
+            for (int i = secondStartIndex; i < secondSeries.Count; i++)
+            {
+                series2.Points.AddXY(i + 1, secondSeries[i]);
+            }
+            form.chart1.Series.Add(series2);
+
+            form.ShowDialog();
+        }
+
+        public void Plot()
+        {
+            DrawSeriesData(originSeries, 0);
+            DrawSeriesData(processSeries, 0);
+        }
+
+        public void Test()
+        {
+            List<double> testSeries = new List<double>();
+            for (int i = m_iNumInputNodes; i < processSeries.Count; i++)
+            {
+                double[] input = new double[m_iNumInputNodes];
+                for (int j = m_iNumInputNodes; j > 0; j--)
+                {
+                    input[m_iNumInputNodes - j] = processSeries[i - j];
+                }
+                double temp = CalculateOutput(input);
+                testSeries.Add(temp);
+            }
+
+            DrawTwoSeriesData(processSeries, 0, testSeries, 0);
+        }
+
         public Neural()
         {
             originSeries = new List<double>();
