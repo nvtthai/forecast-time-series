@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -235,7 +236,19 @@ namespace ForecastTimeSeries
             ARIMAModel.SetData(dataSeries);
             ARIMAModel.AutomaticTraining();
             ARIMAModel.GetError(out errorSeries);
+            WriteSeries(errorSeries, "errorseries.txt");
             showARIMAModel();
+        }
+
+        private void WriteSeries(List<double> series, string filename)
+        {
+            StreamWriter file = new StreamWriter(filename, true);
+            foreach (double data in series)
+            {
+                file.WriteLine(data);
+            }
+            file.Flush();
+            file.Close();
         }
 
         private void btnPlotData_Click(object sender, EventArgs e)
