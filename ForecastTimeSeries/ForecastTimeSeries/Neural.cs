@@ -76,6 +76,41 @@ namespace ForecastTimeSeries
             form.ShowDialog();
         }
 
+        private void DrawForecastSeriesData(List<double> firstSeries, int firstStartIndex, List<double> secondSeries)
+        {
+            Plot_Form form = new Plot_Form();
+
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series1.Color = System.Drawing.Color.Blue;
+            series1.IsVisibleInLegend = false;
+
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series2.Color = System.Drawing.Color.Red;
+            series2.IsVisibleInLegend = false;
+
+            form.chart1.ChartAreas[0].AxisX.Interval = Math.Ceiling(1.0 * (firstSeries.Count - firstStartIndex) / 20);
+            form.chart1.Titles["Title1"].Text = "Time series";
+            form.chart1.Series["Data"].Color = System.Drawing.Color.Blue;
+            for (int i = firstStartIndex; i < firstSeries.Count; i++)
+            {
+                series1.Points.AddXY(i + 1, firstSeries[i]);
+            }
+            form.chart1.Series.Add(series1);
+
+            series2.Points.AddXY(firstSeries.Count, firstSeries[firstSeries.Count - 1]);
+            for (int i = 0; i < secondSeries.Count; i++)
+            {
+                series2.Points.AddXY(i + 1 + firstSeries.Count, secondSeries[i]);
+            }
+            form.chart1.Series.Add(series2);
+
+            form.ShowDialog();
+        }
+
         public void Plot()
         {
             DrawSeriesData(originSeries, 0);
@@ -734,6 +769,13 @@ namespace ForecastTimeSeries
                 currentSeries.Add(temp);
                 forecastSeries.Add(temp);
             }
+        }
+
+        public void Forecast(int nHead)
+        {
+            List<double> forecastSeries;
+            Forecast(nHead, out forecastSeries);
+            DrawForecastSeriesData(originSeries, 0, forecastSeries);
         }
     }
 
