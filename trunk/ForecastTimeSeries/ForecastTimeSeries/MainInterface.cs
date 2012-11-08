@@ -47,7 +47,7 @@ namespace ForecastTimeSeries
 
             if (m_DemoFile == null || m_DemoFile.Equals(""))
             {
-                MessageBox.Show("Please choose validate test data file before training", null, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Please choose validate data file before training", null, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
             {
@@ -233,10 +233,15 @@ namespace ForecastTimeSeries
 
         private void btnTrainARIMA_Click(object sender, EventArgs e)
         {
+            if (dataSeries == null || dataSeries.Count == 0)
+            {
+                MessageBox.Show("Please set data for training", null, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             ARIMAModel.SetData(dataSeries);
             ARIMAModel.AutomaticTraining();
             ARIMAModel.GetError(out errorSeries);
-            WriteSeries(errorSeries, "errorseries.txt");
             showARIMAModel();
         }
 
@@ -373,13 +378,17 @@ namespace ForecastTimeSeries
 
         private void btnManualTrainingARIMA_Click(object sender, EventArgs e)
         {
-            int regularDifferencing, pOrder, qOrder;
+            int regularDifferencing, pRegular, qRegular, pSeason, qSeason, seasonDifferencing, seasonPartern;
             try
             {
                 regularDifferencing = Int32.Parse(txtRegularDifferencing.Text);
-                pOrder = Int32.Parse(txtARRegular.Text);
-                qOrder = Int32.Parse(txtMARegular.Text);
-                ARIMAModel.ManualTraining(regularDifferencing, pOrder, qOrder);
+                pRegular = Int32.Parse(txtARRegular.Text);
+                qRegular = Int32.Parse(txtMARegular.Text);
+                pSeason = Int32.Parse(this.txtARRegular.Text);
+                qSeason = Int32.Parse(this.txtMASeason.Text);
+                seasonDifferencing = Int32.Parse(this.txtSeasonDifferencing.Text);
+                seasonPartern = Int32.Parse(this.txtSeasonPartern.Text);
+                ARIMAModel.ManualTraining(pRegular, regularDifferencing, qRegular, pSeason, seasonDifferencing, qSeason, seasonPartern);
                 showARIMAModel();
             }
             catch
@@ -450,7 +459,7 @@ namespace ForecastTimeSeries
 
         private void btnForecastARIMA_Click(object sender, EventArgs e)
         {
-
+            ARIMAModel.Forecast(30);
         }
 
         private void btnRemoveSeason_Click(object sender, EventArgs e)
@@ -458,7 +467,7 @@ namespace ForecastTimeSeries
             int regularDifferencingLevel = Int32.Parse(txtRegularDifferencing.Text);
             int seasonDifferencingLevel = Int32.Parse(txtSeasonDifferencing.Text);
             int seasonPartern = Int32.Parse(txtSeasonPartern.Text);
-            ARIMAModel.RemoveSeasonality(regularDifferencingLevel, seasonDifferencingLevel, seasonPartern);
+            ARIMAModel.RemoveTrendSeasonality(regularDifferencingLevel, seasonDifferencingLevel, seasonPartern);
         }
 
         private void btnTestArima_Click(object sender, EventArgs e)
@@ -474,6 +483,61 @@ namespace ForecastTimeSeries
         private void btnTestNeural_Click(object sender, EventArgs e)
         {
             neuralModel.Test();
+        }
+
+        private void btnSaveARIMA_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveDialog = new SaveFileDialog();
+            saveDialog.Title = "Save Arima Config File";
+            saveDialog.DefaultExt = "xml";
+            DialogResult result = saveDialog.ShowDialog();
+            string dataFile = "";
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                dataFile = saveDialog.FileName;
+                bool exportResult = ARIMAModel.Export(dataFile);
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        private void btnLoadARIMA_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog fileDialog = new OpenFileDialog();
+            fileDialog.Title = "Load Network Config File";
+            fileDialog.DefaultExt = "xml";
+            DialogResult result = fileDialog.ShowDialog();
+            string dataFile = "";
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                dataFile = fileDialog.FileName;
+                bool importResult = ARIMAModel.Import(dataFile);
+                if (importResult)
+                {
+                    List<int> model;
+                    ARIMAModel.GetModel(out model);
+                    this.txtARRegular.Text = model[0].ToString();
+                    this.txtRegularDifferencing.Text = model[1].ToString();
+                    this.txtMARegular.Text = model[2].ToString();
+                    this.txtARSeason.Text = model[3].ToString();
+                    this.txtSeasonDifferencing.Text = model[4].ToString();
+                    this.txtMASeason.Text = model[5].ToString();
+                    this.txtSeasonPartern.Text = model[6].ToString();
+
+                    this.groupBoxARIMAParameter.Enabled = true;
+                }
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        private void btnForecastNeural_Click(object sender, EventArgs e)
+        {
+            neuralModel.Forecast(30);
         }
     
     }

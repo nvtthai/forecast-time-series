@@ -28,11 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.btnTestArima = new System.Windows.Forms.Button();
             this.btnForecastARIMA = new System.Windows.Forms.Button();
             this.btnManualARIMA = new System.Windows.Forms.RadioButton();
             this.btnSaveARIMA = new System.Windows.Forms.Button();
@@ -76,6 +77,9 @@
             this.btnChooseData = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.btnForecastNeural = new System.Windows.Forms.Button();
+            this.btnTestNeural = new System.Windows.Forms.Button();
+            this.btnPlotNeural = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.radioRPROP = new System.Windows.Forms.RadioButton();
             this.radioBackPropagation = new System.Windows.Forms.RadioButton();
@@ -103,10 +107,6 @@
             this.textBoxNHead = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.chartForecast = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.btnTestArima = new System.Windows.Forms.Button();
-            this.btnPlotNeural = new System.Windows.Forms.Button();
-            this.btnTestNeural = new System.Windows.Forms.Button();
-            this.btnForecastNeural = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBoxARIMAParameter.SuspendLayout();
@@ -165,6 +165,16 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "ARIMA";
             // 
+            // btnTestArima
+            // 
+            this.btnTestArima.Location = new System.Drawing.Point(515, 241);
+            this.btnTestArima.Name = "btnTestArima";
+            this.btnTestArima.Size = new System.Drawing.Size(75, 23);
+            this.btnTestArima.TabIndex = 50;
+            this.btnTestArima.Text = "Test";
+            this.btnTestArima.UseVisualStyleBackColor = true;
+            this.btnTestArima.Click += new System.EventHandler(this.btnTestArima_Click);
+            // 
             // btnForecastARIMA
             // 
             this.btnForecastARIMA.Location = new System.Drawing.Point(615, 241);
@@ -197,16 +207,18 @@
             this.btnSaveARIMA.TabIndex = 47;
             this.btnSaveARIMA.Text = "Save ARIMA";
             this.btnSaveARIMA.UseVisualStyleBackColor = true;
+            this.btnSaveARIMA.Click += new System.EventHandler(this.btnSaveARIMA_Click);
             // 
             // btnLoadARIMA
             // 
             this.btnLoadARIMA.ForeColor = System.Drawing.Color.Black;
-            this.btnLoadARIMA.Location = new System.Drawing.Point(722, 241);
+            this.btnLoadARIMA.Location = new System.Drawing.Point(716, 241);
             this.btnLoadARIMA.Name = "btnLoadARIMA";
             this.btnLoadARIMA.Size = new System.Drawing.Size(80, 23);
             this.btnLoadARIMA.TabIndex = 46;
             this.btnLoadARIMA.Text = "Load ARIMA";
             this.btnLoadARIMA.UseVisualStyleBackColor = true;
+            this.btnLoadARIMA.Click += new System.EventHandler(this.btnLoadARIMA_Click);
             // 
             // labelTrainDataNumRows
             // 
@@ -584,11 +596,41 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Neural Network";
             // 
+            // btnForecastNeural
+            // 
+            this.btnForecastNeural.Location = new System.Drawing.Point(348, 357);
+            this.btnForecastNeural.Name = "btnForecastNeural";
+            this.btnForecastNeural.Size = new System.Drawing.Size(75, 23);
+            this.btnForecastNeural.TabIndex = 8;
+            this.btnForecastNeural.Text = "Forecast";
+            this.btnForecastNeural.UseVisualStyleBackColor = true;
+            this.btnForecastNeural.Click += new System.EventHandler(this.btnForecastNeural_Click);
+            // 
+            // btnTestNeural
+            // 
+            this.btnTestNeural.Location = new System.Drawing.Point(238, 357);
+            this.btnTestNeural.Name = "btnTestNeural";
+            this.btnTestNeural.Size = new System.Drawing.Size(75, 23);
+            this.btnTestNeural.TabIndex = 7;
+            this.btnTestNeural.Text = "Test";
+            this.btnTestNeural.UseVisualStyleBackColor = true;
+            this.btnTestNeural.Click += new System.EventHandler(this.btnTestNeural_Click);
+            // 
+            // btnPlotNeural
+            // 
+            this.btnPlotNeural.Location = new System.Drawing.Point(136, 357);
+            this.btnPlotNeural.Name = "btnPlotNeural";
+            this.btnPlotNeural.Size = new System.Drawing.Size(75, 23);
+            this.btnPlotNeural.TabIndex = 6;
+            this.btnPlotNeural.Text = "Plot";
+            this.btnPlotNeural.UseVisualStyleBackColor = true;
+            this.btnPlotNeural.Click += new System.EventHandler(this.btnPlotNeural_Click);
+            // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.radioRPROP);
             this.groupBox3.Controls.Add(this.radioBackPropagation);
-            this.groupBox3.Location = new System.Drawing.Point(37, 186);
+            this.groupBox3.Location = new System.Drawing.Point(37, 217);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(348, 75);
             this.groupBox3.TabIndex = 0;
@@ -623,9 +665,9 @@
             // 
             // btnTrainNeural
             // 
-            this.btnTrainNeural.Location = new System.Drawing.Point(83, 284);
+            this.btnTrainNeural.Location = new System.Drawing.Point(33, 357);
             this.btnTrainNeural.Name = "btnTrainNeural";
-            this.btnTrainNeural.Size = new System.Drawing.Size(102, 38);
+            this.btnTrainNeural.Size = new System.Drawing.Size(79, 22);
             this.btnTrainNeural.TabIndex = 5;
             this.btnTrainNeural.Text = "Train Neural";
             this.btnTrainNeural.UseVisualStyleBackColor = true;
@@ -859,59 +901,20 @@
             // 
             // chartForecast
             // 
-            chartArea3.Name = "ChartArea1";
-            this.chartForecast.ChartAreas.Add(chartArea3);
-            legend3.Name = "Legend1";
-            this.chartForecast.Legends.Add(legend3);
+            chartArea2.Name = "ChartArea1";
+            this.chartForecast.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.chartForecast.Legends.Add(legend2);
             this.chartForecast.Location = new System.Drawing.Point(6, 82);
             this.chartForecast.Name = "chartForecast";
-            series3.ChartArea = "ChartArea1";
-            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series3.Legend = "Legend1";
-            series3.Name = "Series";
-            this.chartForecast.Series.Add(series3);
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series2.Legend = "Legend1";
+            series2.Name = "Series";
+            this.chartForecast.Series.Add(series2);
             this.chartForecast.Size = new System.Drawing.Size(894, 368);
             this.chartForecast.TabIndex = 0;
             this.chartForecast.Text = "chart1";
-            // 
-            // btnTestArima
-            // 
-            this.btnTestArima.Location = new System.Drawing.Point(515, 241);
-            this.btnTestArima.Name = "btnTestArima";
-            this.btnTestArima.Size = new System.Drawing.Size(75, 23);
-            this.btnTestArima.TabIndex = 50;
-            this.btnTestArima.Text = "Test";
-            this.btnTestArima.UseVisualStyleBackColor = true;
-            this.btnTestArima.Click += new System.EventHandler(this.btnTestArima_Click);
-            // 
-            // btnPlotNeural
-            // 
-            this.btnPlotNeural.Location = new System.Drawing.Point(28, 357);
-            this.btnPlotNeural.Name = "btnPlotNeural";
-            this.btnPlotNeural.Size = new System.Drawing.Size(75, 23);
-            this.btnPlotNeural.TabIndex = 6;
-            this.btnPlotNeural.Text = "Plot";
-            this.btnPlotNeural.UseVisualStyleBackColor = true;
-            this.btnPlotNeural.Click += new System.EventHandler(this.btnPlotNeural_Click);
-            // 
-            // btnTestNeural
-            // 
-            this.btnTestNeural.Location = new System.Drawing.Point(126, 357);
-            this.btnTestNeural.Name = "btnTestNeural";
-            this.btnTestNeural.Size = new System.Drawing.Size(75, 23);
-            this.btnTestNeural.TabIndex = 7;
-            this.btnTestNeural.Text = "Test";
-            this.btnTestNeural.UseVisualStyleBackColor = true;
-            this.btnTestNeural.Click += new System.EventHandler(this.btnTestNeural_Click);
-            // 
-            // btnForecastNeural
-            // 
-            this.btnForecastNeural.Location = new System.Drawing.Point(237, 357);
-            this.btnForecastNeural.Name = "btnForecastNeural";
-            this.btnForecastNeural.Size = new System.Drawing.Size(75, 23);
-            this.btnForecastNeural.TabIndex = 8;
-            this.btnForecastNeural.Text = "Forecast";
-            this.btnForecastNeural.UseVisualStyleBackColor = true;
             // 
             // MainInterface
             // 
