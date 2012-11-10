@@ -204,6 +204,11 @@ namespace ForecastTimeSeries
             groupBoxAlgorithmConfig.Text = "Back Propagation Config";
             labelConfig1.Text = "Learning Rate";
             labelConfig2.Text = "Momemtum";
+
+            txtConfig1.Text = 0.4.ToString();
+            txtConfigEpoches.Text = 1000.ToString();
+            txtConfig2.Text = 0.2.ToString();
+            txtConfigErrors.Text = 0.000001.ToString();
         }
 
         private void radioRPROP_CheckedChanged(object sender, EventArgs e)
@@ -212,6 +217,11 @@ namespace ForecastTimeSeries
             groupBoxAlgorithmConfig.Text = "Resilient Propagation Config";
             labelConfig1.Text = "Default Update Value";
             labelConfig2.Text = "Max Update Value";
+
+            txtConfig1.Text = 0.1.ToString();
+            txtConfigEpoches.Text = 1000.ToString();
+            txtConfig2.Text = 10.ToString();
+            txtConfigErrors.Text = 0.000001.ToString();
         }
 
         private void btnAutomaticARIMA_CheckedChanged(object sender, EventArgs e)
@@ -241,8 +251,9 @@ namespace ForecastTimeSeries
 
             ARIMAModel.SetData(dataSeries);
             ARIMAModel.AutomaticTraining();
-            ARIMAModel.GetError(out errorSeries);
+            ARIMAModel.GetErrorSeries(out errorSeries);
             showARIMAModel();
+            WriteSeries(errorSeries, "ErrorSeries.txt");
         }
 
         private void WriteSeries(List<double> series, string filename)
@@ -339,42 +350,6 @@ namespace ForecastTimeSeries
             }
         }
 
-        private void buttonForecast_Click(object sender, EventArgs e)
-        {
-            int nHead = Int16.Parse(textBoxNHead.Text);
-            List<double> forecastSeries;
-            List<double> forecastErrorSeries;
-            ARIMAModel.Forecast(nHead, out forecastSeries);
-            neuralModel.Forecast(nHead, out forecastErrorSeries);
-            for (int i = 0; i < nHead; i++)
-            {
-                forecastSeries[i] += forecastErrorSeries[i];
-            }
-
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series1.Color = System.Drawing.Color.Blue;
-            series1.IsVisibleInLegend = false;
-
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series2.Color = System.Drawing.Color.Red;
-            series2.IsVisibleInLegend = false;
-
-            for (int i = 0; i < dataSeries.Count; i++)
-            {
-                series1.Points.AddXY(i + 1, dataSeries[i]);
-            }
-            chartForecast.Series.Add(series1);
-
-            for (int i = 0; i < forecastSeries.Count; i++)
-            {
-                series2.Points.AddXY(dataSeries.Count + i +1, forecastSeries[i]);
-            }
-            chartForecast.Series.Add(series2);
-        }
 
         private void btnManualTrainingARIMA_Click(object sender, EventArgs e)
         {
@@ -389,7 +364,9 @@ namespace ForecastTimeSeries
                 seasonDifferencing = Int32.Parse(this.txtSeasonDifferencing.Text);
                 seasonPartern = Int32.Parse(this.txtSeasonPartern.Text);
                 ARIMAModel.ManualTraining(pRegular, regularDifferencing, qRegular, pSeason, seasonDifferencing, qSeason, seasonPartern);
+                ARIMAModel.GetErrorSeries(out errorSeries);
                 showARIMAModel();
+                WriteSeries(errorSeries, "ErrorSeries.txt");
             }
             catch
             {
@@ -472,7 +449,25 @@ namespace ForecastTimeSeries
 
         private void btnTestArima_Click(object sender, EventArgs e)
         {
-            ARIMAModel.Test();
+            //ARIMAModel.Test();
+            List<double> testSeries;
+            ARIMAModel.GetTestSeries(out testSeries);
+            double MAE = Algorithm.ComputeMAE(dataSeries, testSeries);
+            double SSE = Algorithm.ComputeSSE(dataSeries, testSeries);
+            double MSE = Algorithm.ComputeMSE(dataSeries, testSeries);
+
+            Test_Form form = new Test_Form();
+            form.textBox1.AppendText("Mean Absolute Error MAE =  " + MAE + "\n");
+            form.textBox1.AppendText("Sum Square Error SSE =  " + SSE + "\n");
+            form.textBox1.AppendText("Mean Square Error MSE =  " + MSE + "\n");
+            form.textBox1.ReadOnly = true;
+            for (int t = 0; t < dataSeries.Count; t++)
+            {
+                form.chart1.Series["Observations"].Points.AddXY(t + 1, dataSeries.ElementAt(t));
+                form.chart1.Series["Computations"].Points.AddXY(t + 1, testSeries[t]);
+            }
+            form.ShowDialog();
+
         }
 
         private void btnPlotNeural_Click(object sender, EventArgs e)
@@ -482,7 +477,24 @@ namespace ForecastTimeSeries
 
         private void btnTestNeural_Click(object sender, EventArgs e)
         {
-            neuralModel.Test();
+            //neuralModel.Test();
+            List<double> testSeries;
+            neuralModel.GetTestSeries(out testSeries);
+            double MAE = Algorithm.ComputeMAE(errorSeries, testSeries);
+            double SSE = Algorithm.ComputeSSE(errorSeries, testSeries);
+            double MSE = Algorithm.ComputeMSE(errorSeries, testSeries);
+
+            Test_Form form = new Test_Form();
+            form.textBox1.AppendText("Mean Absolute Error MAE =  " + MAE + "\n");
+            form.textBox1.AppendText("Sum Square Error SSE =  " + SSE + "\n");
+            form.textBox1.AppendText("Mean Square Error MSE =  " + MSE + "\n");
+            form.textBox1.ReadOnly = true;
+            for (int t = 0; t < dataSeries.Count; t++)
+            {
+                form.chart1.Series["Observations"].Points.AddXY(t + 1, errorSeries.ElementAt(t));
+                form.chart1.Series["Computations"].Points.AddXY(t + 1, testSeries[t]);
+            }
+            form.ShowDialog();
         }
 
         private void btnSaveARIMA_Click(object sender, EventArgs e)
@@ -538,6 +550,82 @@ namespace ForecastTimeSeries
         private void btnForecastNeural_Click(object sender, EventArgs e)
         {
             neuralModel.Forecast(30);
+        }
+
+        private void MainInterface_Load(object sender, EventArgs e)
+        {
+            txtConfig1.Text = 0.1.ToString();
+            txtConfigEpoches.Text = 1000.ToString();
+            txtConfig2.Text = 10.ToString();
+            txtConfigErrors.Text = 0.000001.ToString();
+        }
+
+        private void buttonForecast_Click(object sender, EventArgs e)
+        {
+            int nHead = Int16.Parse(textBoxNHead.Text);
+            List<double> forecastSeries;
+            List<double> forecastErrorSeries;
+            ARIMAModel.Forecast(nHead, out forecastSeries);
+            neuralModel.Forecast(nHead, out forecastErrorSeries);
+            for (int i = 0; i < nHead; i++)
+            {
+                forecastSeries[i] += forecastErrorSeries[i];
+            }
+
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series1.Color = System.Drawing.Color.Blue;
+            series1.IsVisibleInLegend = false;
+
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series2.Color = System.Drawing.Color.Red;
+            series2.IsVisibleInLegend = false;
+
+            for (int i = 0; i < dataSeries.Count; i++)
+            {
+                series1.Points.AddXY(i + 1, dataSeries[i]);
+            }
+            chartForecast.Series.Add(series1);
+
+            series2.Points.AddXY(dataSeries.Count, dataSeries[dataSeries.Count - 1]);
+            for (int i = 0; i < forecastSeries.Count; i++)
+            {
+                series2.Points.AddXY(dataSeries.Count + i + 1, forecastSeries[i]);
+            }
+            chartForecast.Series.Add(series2);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            List<double> testSeries;
+            List<double> errorSeries;
+
+            ARIMAModel.GetTestSeries(out testSeries);
+            neuralModel.GetTestSeries(out errorSeries);
+            for (int i = 0; i < testSeries.Count; i++)
+            {
+                testSeries[i] += errorSeries[i];
+            }
+
+            double MAE = Algorithm.ComputeMAE(dataSeries, testSeries);
+            double SSE = Algorithm.ComputeSSE(dataSeries, testSeries);
+            double MSE = Algorithm.ComputeMSE(dataSeries, testSeries);
+
+            Test_Form form = new Test_Form();
+            form.textBox1.AppendText("Mean Absolute Error MAE =  " + MAE + "\n");
+            form.textBox1.AppendText("Sum Square Error SSE =  " + SSE + "\n");
+            form.textBox1.AppendText("Mean Square Error MSE =  " + MSE + "\n");
+            form.textBox1.ReadOnly = true;
+            for (int t = 0; t < dataSeries.Count; t++)
+            {
+                form.chart1.Series["Observations"].Points.AddXY(t + 1, dataSeries.ElementAt(t));
+                form.chart1.Series["Computations"].Points.AddXY(t + 1, testSeries[t]);
+            }
+            form.ShowDialog();
+
         }
     
     }

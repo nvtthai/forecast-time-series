@@ -63,7 +63,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(806, 463);
+            this.ClientSize = new System.Drawing.Size(804, 461);
             this.Controls.Add(this.chart1);
             this.Name = "Plot_Form";
             this.Text = "Plot_Form";
