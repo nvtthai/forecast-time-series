@@ -103,6 +103,7 @@
             this.txtNumInput = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.button1 = new System.Windows.Forms.Button();
             this.buttonForecast = new System.Windows.Forms.Button();
             this.textBoxNHead = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
@@ -598,9 +599,9 @@
             // 
             // btnForecastNeural
             // 
-            this.btnForecastNeural.Location = new System.Drawing.Point(348, 357);
+            this.btnForecastNeural.Location = new System.Drawing.Point(384, 341);
             this.btnForecastNeural.Name = "btnForecastNeural";
-            this.btnForecastNeural.Size = new System.Drawing.Size(75, 23);
+            this.btnForecastNeural.Size = new System.Drawing.Size(90, 39);
             this.btnForecastNeural.TabIndex = 8;
             this.btnForecastNeural.Text = "Forecast";
             this.btnForecastNeural.UseVisualStyleBackColor = true;
@@ -608,9 +609,9 @@
             // 
             // btnTestNeural
             // 
-            this.btnTestNeural.Location = new System.Drawing.Point(238, 357);
+            this.btnTestNeural.Location = new System.Drawing.Point(267, 341);
             this.btnTestNeural.Name = "btnTestNeural";
-            this.btnTestNeural.Size = new System.Drawing.Size(75, 23);
+            this.btnTestNeural.Size = new System.Drawing.Size(90, 39);
             this.btnTestNeural.TabIndex = 7;
             this.btnTestNeural.Text = "Test";
             this.btnTestNeural.UseVisualStyleBackColor = true;
@@ -618,9 +619,9 @@
             // 
             // btnPlotNeural
             // 
-            this.btnPlotNeural.Location = new System.Drawing.Point(136, 357);
+            this.btnPlotNeural.Location = new System.Drawing.Point(150, 341);
             this.btnPlotNeural.Name = "btnPlotNeural";
-            this.btnPlotNeural.Size = new System.Drawing.Size(75, 23);
+            this.btnPlotNeural.Size = new System.Drawing.Size(90, 39);
             this.btnPlotNeural.TabIndex = 6;
             this.btnPlotNeural.Text = "Plot";
             this.btnPlotNeural.UseVisualStyleBackColor = true;
@@ -665,9 +666,9 @@
             // 
             // btnTrainNeural
             // 
-            this.btnTrainNeural.Location = new System.Drawing.Point(33, 357);
+            this.btnTrainNeural.Location = new System.Drawing.Point(33, 341);
             this.btnTrainNeural.Name = "btnTrainNeural";
-            this.btnTrainNeural.Size = new System.Drawing.Size(79, 22);
+            this.btnTrainNeural.Size = new System.Drawing.Size(90, 38);
             this.btnTrainNeural.TabIndex = 5;
             this.btnTrainNeural.Text = "Train Neural";
             this.btnTrainNeural.UseVisualStyleBackColor = true;
@@ -862,6 +863,7 @@
             // tabPage3
             // 
             this.tabPage3.BackColor = System.Drawing.Color.SeaGreen;
+            this.tabPage3.Controls.Add(this.button1);
             this.tabPage3.Controls.Add(this.buttonForecast);
             this.tabPage3.Controls.Add(this.textBoxNHead);
             this.tabPage3.Controls.Add(this.label10);
@@ -872,6 +874,16 @@
             this.tabPage3.Size = new System.Drawing.Size(909, 456);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Forecast";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(415, 23);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 4;
+            this.button1.Text = "Test";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // buttonForecast
             // 
@@ -924,6 +936,7 @@
             this.Controls.Add(this.tabControl1);
             this.Name = "MainInterface";
             this.Text = "Forecast Time Series Model";
+            this.Load += new System.EventHandler(this.MainInterface_Load);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
@@ -1021,5 +1034,6 @@
         private System.Windows.Forms.Button btnPlotNeural;
         private System.Windows.Forms.Button btnTestNeural;
         private System.Windows.Forms.Button btnForecastNeural;
+        private System.Windows.Forms.Button button1;
     }
 }

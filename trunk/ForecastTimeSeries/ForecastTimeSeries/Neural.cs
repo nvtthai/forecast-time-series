@@ -63,13 +63,13 @@ namespace ForecastTimeSeries
             form.chart1.Series["Data"].Color = System.Drawing.Color.Blue;
             for (int i = firstStartIndex; i < firstSeries.Count; i++)
             {
-                series1.Points.AddXY(i + 1, firstSeries[i]);
+                series1.Points.AddXY(i + 1 - firstStartIndex, firstSeries[i]);
             }
             form.chart1.Series.Add(series1);
 
             for (int i = secondStartIndex; i < secondSeries.Count; i++)
             {
-                series2.Points.AddXY(i + 1, secondSeries[i]);
+                series2.Points.AddXY(i + 1 - secondStartIndex, secondSeries[i]);
             }
             form.chart1.Series.Add(series2);
 
@@ -117,9 +117,15 @@ namespace ForecastTimeSeries
             DrawSeriesData(processSeries, 0);
         }
 
-        public void Test()
+        public void GetTestSeries(out List<double> testSeries)
         {
-            List<double> testSeries = new List<double>();
+            testSeries = new List<double>();
+            for (int i = 0; i < m_iNumInputNodes; i++)
+            {
+                testSeries.Add(originSeries[i]);
+            }
+            double min = originSeries.Min();
+            double max = originSeries.Max();
             for (int i = m_iNumInputNodes; i < processSeries.Count; i++)
             {
                 double[] input = new double[m_iNumInputNodes];
@@ -127,11 +133,32 @@ namespace ForecastTimeSeries
                 {
                     input[m_iNumInputNodes - j] = processSeries[i - j];
                 }
-                double temp = CalculateOutput(input);
+                CalculateOutput(input);
+                double temp = m_arOutputNodes[0].GetOutput();
+                temp = (temp - 0.01) / (0.99 - 0.01) * (max - min) + min;
+                testSeries.Add(temp);
+            }
+        }
+
+        public void Test()
+        {
+            List<double> testSeries = new List<double>();
+            double min = originSeries.Min();
+            double max = originSeries.Max();
+            for (int i = m_iNumInputNodes; i < processSeries.Count; i++)
+            {
+                double[] input = new double[m_iNumInputNodes];
+                for (int j = m_iNumInputNodes; j > 0; j--)
+                {
+                    input[m_iNumInputNodes - j] = processSeries[i - j];
+                }
+                CalculateOutput(input);
+                double temp = m_arOutputNodes[0].GetOutput();
+                temp = (temp - 0.01) / (0.99 - 0.01) * (max - min) + min;
                 testSeries.Add(temp);
             }
 
-            DrawTwoSeriesData(processSeries, 0, testSeries, 0);
+            DrawTwoSeriesData(originSeries, m_iNumInputNodes, testSeries, 0);
         }
 
         public Neural()
@@ -755,17 +782,27 @@ namespace ForecastTimeSeries
         public void Forecast(int nHead, out List<double> forecastSeries)
         {
             forecastSeries = new List<double>();
-            double max = processSeries.Max();
-            double min = processSeries.Min();
+            double max = originSeries.Max();
+            double min = originSeries.Min();
             List<double> currentSeries = processSeries.FindAll(item => true);
             for (int i = 0; i < nHead; i++)
             {
+                //double[] input = new double[m_iNumInputNodes];
+                //for (int j = 0; j < m_iNumInputNodes; j++)
+                //{
+                //    input[j] = currentSeries[currentSeries.Count - m_iNumInputNodes + j];
+                //}
+                //CalculateOutput(input);
+
                 double[] input = new double[m_iNumInputNodes];
-                for (int j = 0; j < m_iNumInputNodes; j++)
+                for (int j = m_iNumInputNodes; j > 0; j--)
                 {
-                    input[j] = currentSeries[currentSeries.Count - m_iNumInputNodes + j];
+                    input[m_iNumInputNodes - j] = currentSeries[currentSeries.Count - j];
                 }
-                double temp = CalculateOutput(input);
+                CalculateOutput(input);
+
+                double temp = m_arOutputNodes[0].GetOutput();
+                temp = (temp - 0.01) / (0.99 - 0.01) * (max - min) + min;
                 currentSeries.Add(temp);
                 forecastSeries.Add(temp);
             }
