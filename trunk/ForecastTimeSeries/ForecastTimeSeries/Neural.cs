@@ -9,12 +9,9 @@ namespace ForecastTimeSeries
 {
     public class Neural
     {
-        //data is received from outer
-        private List<double> originSeries;
-        //data is used for training
-        private List<double> processSeries;
+        private List<double> _originSeries;
+        private List<double> _processSeries;
 
-        //use hommology, the last perception in each level is Bias 
         public int m_iNumInputNodes;
         public int m_iNumHiddenNodes;
         public int m_iNumOutputNodes;
@@ -29,142 +26,15 @@ namespace ForecastTimeSeries
         private double[,] Backup_m_arInputHiddenConn;
         private double[,] Backup_m_arHiddenOutputConn;
 
-        private void DrawSeriesData(List<double> series, int startIndex)
+        public void DrawSeriesData()
         {
-            Plot_Form form = new Plot_Form();
-            form.chart1.ChartAreas[0].AxisX.Interval = Math.Ceiling(1.0 * (series.Count - startIndex) / 20);
-            form.chart1.Titles["Title1"].Text = "Time series";
-            form.chart1.Series["Data"].Color = System.Drawing.Color.Blue;
-            for (int i = startIndex; i < series.Count; i++)
-            {
-                form.chart1.Series["Data"].Points.AddXY(i + 1, series.ElementAt(i));
-            }
-            form.ShowDialog();
-        }
-
-        private void DrawTwoSeriesData(List<double> firstSeries, int firstStartIndex, List<double> secondSeries, int secondStartIndex)
-        {
-            Plot_Form form = new Plot_Form();
-
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series1.Color = System.Drawing.Color.Blue;
-            series1.IsVisibleInLegend = false;
-
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series2.Color = System.Drawing.Color.Red;
-            series2.IsVisibleInLegend = false;
-
-            form.chart1.ChartAreas[0].AxisX.Interval = Math.Ceiling(1.0 * (firstSeries.Count - firstStartIndex) / 20);
-            form.chart1.Titles["Title1"].Text = "Time series";
-            form.chart1.Series["Data"].Color = System.Drawing.Color.Blue;
-            for (int i = firstStartIndex; i < firstSeries.Count; i++)
-            {
-                series1.Points.AddXY(i + 1 - firstStartIndex, firstSeries[i]);
-            }
-            form.chart1.Series.Add(series1);
-
-            for (int i = secondStartIndex; i < secondSeries.Count; i++)
-            {
-                series2.Points.AddXY(i + 1 - secondStartIndex, secondSeries[i]);
-            }
-            form.chart1.Series.Add(series2);
-
-            form.ShowDialog();
-        }
-
-        private void DrawForecastSeriesData(List<double> firstSeries, int firstStartIndex, List<double> secondSeries)
-        {
-            Plot_Form form = new Plot_Form();
-
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series1.Color = System.Drawing.Color.Blue;
-            series1.IsVisibleInLegend = false;
-
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series2.Color = System.Drawing.Color.Red;
-            series2.IsVisibleInLegend = false;
-
-            form.chart1.ChartAreas[0].AxisX.Interval = Math.Ceiling(1.0 * (firstSeries.Count - firstStartIndex) / 20);
-            form.chart1.Titles["Title1"].Text = "Time series";
-            form.chart1.Series["Data"].Color = System.Drawing.Color.Blue;
-            for (int i = firstStartIndex; i < firstSeries.Count; i++)
-            {
-                series1.Points.AddXY(i + 1, firstSeries[i]);
-            }
-            form.chart1.Series.Add(series1);
-
-            series2.Points.AddXY(firstSeries.Count, firstSeries[firstSeries.Count - 1]);
-            for (int i = 0; i < secondSeries.Count; i++)
-            {
-                series2.Points.AddXY(i + 1 + firstSeries.Count, secondSeries[i]);
-            }
-            form.chart1.Series.Add(series2);
-
-            form.ShowDialog();
-        }
-
-        public void Plot()
-        {
-            DrawSeriesData(originSeries, 0);
-            DrawSeriesData(processSeries, 0);
-        }
-
-        public void GetTestSeries(out List<double> testSeries)
-        {
-            testSeries = new List<double>();
-            for (int i = 0; i < m_iNumInputNodes; i++)
-            {
-                testSeries.Add(originSeries[i]);
-            }
-            double min = originSeries.Min();
-            double max = originSeries.Max();
-            for (int i = m_iNumInputNodes; i < processSeries.Count; i++)
-            {
-                double[] input = new double[m_iNumInputNodes];
-                for (int j = m_iNumInputNodes; j > 0; j--)
-                {
-                    input[m_iNumInputNodes - j] = processSeries[i - j];
-                }
-                CalculateOutput(input);
-                double temp = m_arOutputNodes[0].GetOutput();
-                temp = (temp - 0.01) / (0.99 - 0.01) * (max - min) + min;
-                testSeries.Add(temp);
-            }
-        }
-
-        public void Test()
-        {
-            List<double> testSeries = new List<double>();
-            double min = originSeries.Min();
-            double max = originSeries.Max();
-            for (int i = m_iNumInputNodes; i < processSeries.Count; i++)
-            {
-                double[] input = new double[m_iNumInputNodes];
-                for (int j = m_iNumInputNodes; j > 0; j--)
-                {
-                    input[m_iNumInputNodes - j] = processSeries[i - j];
-                }
-                CalculateOutput(input);
-                double temp = m_arOutputNodes[0].GetOutput();
-                temp = (temp - 0.01) / (0.99 - 0.01) * (max - min) + min;
-                testSeries.Add(temp);
-            }
-
-            DrawTwoSeriesData(originSeries, m_iNumInputNodes, testSeries, 0);
+            Algorithm.DrawSeriesData(_originSeries, 0);
         }
 
         public Neural()
         {
-            originSeries = new List<double>();
-            processSeries = new List<double>();
+            _originSeries = new List<double>();
+            _processSeries = new List<double>();
 
             m_iNumInputNodes = 0;
             m_iNumHiddenNodes = 0;
@@ -173,8 +43,8 @@ namespace ForecastTimeSeries
 
         public Neural(int inputNodes, int hiddenNodes, int outputNodes)
         {
-            originSeries = new List<double>();
-            processSeries = new List<double>();
+            _originSeries = new List<double>();
+            _processSeries = new List<double>();
 
             m_iNumInputNodes = inputNodes;
             m_iNumHiddenNodes = hiddenNodes;
@@ -268,7 +138,7 @@ namespace ForecastTimeSeries
             }
         }
 
-        private double CalculateOutput(double[] input)
+        private void CalculateOutput(double[] input)
         {
             int i, j, k;
             double temp = 0;
@@ -292,26 +162,25 @@ namespace ForecastTimeSeries
                 }
                 m_arOutputNodes[k].SetInput(temp);
             }
-            return temp;
         }
 
         public void SetData(List<double> series)
         {
-            originSeries.Clear();
-            processSeries.Clear();
+            _originSeries.Clear();
+            _processSeries.Clear();
             for (int i = 0; i < series.Count; i++)
             {
-                originSeries.Add(series[i]);
+                _originSeries.Add(series[i]);
             }
 
-            double max = originSeries.Max();
-            double min = originSeries.Min();
-            int count = originSeries.Count;
+            double max = _originSeries.Max();
+            double min = _originSeries.Min();
+            int count = _originSeries.Count;
             for (int i = 0; i < count; i++)
             {
-                double a = originSeries.ElementAt(i);
+                double a = _originSeries.ElementAt(i);
                 double b = (a - min) / (max - min) * (0.99 - 0.01) + 0.01;
-                processSeries.Add(b);
+                _processSeries.Add(b);
             }
         }
 
@@ -502,18 +371,18 @@ namespace ForecastTimeSeries
             while (epoch < theEpoches)
             {
                 MAE = 0.0;
-                for (n = m_iNumInputNodes; n < processSeries.Count; n++)
+                for (n = m_iNumInputNodes; n < _processSeries.Count; n++)
                 {
                     // forward
                     double[] lstTemp = new double[m_iNumInputNodes];
                     for (i = m_iNumInputNodes; i > 0; i--)
                     {
-                        lstTemp[m_iNumInputNodes - i] = processSeries[n - i];
+                        lstTemp[m_iNumInputNodes - i] = _processSeries[n - i];
                     }
                     CalculateOutput(lstTemp);
                     for (k = 0; k < m_iNumOutputNodes; k++)
                     {
-                        MAE += Math.Abs(processSeries.ElementAt(n + k) - m_arOutputNodes[k].GetOutput());
+                        MAE += Math.Abs(_processSeries.ElementAt(n + k) - m_arOutputNodes[k].GetOutput());
                     }
 
                     // backward
@@ -522,7 +391,7 @@ namespace ForecastTimeSeries
                     {
                         for (j = 0; j <= m_iNumHiddenNodes; j++)
                         {
-                            double parDerv = -m_arOutputNodes[k].GetOutput() * (1 - m_arOutputNodes[k].GetOutput()) * m_arHiddenNodes[j].GetOutput() * (processSeries.ElementAt(n) - m_arOutputNodes[k].GetOutput());
+                            double parDerv = -m_arOutputNodes[k].GetOutput() * (1 - m_arOutputNodes[k].GetOutput()) * m_arHiddenNodes[j].GetOutput() * (_processSeries.ElementAt(n) - m_arOutputNodes[k].GetOutput());
                             deltaHiddenOutput[j, k] = -learnRate * parDerv + momentum * lagDeltaHiddenOutput[j, k];
                             lagDeltaHiddenOutput[j, k] = deltaHiddenOutput[j, k];
                         }
@@ -533,7 +402,7 @@ namespace ForecastTimeSeries
                         double temp = 0.0;
                         for (k = 0; k < m_iNumOutputNodes; k++)
                         {
-                            temp += -(processSeries.ElementAt(n) - m_arOutputNodes[k].GetOutput()) * m_arOutputNodes[k].GetOutput() * (1 - m_arOutputNodes[k].GetOutput()) * m_arHiddenOutputConn[j, k];
+                            temp += -(_processSeries.ElementAt(n) - m_arOutputNodes[k].GetOutput()) * m_arOutputNodes[k].GetOutput() * (1 - m_arOutputNodes[k].GetOutput()) * m_arHiddenOutputConn[j, k];
                         }
                         for (i = 0; i <= m_iNumInputNodes; i++)
                         {
@@ -560,7 +429,7 @@ namespace ForecastTimeSeries
                     }
 
                 } // end outer for
-                MAE = MAE / (processSeries.Count - m_iNumInputNodes); // caculate mean square error
+                MAE = MAE / (_processSeries.Count - m_iNumInputNodes); // caculate mean square error
                 if (Math.Abs(MAE - LastError) < residual) // if the Error is not improved significantly, halt training process and rollback
                 {
                     RollBack();
@@ -647,20 +516,20 @@ namespace ForecastTimeSeries
             {
                 MAE = 0.0;
                 //training for each epoch
-                for (n = m_iNumInputNodes; n < processSeries.Count; n++)
+                for (n = m_iNumInputNodes; n < _processSeries.Count; n++)
                 {
                     //forward
                     double[] lstTemp = new double[m_iNumInputNodes];
                     for (i = m_iNumInputNodes; i > 0; i--)
                     {
-                        lstTemp[m_iNumInputNodes - i] = processSeries[n - i];
+                        lstTemp[m_iNumInputNodes - i] = _processSeries[n - i];
                     }
                     CalculateOutput(lstTemp);
 
                     /*calculate abs error*/
                     for (k = 0; k < m_iNumOutputNodes; k++)
                     {
-                        MAE += Math.Abs(processSeries.ElementAt(n) - m_arOutputNodes[k].GetOutput());
+                        MAE += Math.Abs(_processSeries.ElementAt(n) - m_arOutputNodes[k].GetOutput());
                     }
                     // backward
                     /*calculate weight-step for weights connecting from hidden nodes to output nodes*/
@@ -668,7 +537,7 @@ namespace ForecastTimeSeries
                     {
                         for (j = 0; j <= m_iNumHiddenNodes; j++)
                         {
-                            newGradientHiddenOutput[j, k] += -m_arOutputNodes[k].GetOutput() * (1 - m_arOutputNodes[k].GetOutput()) * m_arHiddenNodes[j].GetOutput() * (processSeries[n] - m_arOutputNodes[k].GetOutput());
+                            newGradientHiddenOutput[j, k] += -m_arOutputNodes[k].GetOutput() * (1 - m_arOutputNodes[k].GetOutput()) * m_arHiddenNodes[j].GetOutput() * (_processSeries[n] - m_arOutputNodes[k].GetOutput());
                         }
                     }
                     /*calculate weight-step for weights connecting from input nodes to hidden nodes*/
@@ -677,7 +546,7 @@ namespace ForecastTimeSeries
                         double temp = 0.0;
                         for (k = 0; k < m_iNumOutputNodes; k++)
                         {
-                            temp += -(processSeries.ElementAt(n) - m_arOutputNodes[k].GetOutput()) * m_arOutputNodes[k].GetOutput() * (1 - m_arOutputNodes[k].GetOutput()) * m_arHiddenOutputConn[j, k];
+                            temp += -(_processSeries.ElementAt(n) - m_arOutputNodes[k].GetOutput()) * m_arOutputNodes[k].GetOutput() * (1 - m_arOutputNodes[k].GetOutput()) * m_arHiddenOutputConn[j, k];
                         }
                         for (i = 0; i <= m_iNumInputNodes; i++)
                         {
@@ -746,7 +615,7 @@ namespace ForecastTimeSeries
                         newGradientInputHidden[i, j] = 0.0;
                     }
                 }
-                MAE = MAE / (processSeries.Count); // caculate mean square error
+                MAE = MAE / (_processSeries.Count); // caculate mean square error
                 if (Math.Abs(MAE - LastError) < residual) // if the Error is not improved significantly, halt training process and rollback
                 {
                     RollBack();
@@ -782,38 +651,47 @@ namespace ForecastTimeSeries
         public void Forecast(int nHead, out List<double> forecastSeries)
         {
             forecastSeries = new List<double>();
-            double max = originSeries.Max();
-            double min = originSeries.Min();
-            List<double> currentSeries = processSeries.FindAll(item => true);
+            double max = _originSeries.Max();
+            double min = _originSeries.Min();
+            List<double> currentSeries = _processSeries.FindAll(item => true);
             for (int i = 0; i < nHead; i++)
             {
-                //double[] input = new double[m_iNumInputNodes];
-                //for (int j = 0; j < m_iNumInputNodes; j++)
-                //{
-                //    input[j] = currentSeries[currentSeries.Count - m_iNumInputNodes + j];
-                //}
-                //CalculateOutput(input);
-
                 double[] input = new double[m_iNumInputNodes];
                 for (int j = m_iNumInputNodes; j > 0; j--)
                 {
                     input[m_iNumInputNodes - j] = currentSeries[currentSeries.Count - j];
                 }
                 CalculateOutput(input);
-
                 double temp = m_arOutputNodes[0].GetOutput();
-                temp = (temp - 0.01) / (0.99 - 0.01) * (max - min) + min;
                 currentSeries.Add(temp);
+                temp = (temp - 0.01) / (0.99 - 0.01) * (max - min) + min;
                 forecastSeries.Add(temp);
             }
         }
 
-        public void Forecast(int nHead)
+        public void GetTestSeries(out List<double> testSeries)
         {
-            List<double> forecastSeries;
-            Forecast(nHead, out forecastSeries);
-            DrawForecastSeriesData(originSeries, 0, forecastSeries);
+            testSeries = new List<double>();
+            for (int i = 0; i < m_iNumInputNodes; i++)
+            {
+                testSeries.Add(_originSeries[i]);
+            }
+            double min = _originSeries.Min();
+            double max = _originSeries.Max();
+            for (int i = m_iNumInputNodes; i < _processSeries.Count; i++)
+            {
+                double[] input = new double[m_iNumInputNodes];
+                for (int j = m_iNumInputNodes; j > 0; j--)
+                {
+                    input[m_iNumInputNodes - j] = _processSeries[i - j];
+                }
+                CalculateOutput(input);
+                double temp = m_arOutputNodes[0].GetOutput();
+                temp = (temp - 0.01) / (0.99 - 0.01) * (max - min) + min;
+                testSeries.Add(temp);
+            }
         }
+        
     }
 
 }
