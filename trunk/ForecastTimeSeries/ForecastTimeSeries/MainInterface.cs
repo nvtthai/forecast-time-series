@@ -13,16 +13,7 @@ namespace ForecastTimeSeries
 {
     public partial class MainInterface : Form
     {
-        private void WriteSeries(List<double> series, string filename)
-        {
-            StreamWriter file = new StreamWriter(filename, false);
-            foreach (double data in series)
-            {
-                file.WriteLine(data);
-            }
-            file.Flush();
-            file.Close();
-        }
+
 
         private string m_DataFile;
         private ARIMA ARIMAModel;
@@ -42,6 +33,70 @@ namespace ForecastTimeSeries
             _errorSeries = new List<double>();
             ARIMAModel = new ARIMA();
             NeuralModel = new Neural();
+        }
+
+        private void SettingChooseData()
+        {
+            radioBtnAutomaticARIMA.Enabled = false;
+            radioBtnManualARIMA.Enabled = false;
+            btnTrainARIMA.Enabled = false;
+            btnTestArima.Enabled = false;
+            btnForecastARIMA.Enabled = false;
+            btnLoadARIMA.Enabled = false;
+            btnSaveARIMA.Enabled = false;
+            btnPlotDataARIMA.Enabled = false;
+            btnCorrelogram.Enabled = false;
+            btnPartialCorrelation.Enabled = false;
+
+            btnNetworkNew.Enabled = false;
+            btnNetworkLoad.Enabled = false;
+            btnNetworkSave.Enabled = false;
+            btnNetworkClear.Enabled = false;
+            btnTrainNeural.Enabled = false;
+            btnPlotNeural.Enabled = false;
+            btnTestNeural.Enabled = false;
+            btnForecastNeural.Enabled = false;
+
+            buttonForecast.Enabled = false;
+            buttonTest.Enabled = false;
+        }
+
+
+        private void SettingGetData()
+        {
+            radioBtnAutomaticARIMA.Enabled = true;
+            radioBtnManualARIMA.Enabled = true;
+
+            btnTrainARIMA.Enabled = true;
+            btnTestArima.Enabled = false;
+            btnForecastARIMA.Enabled = false;
+            btnLoadARIMA.Enabled = true;
+            btnSaveARIMA.Enabled = false;
+            btnPlotDataARIMA.Enabled = true;
+            btnCorrelogram.Enabled = true;
+            btnPartialCorrelation.Enabled = true;
+        }
+
+        private void SettingTrainARIMA()
+        {
+            btnTestArima.Enabled = true;
+            btnForecastARIMA.Enabled = true;
+            btnLoadARIMA.Enabled = true;
+            btnSaveARIMA.Enabled = true;
+
+            btnNetworkNew.Enabled = true;
+            btnNetworkLoad.Enabled = true;
+            btnPlotNeural.Enabled = true;
+        }
+
+        private void MainInterface_Load(object sender, EventArgs e)
+        {
+            SettingChooseData();
+
+            txtConfig1.Text = 0.1.ToString();
+            txtConfigEpoches.Text = 1000.ToString();
+            txtConfig2.Text = 10.ToString();
+            txtConfigErrors.Text = 0.000001.ToString();
         }
 
         private void btnChooseData_Click(object sender, EventArgs e)
@@ -94,6 +149,8 @@ namespace ForecastTimeSeries
                     }
                     else
                         this.txtTrainDataColumn.Enabled = true;
+
+                    SettingChooseData();
                 }
                 catch (System.OutOfMemoryException outOfMemory)
                 {
@@ -139,15 +196,6 @@ namespace ForecastTimeSeries
                     if (columnSelected <= words.Length)
                     {
                         _dataSeries.Add(Double.Parse(words[columnSelected - 1]));
-
-                        btnTrainARIMA.Enabled = true;
-                        btnTestArima.Enabled = false;
-                        btnForecastARIMA.Enabled = false;
-                        btnLoadARIMA.Enabled = true;
-                        btnSaveARIMA.Enabled = false;
-                        btnPlotDataARIMA.Enabled = true;
-                        btnCorrelogram.Enabled = true;
-                        btnPartialCorrelation.Enabled = true;
                     }
                     else
                     {
@@ -184,10 +232,9 @@ namespace ForecastTimeSeries
 
             if (_dataSeries != null)
             {
-                //m_DemoDataSeries.loadData(sample);
+                SettingGetData();
                 ARIMAModel.SetData(_dataSeries);
                 showData();
-                //this.m_DemoDataSeries.preProcessList.Clear(); //clear for new data
             }
             else
             {
@@ -292,14 +339,7 @@ namespace ForecastTimeSeries
                 NeuralModel.SetData(_errorSeries);
                 showARIMAModel();
 
-                btnTestArima.Enabled = true;
-                btnForecastARIMA.Enabled = true;
-                btnLoadARIMA.Enabled = true;
-                btnSaveARIMA.Enabled = true;
-
-                btnNetworkNew.Enabled = true;
-                btnNetworkLoad.Enabled = true;
-                btnPlotNeural.Enabled = true;
+                SettingTrainARIMA();
             }
             catch
             {
@@ -317,10 +357,7 @@ namespace ForecastTimeSeries
             txtMASeason.Text = "0";
             ARIMAModel.InitTraining();
 
-            btnTestArima.Enabled = false;
-            btnForecastARIMA.Enabled = false;
-            btnLoadARIMA.Enabled = true;
-            btnSaveARIMA.Enabled = false;
+            SettingGetData();
         }
 
         private void btnAutomaticTrainingARIMA_Click(object sender, EventArgs e)
@@ -337,14 +374,7 @@ namespace ForecastTimeSeries
             NeuralModel.SetData(_errorSeries);
             showARIMAModel();
 
-            btnTestArima.Enabled = true;
-            btnForecastARIMA.Enabled = true;
-            btnLoadARIMA.Enabled = true;
-            btnSaveARIMA.Enabled = true;
-
-            btnNetworkNew.Enabled = true;
-            btnNetworkLoad.Enabled = true;
-            btnPlotNeural.Enabled = true;
+            SettingTrainARIMA();
         }
 
         private void btnForecastARIMA_Click(object sender, EventArgs e)
@@ -452,7 +482,6 @@ namespace ForecastTimeSeries
                 return;
             }
         }
-
 
         private void btnNetworkNew_Click(object sender, EventArgs e)
         {
@@ -643,35 +672,6 @@ namespace ForecastTimeSeries
             }
         }
 
-        private void MainInterface_Load(object sender, EventArgs e)
-        {
-            btnTrainARIMA.Enabled = false;
-            btnTestArima.Enabled = false;
-            btnForecastARIMA.Enabled = false;
-            btnLoadARIMA.Enabled = false;
-            btnSaveARIMA.Enabled = false;
-            btnPlotDataARIMA.Enabled = false;
-            btnCorrelogram.Enabled = false;
-            btnPartialCorrelation.Enabled = false;
-
-            btnNetworkNew.Enabled = false;
-            btnNetworkLoad.Enabled = false;
-            btnNetworkSave.Enabled = false;
-            btnNetworkClear.Enabled = false;
-            btnTrainNeural.Enabled = false;
-            btnPlotNeural.Enabled = false;
-            btnTestNeural.Enabled = false;
-            btnForecastNeural.Enabled = false;
-
-            buttonForecast.Enabled = false;
-            buttonTest.Enabled = false;
-
-            txtConfig1.Text = 0.1.ToString();
-            txtConfigEpoches.Text = 1000.ToString();
-            txtConfig2.Text = 10.ToString();
-            txtConfigErrors.Text = 0.000001.ToString();
-        }
-
         private void buttonForecast_Click(object sender, EventArgs e)
         {
             int nHead = Int16.Parse(textBoxNHead.Text);
@@ -710,13 +710,29 @@ namespace ForecastTimeSeries
             chartForecast.Series.Add(series2);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void buttonTest_Click(object sender, EventArgs e)
         {
             List<double> testSeries;
             List<double> errorSeries;
 
             ARIMAModel.GetTestSeries(out testSeries);
             NeuralModel.GetTestSeries(out errorSeries);
+
+            if (testSeries.Count > errorSeries.Count)
+            {
+                List<double> temp = new List<double>();
+                int n = testSeries.Count - errorSeries.Count;
+                for (int i = 0; i < n; i++)
+                {
+                    temp.Add(0);
+                }
+                foreach (int item in errorSeries)
+                {
+                    temp.Add(item);
+                }
+                errorSeries = temp;
+            }
+
             for (int i = 0; i < testSeries.Count; i++)
             {
                 testSeries[i] += errorSeries[i];
@@ -737,23 +753,7 @@ namespace ForecastTimeSeries
                 form.chart1.Series["Computations"].Points.AddXY(t + 1, testSeries[t]);
             }
             form.ShowDialog();
-
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            List<double> listCorrelation;
-            List<double> listCorrelationLimit;
-            List<double> listPartialCorrelation;
-            Algorithm.ComputeAutocorrelation(_dataSeries, 0, out listCorrelation);
-            Algorithm.ComputeConfidenceLimit(listCorrelation, _dataSeries.Count, out listCorrelationLimit);
-            Algorithm.ComputePartialAutocorrelation(listCorrelation, out listPartialCorrelation);
-            double confidenceLimit = 1.96 / Math.Sqrt(_dataSeries.Count);
-
-            Algorithm.DrawAutocorrelation(listCorrelation, listCorrelationLimit);
-            Algorithm.DrawPartialAutocorrelation(listPartialCorrelation, confidenceLimit);
-
-        }
-    
     }
 }

@@ -28,15 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.button2 = new System.Windows.Forms.Button();
             this.btnTestArima = new System.Windows.Forms.Button();
             this.btnForecastARIMA = new System.Windows.Forms.Button();
-            this.btnManualARIMA = new System.Windows.Forms.RadioButton();
+            this.radioBtnManualARIMA = new System.Windows.Forms.RadioButton();
             this.btnSaveARIMA = new System.Windows.Forms.Button();
             this.btnLoadARIMA = new System.Windows.Forms.Button();
             this.labelTrainDataNumRows = new System.Windows.Forms.Label();
@@ -60,7 +59,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.txtRegularDifferencing = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.btnAutomaticARIMA = new System.Windows.Forms.RadioButton();
+            this.radioBtnAutomaticARIMA = new System.Windows.Forms.RadioButton();
             this.label2 = new System.Windows.Forms.Label();
             this.richARIMAModel = new System.Windows.Forms.RichTextBox();
             this.btnPartialCorrelation = new System.Windows.Forms.Button();
@@ -104,11 +103,11 @@
             this.txtNumInput = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.buttonTest = new System.Windows.Forms.Button();
             this.buttonForecast = new System.Windows.Forms.Button();
             this.textBoxNHead = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.chartForecast = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.buttonTest = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBoxARIMAParameter.SuspendLayout();
@@ -134,17 +133,16 @@
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.Color.SeaGreen;
-            this.tabPage1.Controls.Add(this.button2);
             this.tabPage1.Controls.Add(this.btnTestArima);
             this.tabPage1.Controls.Add(this.btnForecastARIMA);
-            this.tabPage1.Controls.Add(this.btnManualARIMA);
+            this.tabPage1.Controls.Add(this.radioBtnManualARIMA);
             this.tabPage1.Controls.Add(this.btnSaveARIMA);
             this.tabPage1.Controls.Add(this.btnLoadARIMA);
             this.tabPage1.Controls.Add(this.labelTrainDataNumRows);
             this.tabPage1.Controls.Add(this.labelTrainDataNumColumns);
             this.tabPage1.Controls.Add(this.btnTrainARIMA);
             this.tabPage1.Controls.Add(this.groupBoxARIMAParameter);
-            this.tabPage1.Controls.Add(this.btnAutomaticARIMA);
+            this.tabPage1.Controls.Add(this.radioBtnAutomaticARIMA);
             this.tabPage1.Controls.Add(this.label2);
             this.tabPage1.Controls.Add(this.richARIMAModel);
             this.tabPage1.Controls.Add(this.btnPartialCorrelation);
@@ -168,16 +166,6 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "ARIMA";
             // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(250, 124);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 51;
-            this.button2.Text = "button2";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
             // btnTestArima
             // 
             this.btnTestArima.Location = new System.Drawing.Point(515, 241);
@@ -198,18 +186,18 @@
             this.btnForecastARIMA.UseVisualStyleBackColor = true;
             this.btnForecastARIMA.Click += new System.EventHandler(this.btnForecastARIMA_Click);
             // 
-            // btnManualARIMA
+            // radioBtnManualARIMA
             // 
-            this.btnManualARIMA.AutoSize = true;
-            this.btnManualARIMA.ForeColor = System.Drawing.Color.Black;
-            this.btnManualARIMA.Location = new System.Drawing.Point(499, 9);
-            this.btnManualARIMA.Name = "btnManualARIMA";
-            this.btnManualARIMA.Size = new System.Drawing.Size(89, 17);
-            this.btnManualARIMA.TabIndex = 48;
-            this.btnManualARIMA.TabStop = true;
-            this.btnManualARIMA.Text = "Manual mode";
-            this.btnManualARIMA.UseVisualStyleBackColor = true;
-            this.btnManualARIMA.CheckedChanged += new System.EventHandler(this.btnManualARIMA_CheckedChanged);
+            this.radioBtnManualARIMA.AutoSize = true;
+            this.radioBtnManualARIMA.ForeColor = System.Drawing.Color.Black;
+            this.radioBtnManualARIMA.Location = new System.Drawing.Point(499, 9);
+            this.radioBtnManualARIMA.Name = "radioBtnManualARIMA";
+            this.radioBtnManualARIMA.Size = new System.Drawing.Size(89, 17);
+            this.radioBtnManualARIMA.TabIndex = 48;
+            this.radioBtnManualARIMA.TabStop = true;
+            this.radioBtnManualARIMA.Text = "Manual mode";
+            this.radioBtnManualARIMA.UseVisualStyleBackColor = true;
+            this.radioBtnManualARIMA.CheckedChanged += new System.EventHandler(this.btnManualARIMA_CheckedChanged);
             // 
             // btnSaveARIMA
             // 
@@ -428,18 +416,18 @@
             this.label3.TabIndex = 0;
             this.label3.Text = "Regular differencing";
             // 
-            // btnAutomaticARIMA
+            // radioBtnAutomaticARIMA
             // 
-            this.btnAutomaticARIMA.AutoSize = true;
-            this.btnAutomaticARIMA.Checked = true;
-            this.btnAutomaticARIMA.Location = new System.Drawing.Point(367, 9);
-            this.btnAutomaticARIMA.Name = "btnAutomaticARIMA";
-            this.btnAutomaticARIMA.Size = new System.Drawing.Size(101, 17);
-            this.btnAutomaticARIMA.TabIndex = 41;
-            this.btnAutomaticARIMA.TabStop = true;
-            this.btnAutomaticARIMA.Text = "Automatic mode";
-            this.btnAutomaticARIMA.UseVisualStyleBackColor = true;
-            this.btnAutomaticARIMA.CheckedChanged += new System.EventHandler(this.btnAutomaticARIMA_CheckedChanged);
+            this.radioBtnAutomaticARIMA.AutoSize = true;
+            this.radioBtnAutomaticARIMA.Checked = true;
+            this.radioBtnAutomaticARIMA.Location = new System.Drawing.Point(367, 9);
+            this.radioBtnAutomaticARIMA.Name = "radioBtnAutomaticARIMA";
+            this.radioBtnAutomaticARIMA.Size = new System.Drawing.Size(101, 17);
+            this.radioBtnAutomaticARIMA.TabIndex = 41;
+            this.radioBtnAutomaticARIMA.TabStop = true;
+            this.radioBtnAutomaticARIMA.Text = "Automatic mode";
+            this.radioBtnAutomaticARIMA.UseVisualStyleBackColor = true;
+            this.radioBtnAutomaticARIMA.CheckedChanged += new System.EventHandler(this.btnAutomaticARIMA_CheckedChanged);
             // 
             // label2
             // 
@@ -887,16 +875,6 @@
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Forecast";
             // 
-            // buttonTest
-            // 
-            this.buttonTest.Location = new System.Drawing.Point(415, 23);
-            this.buttonTest.Name = "buttonTest";
-            this.buttonTest.Size = new System.Drawing.Size(75, 23);
-            this.buttonTest.TabIndex = 4;
-            this.buttonTest.Text = "Test";
-            this.buttonTest.UseVisualStyleBackColor = true;
-            this.buttonTest.Click += new System.EventHandler(this.button1_Click);
-            // 
             // buttonForecast
             // 
             this.buttonForecast.Location = new System.Drawing.Point(287, 23);
@@ -925,20 +903,30 @@
             // 
             // chartForecast
             // 
-            chartArea2.Name = "ChartArea1";
-            this.chartForecast.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.chartForecast.Legends.Add(legend2);
+            chartArea3.Name = "ChartArea1";
+            this.chartForecast.ChartAreas.Add(chartArea3);
+            legend3.Name = "Legend1";
+            this.chartForecast.Legends.Add(legend3);
             this.chartForecast.Location = new System.Drawing.Point(6, 82);
             this.chartForecast.Name = "chartForecast";
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series2.Legend = "Legend1";
-            series2.Name = "Series";
-            this.chartForecast.Series.Add(series2);
+            series3.ChartArea = "ChartArea1";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series3.Legend = "Legend1";
+            series3.Name = "Series";
+            this.chartForecast.Series.Add(series3);
             this.chartForecast.Size = new System.Drawing.Size(894, 368);
             this.chartForecast.TabIndex = 0;
             this.chartForecast.Text = "chart1";
+            // 
+            // buttonTest
+            // 
+            this.buttonTest.Location = new System.Drawing.Point(425, 23);
+            this.buttonTest.Name = "buttonTest";
+            this.buttonTest.Size = new System.Drawing.Size(75, 23);
+            this.buttonTest.TabIndex = 4;
+            this.buttonTest.Text = "Test";
+            this.buttonTest.UseVisualStyleBackColor = true;
+            this.buttonTest.Click += new System.EventHandler(this.buttonTest_Click);
             // 
             // MainInterface
             // 
@@ -989,7 +977,7 @@
         private System.Windows.Forms.Button btnPlotDataARIMA;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.RichTextBox richARIMAModel;
-        private System.Windows.Forms.RadioButton btnAutomaticARIMA;
+        private System.Windows.Forms.RadioButton radioBtnAutomaticARIMA;
         private System.Windows.Forms.GroupBox groupBoxARIMAParameter;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtRegularDifferencing;
@@ -1013,7 +1001,7 @@
         private System.Windows.Forms.Button btnManualTrainingARIMA;
         private System.Windows.Forms.Button btnSaveARIMA;
         private System.Windows.Forms.Button btnLoadARIMA;
-        private System.Windows.Forms.RadioButton btnManualARIMA;
+        private System.Windows.Forms.RadioButton radioBtnManualARIMA;
         private System.Windows.Forms.GroupBox groupBoxAlgorithmConfig;
         private System.Windows.Forms.TextBox txtConfigErrors;
         private System.Windows.Forms.TextBox txtConfig2;
@@ -1047,6 +1035,5 @@
         private System.Windows.Forms.Button btnTestNeural;
         private System.Windows.Forms.Button btnForecastNeural;
         private System.Windows.Forms.Button buttonTest;
-        private System.Windows.Forms.Button button2;
     }
 }
