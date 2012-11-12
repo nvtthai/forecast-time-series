@@ -72,6 +72,12 @@
     </Compile>
     <Compile Include="MatrixLib.cs" />
     <Compile Include="Neural.cs" />
+    <Compile Include="AHead_Form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AHead_Form.Designer.cs">
+      <DependentUpon>AHead_Form.cs</DependentUpon>
+    </Compile>
     <Compile Include="Perceptron.cs" />
     <Compile Include="Plot_Form.cs">
       <SubType>Form</SubType>
@@ -101,6 +107,9 @@
   <ItemGroup>
     <EmbeddedResource Include="MainInterface.resx">
       <DependentUpon>MainInterface.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AHead_Form.resx">
+      <DependentUpon>AHead_Form.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Plot_Form.resx">
       <DependentUpon>Plot_Form.cs</DependentUpon>

@@ -590,7 +590,11 @@ namespace ForecastTimeSeries
         public void GetErrorSeries(out List<double> errors)
         {
             errors = new List<double>();
-            errors = _errorSeries.FindAll(item => true);
+            for(int i= _startIndex; i<_errorSeries.Count; i++)
+            {
+                errors.Add(_errorSeries[i]);
+            }
+            //errors = _errorSeries.FindAll(item => true);
         }
 
         public void GetTestSeries(out List<double> testSeries)
@@ -727,13 +731,10 @@ namespace ForecastTimeSeries
         public void DrawPartialAutocorrelation()
         {
             List<double> listAutocorrelation;
-            List<double> listConfidenceLimit;
             List<double> listPartialAutocorrelation;
             Algorithm.ComputeAutocorrelation(_processSeries, _startIndex, out listAutocorrelation);
-            Algorithm.ComputeConfidenceLimit(listAutocorrelation, _processSeries.Count - _startIndex, out listConfidenceLimit);
             Algorithm.ComputePartialAutocorrelation(listAutocorrelation, out listPartialAutocorrelation);
             double confidenceLimit = 1.96 / Math.Sqrt(_processSeries.Count);
-            Algorithm.DrawAutocorrelation(listAutocorrelation, listConfidenceLimit);
             Algorithm.DrawPartialAutocorrelation(listPartialAutocorrelation, confidenceLimit);
         }
 

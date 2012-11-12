@@ -117,7 +117,7 @@ namespace ForecastTimeSeries
 
         private void btnGetData_Click(object sender, EventArgs e)
         {
-            _dataSeries.Clear();
+            _dataSeries = new List<double>();
             System.IO.StreamReader file = null;
             string line = null;
             bool isFormatFileRight = true;
@@ -139,6 +139,15 @@ namespace ForecastTimeSeries
                     if (columnSelected <= words.Length)
                     {
                         _dataSeries.Add(Double.Parse(words[columnSelected - 1]));
+
+                        btnTrainARIMA.Enabled = true;
+                        btnTestArima.Enabled = false;
+                        btnForecastARIMA.Enabled = false;
+                        btnLoadARIMA.Enabled = true;
+                        btnSaveARIMA.Enabled = false;
+                        btnPlotDataARIMA.Enabled = true;
+                        btnCorrelogram.Enabled = true;
+                        btnPartialCorrelation.Enabled = true;
                     }
                     else
                     {
@@ -279,9 +288,18 @@ namespace ForecastTimeSeries
 
                 seasonPartern = Int32.Parse(this.txtSeasonPartern.Text);
                 ARIMAModel.ManualTraining(pRegular, regularDifferencing, qRegular, pSeason, seasonDifferencing, qSeason, seasonPartern);
-                showARIMAModel();
                 ARIMAModel.GetErrorSeries(out _errorSeries);
-                WriteSeries(_errorSeries, "ErrorSeries.txt");
+                NeuralModel.SetData(_errorSeries);
+                showARIMAModel();
+
+                btnTestArima.Enabled = true;
+                btnForecastARIMA.Enabled = true;
+                btnLoadARIMA.Enabled = true;
+                btnSaveARIMA.Enabled = true;
+
+                btnNetworkNew.Enabled = true;
+                btnNetworkLoad.Enabled = true;
+                btnPlotNeural.Enabled = true;
             }
             catch
             {
@@ -298,6 +316,11 @@ namespace ForecastTimeSeries
             txtARSeason.Text = "0";
             txtMASeason.Text = "0";
             ARIMAModel.InitTraining();
+
+            btnTestArima.Enabled = false;
+            btnForecastARIMA.Enabled = false;
+            btnLoadARIMA.Enabled = true;
+            btnSaveARIMA.Enabled = false;
         }
 
         private void btnAutomaticTrainingARIMA_Click(object sender, EventArgs e)
@@ -310,16 +333,41 @@ namespace ForecastTimeSeries
 
             ARIMAModel.SetData(_dataSeries);
             ARIMAModel.AutomaticTraining();
-            showARIMAModel();
             ARIMAModel.GetErrorSeries(out _errorSeries);
-            WriteSeries(_errorSeries, "ErrorSeries.txt");
+            NeuralModel.SetData(_errorSeries);
+            showARIMAModel();
+
+            btnTestArima.Enabled = true;
+            btnForecastARIMA.Enabled = true;
+            btnLoadARIMA.Enabled = true;
+            btnSaveARIMA.Enabled = true;
+
+            btnNetworkNew.Enabled = true;
+            btnNetworkLoad.Enabled = true;
+            btnPlotNeural.Enabled = true;
         }
 
         private void btnForecastARIMA_Click(object sender, EventArgs e)
         {
             List<double> forecastSeries;
-            ARIMAModel.Forecast(30, out forecastSeries);
-            Algorithm.DrawForecastSeriesData(_dataSeries, 0, forecastSeries, 0);
+            int aHead = 0;
+            AHead_Form aHeadDialog = new AHead_Form();
+
+            if (aHeadDialog.ShowDialog() == DialogResult.OK)
+            {
+                // Read the contents of testDialog's TextBox.
+                aHead = aHeadDialog.GetAHead();
+            }
+            aHeadDialog.Dispose();
+            if (aHead > 0)
+            {
+                ARIMAModel.Forecast(aHead, out forecastSeries);
+                Algorithm.DrawForecastSeriesData(_dataSeries, 0, forecastSeries, 0);
+            }
+            else
+            {
+                MessageBox.Show(this, "Please enter input in correct format", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void btnTestArima_Click(object sender, EventArgs e)
@@ -386,6 +434,17 @@ namespace ForecastTimeSeries
                     this.txtSeasonPartern.Text = model[6].ToString();
 
                     this.groupBoxARIMAParameter.Enabled = true;
+                    ARIMAModel.GetErrorSeries(out _errorSeries);
+                    NeuralModel.SetData(_errorSeries);
+
+                    btnTestArima.Enabled = true;
+                    btnForecastARIMA.Enabled = true;
+                    btnLoadARIMA.Enabled = true;
+                    btnSaveARIMA.Enabled = true;
+
+                    btnNetworkNew.Enabled = true;
+                    btnNetworkLoad.Enabled = true;
+                    btnPlotNeural.Enabled = true;
                 }
             }
             else
@@ -419,6 +478,8 @@ namespace ForecastTimeSeries
                 this.btnNetworkLoad.Enabled = false;
                 this.btnNetworkSave.Enabled = true;
                 this.btnNetworkClear.Enabled = true;
+
+                this.btnTrainNeural.Enabled = true;
             }
             catch (Exception exception)
             {
@@ -452,6 +513,8 @@ namespace ForecastTimeSeries
                     this.btnNetworkLoad.Enabled = false;
                     this.btnNetworkSave.Enabled = true;
                     this.btnNetworkClear.Enabled = true;
+
+                    this.btnTrainNeural.Enabled = true;
                 }
             }
             else
@@ -478,7 +541,9 @@ namespace ForecastTimeSeries
 
         private void btnNetworkClear_Click(object sender, EventArgs e)
         {
-            NeuralModel = null;
+            NeuralModel = new Neural();
+            NeuralModel.SetData(_errorSeries);
+
             this.txtNumInput.Text = "";
             this.txtNumHidden.Text = "";
             this.txtNumInput.Enabled = true;
@@ -488,6 +553,10 @@ namespace ForecastTimeSeries
             this.btnNetworkLoad.Enabled = true;
             this.btnNetworkSave.Enabled = false;
             this.btnNetworkClear.Enabled = false;
+
+            this.btnTrainNeural.Enabled = false;
+            this.btnTestNeural.Enabled = false;
+            this.btnForecastNeural.Enabled = false;
         }
 
         private void btnTrainNeural_Click(object sender, EventArgs e)
@@ -503,6 +572,11 @@ namespace ForecastTimeSeries
                     residual = Double.Parse(txtConfigErrors.Text);
 
                     NeuralModel.Bp_Run(learningRate, momemtum, epoch, residual);
+                    this.btnForecastNeural.Enabled = true;
+                    this.btnTestNeural.Enabled = true;
+
+                    this.buttonForecast.Enabled = true;
+                    this.buttonTest.Enabled = true;
                 }
                 catch
                 {
@@ -520,6 +594,11 @@ namespace ForecastTimeSeries
                     residual = Double.Parse(txtConfigErrors.Text);
 
                     NeuralModel.Rprop_Run(defaultValue, maxValue, epoch, residual);
+                    this.btnForecastNeural.Enabled = true;
+                    this.btnTestNeural.Enabled = true;
+
+                    this.buttonForecast.Enabled = true;
+                    this.buttonTest.Enabled = true;
                 }
                 catch
                 {
@@ -544,12 +623,49 @@ namespace ForecastTimeSeries
         {
             //NeuralModel.Forecast(30);
             List<double> forecastSeries;
-            NeuralModel.Forecast(30, out forecastSeries);
-            Algorithm.DrawForecastSeriesData(_errorSeries, 0, forecastSeries, 0);
+            int aHead = 0;
+            AHead_Form aHeadDialog = new AHead_Form();
+
+            if (aHeadDialog.ShowDialog() == DialogResult.OK)
+            {
+                // Read the contents of testDialog's TextBox.
+                aHead = aHeadDialog.GetAHead();
+            }
+            aHeadDialog.Dispose();
+            if (aHead > 0)
+            {
+                NeuralModel.Forecast(aHead, out forecastSeries);
+                Algorithm.DrawForecastSeriesData(_errorSeries, 0, forecastSeries, 0);
+            }
+            else
+            {
+                MessageBox.Show(this, "Please enter input in correct format", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void MainInterface_Load(object sender, EventArgs e)
         {
+            btnTrainARIMA.Enabled = false;
+            btnTestArima.Enabled = false;
+            btnForecastARIMA.Enabled = false;
+            btnLoadARIMA.Enabled = false;
+            btnSaveARIMA.Enabled = false;
+            btnPlotDataARIMA.Enabled = false;
+            btnCorrelogram.Enabled = false;
+            btnPartialCorrelation.Enabled = false;
+
+            btnNetworkNew.Enabled = false;
+            btnNetworkLoad.Enabled = false;
+            btnNetworkSave.Enabled = false;
+            btnNetworkClear.Enabled = false;
+            btnTrainNeural.Enabled = false;
+            btnPlotNeural.Enabled = false;
+            btnTestNeural.Enabled = false;
+            btnForecastNeural.Enabled = false;
+
+            buttonForecast.Enabled = false;
+            buttonTest.Enabled = false;
+
             txtConfig1.Text = 0.1.ToString();
             txtConfigEpoches.Text = 1000.ToString();
             txtConfig2.Text = 10.ToString();
