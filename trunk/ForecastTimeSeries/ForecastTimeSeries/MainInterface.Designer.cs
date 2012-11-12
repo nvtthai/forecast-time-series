@@ -28,11 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.button2 = new System.Windows.Forms.Button();
             this.btnTestArima = new System.Windows.Forms.Button();
             this.btnForecastARIMA = new System.Windows.Forms.Button();
             this.btnManualARIMA = new System.Windows.Forms.RadioButton();
@@ -64,7 +65,7 @@
             this.richARIMAModel = new System.Windows.Forms.RichTextBox();
             this.btnPartialCorrelation = new System.Windows.Forms.Button();
             this.btnCorrelogram = new System.Windows.Forms.Button();
-            this.btnPlotData = new System.Windows.Forms.Button();
+            this.btnPlotDataARIMA = new System.Windows.Forms.Button();
             this.richTextProcessData = new System.Windows.Forms.RichTextBox();
             this.btnGetData = new System.Windows.Forms.Button();
             this.txtTrainDataColumn = new System.Windows.Forms.TextBox();
@@ -103,12 +104,11 @@
             this.txtNumInput = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.button1 = new System.Windows.Forms.Button();
+            this.buttonTest = new System.Windows.Forms.Button();
             this.buttonForecast = new System.Windows.Forms.Button();
             this.textBoxNHead = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.chartForecast = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.button2 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBoxARIMAParameter.SuspendLayout();
@@ -149,7 +149,7 @@
             this.tabPage1.Controls.Add(this.richARIMAModel);
             this.tabPage1.Controls.Add(this.btnPartialCorrelation);
             this.tabPage1.Controls.Add(this.btnCorrelogram);
-            this.tabPage1.Controls.Add(this.btnPlotData);
+            this.tabPage1.Controls.Add(this.btnPlotDataARIMA);
             this.tabPage1.Controls.Add(this.richTextProcessData);
             this.tabPage1.Controls.Add(this.btnGetData);
             this.tabPage1.Controls.Add(this.txtTrainDataColumn);
@@ -167,6 +167,16 @@
             this.tabPage1.Size = new System.Drawing.Size(909, 456);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "ARIMA";
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(250, 124);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 51;
+            this.button2.Text = "button2";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // btnTestArima
             // 
@@ -472,16 +482,16 @@
             this.btnCorrelogram.UseVisualStyleBackColor = true;
             this.btnCorrelogram.Click += new System.EventHandler(this.btnCorrelogram_Click);
             // 
-            // btnPlotData
+            // btnPlotDataARIMA
             // 
-            this.btnPlotData.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnPlotData.Location = new System.Drawing.Point(367, 398);
-            this.btnPlotData.Name = "btnPlotData";
-            this.btnPlotData.Size = new System.Drawing.Size(138, 51);
-            this.btnPlotData.TabIndex = 34;
-            this.btnPlotData.Text = "Plot";
-            this.btnPlotData.UseVisualStyleBackColor = true;
-            this.btnPlotData.Click += new System.EventHandler(this.btnPlotDataARIMA_Click);
+            this.btnPlotDataARIMA.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPlotDataARIMA.Location = new System.Drawing.Point(367, 398);
+            this.btnPlotDataARIMA.Name = "btnPlotDataARIMA";
+            this.btnPlotDataARIMA.Size = new System.Drawing.Size(138, 51);
+            this.btnPlotDataARIMA.TabIndex = 34;
+            this.btnPlotDataARIMA.Text = "Plot";
+            this.btnPlotDataARIMA.UseVisualStyleBackColor = true;
+            this.btnPlotDataARIMA.Click += new System.EventHandler(this.btnPlotDataARIMA_Click);
             // 
             // richTextProcessData
             // 
@@ -865,7 +875,7 @@
             // tabPage3
             // 
             this.tabPage3.BackColor = System.Drawing.Color.SeaGreen;
-            this.tabPage3.Controls.Add(this.button1);
+            this.tabPage3.Controls.Add(this.buttonTest);
             this.tabPage3.Controls.Add(this.buttonForecast);
             this.tabPage3.Controls.Add(this.textBoxNHead);
             this.tabPage3.Controls.Add(this.label10);
@@ -877,15 +887,15 @@
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Forecast";
             // 
-            // button1
+            // buttonTest
             // 
-            this.button1.Location = new System.Drawing.Point(415, 23);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "Test";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.buttonTest.Location = new System.Drawing.Point(415, 23);
+            this.buttonTest.Name = "buttonTest";
+            this.buttonTest.Size = new System.Drawing.Size(75, 23);
+            this.buttonTest.TabIndex = 4;
+            this.buttonTest.Text = "Test";
+            this.buttonTest.UseVisualStyleBackColor = true;
+            this.buttonTest.Click += new System.EventHandler(this.button1_Click);
             // 
             // buttonForecast
             // 
@@ -915,30 +925,20 @@
             // 
             // chartForecast
             // 
-            chartArea1.Name = "ChartArea1";
-            this.chartForecast.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.chartForecast.Legends.Add(legend1);
+            chartArea2.Name = "ChartArea1";
+            this.chartForecast.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.chartForecast.Legends.Add(legend2);
             this.chartForecast.Location = new System.Drawing.Point(6, 82);
             this.chartForecast.Name = "chartForecast";
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series1.Legend = "Legend1";
-            series1.Name = "Series";
-            this.chartForecast.Series.Add(series1);
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series2.Legend = "Legend1";
+            series2.Name = "Series";
+            this.chartForecast.Series.Add(series2);
             this.chartForecast.Size = new System.Drawing.Size(894, 368);
             this.chartForecast.TabIndex = 0;
             this.chartForecast.Text = "chart1";
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(250, 124);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 51;
-            this.button2.Text = "button2";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // MainInterface
             // 
@@ -986,7 +986,7 @@
         private System.Windows.Forms.RichTextBox richTextProcessData;
         private System.Windows.Forms.Button btnPartialCorrelation;
         private System.Windows.Forms.Button btnCorrelogram;
-        private System.Windows.Forms.Button btnPlotData;
+        private System.Windows.Forms.Button btnPlotDataARIMA;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.RichTextBox richARIMAModel;
         private System.Windows.Forms.RadioButton btnAutomaticARIMA;
@@ -1046,7 +1046,7 @@
         private System.Windows.Forms.Button btnPlotNeural;
         private System.Windows.Forms.Button btnTestNeural;
         private System.Windows.Forms.Button btnForecastNeural;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonTest;
         private System.Windows.Forms.Button button2;
     }
 }
