@@ -587,12 +587,14 @@ namespace ForecastTimeSeries
             }
         }
 
-        public void GetErrorSeries(out List<double> errors)
+        public void  GetErrorSeries(out List<double> errors)
         {
             errors = new List<double>();
+            List<double> testSeries;
+            GetTestSeries(out testSeries);
             for(int i= _startIndex; i<_errorSeries.Count; i++)
             {
-                errors.Add(_errorSeries[i]);
+                errors.Add(_originSeries[i]-testSeries[i]);
             }
             //errors = _errorSeries.FindAll(item => true);
         }
