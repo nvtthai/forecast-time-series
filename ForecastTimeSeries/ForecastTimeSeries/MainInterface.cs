@@ -13,8 +13,6 @@ namespace ForecastTimeSeries
 {
     public partial class MainInterface : Form
     {
-
-
         private string m_DataFile;
         private ARIMA ARIMAModel;
         private Neural NeuralModel;
@@ -24,6 +22,7 @@ namespace ForecastTimeSeries
         public MainInterface()
         {
             InitializeComponent();
+            this.CenterToScreen();
             InitData();
         }
 
@@ -34,6 +33,8 @@ namespace ForecastTimeSeries
             ARIMAModel = new ARIMA();
             NeuralModel = new Neural();
         }
+
+        #region ARIMA model event
 
         private void SettingChooseData()
         {
@@ -60,7 +61,6 @@ namespace ForecastTimeSeries
             buttonForecast.Enabled = false;
             buttonTest.Enabled = false;
         }
-
 
         private void SettingGetData()
         {
@@ -263,32 +263,6 @@ namespace ForecastTimeSeries
             this.richARIMAModel.ScrollToCaret();
         }
 
-        private void radioBackPropagation_CheckedChanged(object sender, EventArgs e)
-        {
-            groupBoxAlgorithmConfig.Enabled = true;
-            groupBoxAlgorithmConfig.Text = "Back Propagation Config";
-            labelConfig1.Text = "Learning Rate";
-            labelConfig2.Text = "Momemtum";
-
-            txtConfig1.Text = 0.4.ToString();
-            txtConfigEpoches.Text = 1000.ToString();
-            txtConfig2.Text = 0.2.ToString();
-            txtConfigErrors.Text = 0.000001.ToString();
-        }
-
-        private void radioRPROP_CheckedChanged(object sender, EventArgs e)
-        {
-            groupBoxAlgorithmConfig.Enabled = true;
-            groupBoxAlgorithmConfig.Text = "Resilient Propagation Config";
-            labelConfig1.Text = "Default Update Value";
-            labelConfig2.Text = "Max Update Value";
-
-            txtConfig1.Text = 0.1.ToString();
-            txtConfigEpoches.Text = 1000.ToString();
-            txtConfig2.Text = 10.ToString();
-            txtConfigErrors.Text = 0.000001.ToString();
-        }
-
         private void btnAutomaticARIMA_CheckedChanged(object sender, EventArgs e)
         {
             groupBoxARIMAParameter.Enabled = false;
@@ -377,6 +351,13 @@ namespace ForecastTimeSeries
             SettingTrainARIMA();
         }
 
+        private void btnTestArima_Click(object sender, EventArgs e)
+        {
+            List<double> testSeries;
+            ARIMAModel.GetTestSeries(out testSeries);
+            Algorithm.DrawTwoSeriesTestData(_dataSeries, 0, testSeries, 0);
+        }
+
         private void btnForecastARIMA_Click(object sender, EventArgs e)
         {
             List<double> forecastSeries;
@@ -397,46 +378,6 @@ namespace ForecastTimeSeries
             else
             {
                 MessageBox.Show(this, "Please enter input in correct format", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void btnTestArima_Click(object sender, EventArgs e)
-        {
-            List<double> testSeries;
-            ARIMAModel.GetTestSeries(out testSeries);
-            Algorithm.DrawTwoSeriesTestData(_dataSeries, 0, testSeries, 0);
-        }
-
-        private void btnPlotDataARIMA_Click(object sender, EventArgs e)
-        {
-            ARIMAModel.DrawSeriesData();
-        }
-
-        private void btnCorrelogram_Click(object sender, EventArgs e)
-        {
-            ARIMAModel.DrawAutocorrelation();
-        }
-
-        private void btnPartialCorrelation_Click(object sender, EventArgs e)
-        {
-            ARIMAModel.DrawPartialAutocorrelation();
-        }
-
-        private void btnSaveARIMA_Click(object sender, EventArgs e)
-        {
-            SaveFileDialog saveDialog = new SaveFileDialog();
-            saveDialog.Title = "Save Arima Config File";
-            saveDialog.DefaultExt = "xml";
-            DialogResult result = saveDialog.ShowDialog();
-            string dataFile = "";
-            if (result == System.Windows.Forms.DialogResult.OK)
-            {
-                dataFile = saveDialog.FileName;
-                bool exportResult = ARIMAModel.Export(dataFile);
-            }
-            else
-            {
-                return;
             }
         }
 
@@ -482,6 +423,44 @@ namespace ForecastTimeSeries
                 return;
             }
         }
+
+        private void btnSaveARIMA_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveDialog = new SaveFileDialog();
+            saveDialog.Title = "Save Arima Config File";
+            saveDialog.DefaultExt = "xml";
+            DialogResult result = saveDialog.ShowDialog();
+            string dataFile = "";
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                dataFile = saveDialog.FileName;
+                bool exportResult = ARIMAModel.Export(dataFile);
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        private void btnPlotDataARIMA_Click(object sender, EventArgs e)
+        {
+            ARIMAModel.DrawSeriesData();
+        }
+
+        private void btnCorrelogram_Click(object sender, EventArgs e)
+        {
+            ARIMAModel.DrawAutocorrelation();
+        }
+
+        private void btnPartialCorrelation_Click(object sender, EventArgs e)
+        {
+            ARIMAModel.DrawPartialAutocorrelation();
+        }
+
+        #endregion ARIMA model event
+
+
+        #region Neural model event
 
         private void btnNetworkNew_Click(object sender, EventArgs e)
         {
@@ -588,6 +567,32 @@ namespace ForecastTimeSeries
             this.btnForecastNeural.Enabled = false;
         }
 
+        private void radioBackPropagation_CheckedChanged(object sender, EventArgs e)
+        {
+            groupBoxAlgorithmConfig.Enabled = true;
+            groupBoxAlgorithmConfig.Text = "Back Propagation Config";
+            labelConfig1.Text = "Learning Rate";
+            labelConfig2.Text = "Momemtum";
+
+            txtConfig1.Text = 0.4.ToString();
+            txtConfigEpoches.Text = 1000.ToString();
+            txtConfig2.Text = 0.2.ToString();
+            txtConfigErrors.Text = 0.000001.ToString();
+        }
+
+        private void radioRPROP_CheckedChanged(object sender, EventArgs e)
+        {
+            groupBoxAlgorithmConfig.Enabled = true;
+            groupBoxAlgorithmConfig.Text = "Resilient Propagation Config";
+            labelConfig1.Text = "Default Update Value";
+            labelConfig2.Text = "Max Update Value";
+
+            txtConfig1.Text = 0.1.ToString();
+            txtConfigEpoches.Text = 1000.ToString();
+            txtConfig2.Text = 10.ToString();
+            txtConfigErrors.Text = 0.000001.ToString();
+        }
+
         private void btnTrainNeural_Click(object sender, EventArgs e)
         {
             if (radioBackPropagation.Checked)
@@ -672,6 +677,11 @@ namespace ForecastTimeSeries
             }
         }
 
+        #endregion Neural model event
+
+
+        #region hybrid model event
+
         private void buttonForecast_Click(object sender, EventArgs e)
         {
             int nHead = Int16.Parse(textBoxNHead.Text);
@@ -755,5 +765,6 @@ namespace ForecastTimeSeries
             form.ShowDialog();
         }
 
+        #endregion hybrid model event
     }
 }
