@@ -14,6 +14,7 @@ namespace ForecastTimeSeries
         public Train_Result()
         {
             InitializeComponent();
+            this.CenterToScreen();
         }
     }
 }

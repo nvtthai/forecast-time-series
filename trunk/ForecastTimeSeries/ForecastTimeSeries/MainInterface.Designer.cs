@@ -103,8 +103,8 @@
             this.txtNumInput = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.buttonTest = new System.Windows.Forms.Button();
-            this.buttonForecast = new System.Windows.Forms.Button();
+            this.btnTest = new System.Windows.Forms.Button();
+            this.btnForecast = new System.Windows.Forms.Button();
             this.textBoxNHead = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.chartForecast = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -863,8 +863,8 @@
             // tabPage3
             // 
             this.tabPage3.BackColor = System.Drawing.Color.SeaGreen;
-            this.tabPage3.Controls.Add(this.buttonTest);
-            this.tabPage3.Controls.Add(this.buttonForecast);
+            this.tabPage3.Controls.Add(this.btnTest);
+            this.tabPage3.Controls.Add(this.btnForecast);
             this.tabPage3.Controls.Add(this.textBoxNHead);
             this.tabPage3.Controls.Add(this.label10);
             this.tabPage3.Controls.Add(this.chartForecast);
@@ -877,23 +877,23 @@
             // 
             // buttonTest
             // 
-            this.buttonTest.Location = new System.Drawing.Point(425, 23);
-            this.buttonTest.Name = "buttonTest";
-            this.buttonTest.Size = new System.Drawing.Size(75, 23);
-            this.buttonTest.TabIndex = 4;
-            this.buttonTest.Text = "Test";
-            this.buttonTest.UseVisualStyleBackColor = true;
-            this.buttonTest.Click += new System.EventHandler(this.buttonTest_Click);
+            this.btnTest.Location = new System.Drawing.Point(425, 23);
+            this.btnTest.Name = "buttonTest";
+            this.btnTest.Size = new System.Drawing.Size(75, 23);
+            this.btnTest.TabIndex = 4;
+            this.btnTest.Text = "Test";
+            this.btnTest.UseVisualStyleBackColor = true;
+            this.btnTest.Click += new System.EventHandler(this.buttonTest_Click);
             // 
             // buttonForecast
             // 
-            this.buttonForecast.Location = new System.Drawing.Point(287, 23);
-            this.buttonForecast.Name = "buttonForecast";
-            this.buttonForecast.Size = new System.Drawing.Size(75, 23);
-            this.buttonForecast.TabIndex = 3;
-            this.buttonForecast.Text = "Forecast";
-            this.buttonForecast.UseVisualStyleBackColor = true;
-            this.buttonForecast.Click += new System.EventHandler(this.buttonForecast_Click);
+            this.btnForecast.Location = new System.Drawing.Point(287, 23);
+            this.btnForecast.Name = "buttonForecast";
+            this.btnForecast.Size = new System.Drawing.Size(75, 23);
+            this.btnForecast.TabIndex = 3;
+            this.btnForecast.Text = "Forecast";
+            this.btnForecast.UseVisualStyleBackColor = true;
+            this.btnForecast.Click += new System.EventHandler(this.buttonForecast_Click);
             // 
             // textBoxNHead
             // 
@@ -1016,7 +1016,7 @@
         private System.Windows.Forms.DataVisualization.Charting.Chart chartForecast;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.TextBox textBoxNHead;
-        private System.Windows.Forms.Button buttonForecast;
+        private System.Windows.Forms.Button btnForecast;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.RadioButton radioRPROP;
         private System.Windows.Forms.RadioButton radioBackPropagation;
@@ -1034,6 +1034,6 @@
         private System.Windows.Forms.Button btnPlotNeural;
         private System.Windows.Forms.Button btnTestNeural;
         private System.Windows.Forms.Button btnForecastNeural;
-        private System.Windows.Forms.Button buttonTest;
+        private System.Windows.Forms.Button btnTest;
     }
 }

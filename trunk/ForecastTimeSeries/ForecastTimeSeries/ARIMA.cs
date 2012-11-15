@@ -17,7 +17,7 @@ namespace ForecastTimeSeries
 
     public static class Configuration
     {
-        public static int MAX_REGULAR_ARMA_ORDER = 10;
+        public static int MAX_REGULAR_ARMA_ORDER = 5;
         public static int MAX_SEASON_ARMA_ORDER = 2;
 
         public static double SIGN_CORRECLATION = 1.0;
@@ -34,16 +34,15 @@ namespace ForecastTimeSeries
         public int _startIndex; 
 
         public int _pRegular;
-        public int _qRegular;
         public int _regularDifferencingLevel;
+        public int _qRegular;
 
         public int _pSeason;
-        public int _qSeason;
         public int _seasonDifferencingLevel;
+        public int _qSeason;
         public int _seasonPartern;
 
         List<double> _listArimaCoef;
-
 
         #region ARIMA algorithm
 
@@ -159,7 +158,7 @@ namespace ForecastTimeSeries
         private void GetLastSignificant(List<double> listAutocorrelation, List<double> listConfidenceLimit, out int lag)
         {
             lag = 0;
-            for (int i = 0; i < listAutocorrelation.Count; i++)
+            for (int i = 0; i < listAutocorrelation.Count && i < Configuration.MAX_REGULAR_ARMA_ORDER; i++)
             {
                 if (Math.Abs(listAutocorrelation[i]) > Math.Abs(listConfidenceLimit[i]) * Configuration.SIGN_CORRECLATION)
                 {
@@ -171,7 +170,7 @@ namespace ForecastTimeSeries
         private void GetLastSignificant(List<double> listAutocorrelation, double confidenceLimit, out int lag)
         {
             lag = 0;
-            for (int i = 0; i < listAutocorrelation.Count; i++)
+            for (int i = 0; i < listAutocorrelation.Count && i < Configuration.MAX_REGULAR_ARMA_ORDER; i++)
             {
                 if (Math.Abs(listAutocorrelation[i]) > Math.Abs(confidenceLimit)*1.3)
                 {
@@ -261,7 +260,7 @@ namespace ForecastTimeSeries
             }
             if (decaySeasonACF != DecayPartern.ABRUPT_DECAY && decaySeasonPACF != DecayPartern.ABRUPT_DECAY)
             {
-                pSeason = qSeason = 2;
+                pSeason = qSeason = 1;
             }
 
             pSeason = Math.Min(pSeason, Configuration.MAX_SEASON_ARMA_ORDER);
@@ -639,21 +638,21 @@ namespace ForecastTimeSeries
             result.Append(String.Format("MA Regular coef\t|"));
             for (int i = 0; i < _qRegular; i++)
             {
-                result.Append(String.Format("  {0:0.000}\t|", _listArimaCoef[i + _pRegular]));
+                result.Append(String.Format("  {0:0.000}\t|", _listArimaCoef[i + _pRegular + 1]));
             }
             result.Append("\n");
 
             result.Append(String.Format("AR Season coef\t|"));
             for (int i = 0; i < _pSeason; i++)
             {
-                result.Append(String.Format("  {0:0.000}\t|", _listArimaCoef[i + _pRegular + _qRegular]));
+                result.Append(String.Format("  {0:0.000}\t|", _listArimaCoef[i + _pRegular + _qRegular + 1]));
             }
             result.Append("\n");
 
             result.Append(String.Format("MA Season coef\t|"));
             for (int i = 0; i < _qSeason; i++)
             {
-                result.Append(String.Format("  {0:0.000}\t|", _listArimaCoef[i + _pRegular + _qRegular + _pSeason]));
+                result.Append(String.Format("  {0:0.000}\t|", _listArimaCoef[i + _pRegular + _qRegular + _pSeason + 1]));
             }
 
             model = result.ToString();
