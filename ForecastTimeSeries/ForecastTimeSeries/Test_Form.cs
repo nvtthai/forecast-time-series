@@ -14,6 +14,7 @@ namespace ForecastTimeSeries
         public Test_Form()
         {
             InitializeComponent();
+            this.CenterToScreen();
         }
     }
 }

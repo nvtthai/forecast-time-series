@@ -15,6 +15,7 @@ namespace ForecastTimeSeries
         public Plot_Form()
         {
             InitializeComponent();
+            this.CenterToScreen();
         }
     }
 }

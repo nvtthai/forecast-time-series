@@ -15,6 +15,7 @@ namespace ForecastTimeSeries
         public AHead_Form()
         {
             InitializeComponent();
+            this.CenterToScreen();
         }
 
         public int GetAHead()

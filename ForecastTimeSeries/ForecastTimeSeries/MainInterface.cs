@@ -58,8 +58,8 @@ namespace ForecastTimeSeries
             btnTestNeural.Enabled = false;
             btnForecastNeural.Enabled = false;
 
-            buttonForecast.Enabled = false;
-            buttonTest.Enabled = false;
+            btnForecast.Enabled = false;
+            btnTest.Enabled = false;
         }
 
         private void SettingGetData()
@@ -92,7 +92,7 @@ namespace ForecastTimeSeries
         private void MainInterface_Load(object sender, EventArgs e)
         {
             SettingChooseData();
-
+            btnGetData.Enabled = false;
             txtConfig1.Text = 0.1.ToString();
             txtConfigEpoches.Text = 1000.ToString();
             txtConfig2.Text = 10.ToString();
@@ -101,6 +101,7 @@ namespace ForecastTimeSeries
 
         private void btnChooseData_Click(object sender, EventArgs e)
         {
+            btnGetData.Enabled = false;
             OpenFileDialog openDialog = new OpenFileDialog();
             openDialog.Title = "Open File";
             DialogResult result = openDialog.ShowDialog();
@@ -151,6 +152,7 @@ namespace ForecastTimeSeries
                         this.txtTrainDataColumn.Enabled = true;
 
                     SettingChooseData();
+                    btnGetData.Enabled = true;
                 }
                 catch (System.OutOfMemoryException outOfMemory)
                 {
@@ -233,6 +235,8 @@ namespace ForecastTimeSeries
             if (_dataSeries != null)
             {
                 SettingGetData();
+                ARIMAModel = new ARIMA();
+                NeuralModel = new Neural();
                 ARIMAModel.SetData(_dataSeries);
                 showData();
             }
@@ -260,7 +264,6 @@ namespace ForecastTimeSeries
             string model;
             ARIMAModel.GetModel(out model);
             this.richARIMAModel.Text = model.ToString();
-            this.richARIMAModel.ScrollToCaret();
         }
 
         private void btnAutomaticARIMA_CheckedChanged(object sender, EventArgs e)
@@ -366,7 +369,6 @@ namespace ForecastTimeSeries
 
             if (aHeadDialog.ShowDialog() == DialogResult.OK)
             {
-                // Read the contents of testDialog's TextBox.
                 aHead = aHeadDialog.GetAHead();
             }
             aHeadDialog.Dispose();
@@ -609,8 +611,8 @@ namespace ForecastTimeSeries
                     this.btnForecastNeural.Enabled = true;
                     this.btnTestNeural.Enabled = true;
 
-                    this.buttonForecast.Enabled = true;
-                    this.buttonTest.Enabled = true;
+                    this.btnForecast.Enabled = true;
+                    this.btnTest.Enabled = true;
                 }
                 catch
                 {
@@ -631,8 +633,8 @@ namespace ForecastTimeSeries
                     this.btnForecastNeural.Enabled = true;
                     this.btnTestNeural.Enabled = true;
 
-                    this.buttonForecast.Enabled = true;
-                    this.buttonTest.Enabled = true;
+                    this.btnForecast.Enabled = true;
+                    this.btnTest.Enabled = true;
                 }
                 catch
                 {
