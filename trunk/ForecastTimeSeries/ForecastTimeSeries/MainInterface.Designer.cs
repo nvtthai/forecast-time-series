@@ -103,11 +103,11 @@
             this.txtNumInput = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.buttonTest = new System.Windows.Forms.Button();
             this.buttonForecast = new System.Windows.Forms.Button();
             this.textBoxNHead = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.chartForecast = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.buttonTest = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBoxARIMAParameter.SuspendLayout();
@@ -443,10 +443,10 @@
             this.richARIMAModel.Location = new System.Drawing.Point(367, 293);
             this.richARIMAModel.Name = "richARIMAModel";
             this.richARIMAModel.ReadOnly = true;
-            this.richARIMAModel.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
             this.richARIMAModel.Size = new System.Drawing.Size(533, 96);
             this.richARIMAModel.TabIndex = 39;
             this.richARIMAModel.Text = "";
+            this.richARIMAModel.WordWrap = false;
             // 
             // btnPartialCorrelation
             // 
@@ -875,6 +875,16 @@
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Forecast";
             // 
+            // buttonTest
+            // 
+            this.buttonTest.Location = new System.Drawing.Point(425, 23);
+            this.buttonTest.Name = "buttonTest";
+            this.buttonTest.Size = new System.Drawing.Size(75, 23);
+            this.buttonTest.TabIndex = 4;
+            this.buttonTest.Text = "Test";
+            this.buttonTest.UseVisualStyleBackColor = true;
+            this.buttonTest.Click += new System.EventHandler(this.buttonTest_Click);
+            // 
             // buttonForecast
             // 
             this.buttonForecast.Location = new System.Drawing.Point(287, 23);
@@ -917,16 +927,6 @@
             this.chartForecast.Size = new System.Drawing.Size(894, 368);
             this.chartForecast.TabIndex = 0;
             this.chartForecast.Text = "chart1";
-            // 
-            // buttonTest
-            // 
-            this.buttonTest.Location = new System.Drawing.Point(425, 23);
-            this.buttonTest.Name = "buttonTest";
-            this.buttonTest.Size = new System.Drawing.Size(75, 23);
-            this.buttonTest.TabIndex = 4;
-            this.buttonTest.Text = "Test";
-            this.buttonTest.UseVisualStyleBackColor = true;
-            this.buttonTest.Click += new System.EventHandler(this.buttonTest_Click);
             // 
             // MainInterface
             // 
