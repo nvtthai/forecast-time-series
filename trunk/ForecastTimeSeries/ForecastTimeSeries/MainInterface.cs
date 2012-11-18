@@ -132,8 +132,10 @@ namespace ForecastTimeSeries
                         if (numRows == 0)
                         {
                             char[] delimiterChars = { ' ', ',' };
-                            string[] words = line.Split(delimiterChars);
-                            numColumns = words.Length;
+                            List<String> words = new List<string>();
+                            words.AddRange(line.Split(delimiterChars));
+                            words.RemoveAll(item => "" == item);
+                            numColumns = words.Count;
                         }
                         numRows++;
                     }
@@ -194,8 +196,11 @@ namespace ForecastTimeSeries
                         continue;
 
                     char[] delimiterChars = { ' ', ',' };
-                    string[] words = line.Split(delimiterChars);
-                    if (columnSelected <= words.Length)
+                    List<String> words = new List<string>();
+                    words.AddRange(line.Split(delimiterChars));
+                    words.RemoveAll(item => "" == item);
+
+                    if (columnSelected <= words.Count)
                     {
                         _dataSeries.Add(Double.Parse(words[columnSelected - 1]));
                     }
@@ -686,6 +691,7 @@ namespace ForecastTimeSeries
 
         private void buttonForecast_Click(object sender, EventArgs e)
         {
+            chartForecast.Series.Clear();
             int nHead = Int16.Parse(textBoxNHead.Text);
             List<double> forecastSeries;
             List<double> forecastErrorSeries;
