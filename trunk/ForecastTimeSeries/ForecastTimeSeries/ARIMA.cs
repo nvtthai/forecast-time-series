@@ -308,40 +308,41 @@ namespace ForecastTimeSeries
             }
 
             int begin = ComputeMax(pRegular, qRegular, pSeason * seasonPartern, qSeason * seasonPartern, startIndex);
-
-            for (int i = begin; i < series.Count; i++)
+            for (int k = 0; k < 10; k++)
             {
-                //Phase 1
-                observationVector[0, 0] = 1;
-                for (int j = 1; j < pRegular + 1; j++)
+                for (int i = begin; i < series.Count; i++)
                 {
-                    observationVector[j, 0] = series[i - j];
-                }
-                for (int j = 1; j < qRegular + 1; j++)
-                {
-                    observationVector[pRegular + j, 0] = errors[i - j];
-                }
-                for (int j = 1; j < pSeason + 1; j++)
-                {
-                    observationVector[j, 0] = series[i - j * seasonPartern];
-                }
-                for (int j = 1; j < qSeason + 1; j++)
-                {
-                    observationVector[pRegular + j, 0] = errors[i - j * seasonPartern];
-                }
+                    //Phase 1
+                    observationVector[0, 0] = 1;
+                    for (int j = 1; j < pRegular + 1; j++)
+                    {
+                        observationVector[j, 0] = series[i - j];
+                    }
+                    for (int j = 1; j < qRegular + 1; j++)
+                    {
+                        observationVector[pRegular + j, 0] = errors[i - j];
+                    }
+                    for (int j = 1; j < pSeason + 1; j++)
+                    {
+                        observationVector[j, 0] = series[i - j * seasonPartern];
+                    }
+                    for (int j = 1; j < qSeason + 1; j++)
+                    {
+                        observationVector[pRegular + j, 0] = errors[i - j * seasonPartern];
+                    }
 
-                //Phase 2 - Estimate Parameters
-                prioriPredictionError = series[i] - (Matrix.Transpose(observationVector) * parameterVector)[0, 0];
-                double temp = 1 + (Matrix.Transpose(observationVector) * invertedCovarianceMatrix * observationVector)[0, 0];
-                gainFactor = (invertedCovarianceMatrix * observationVector) / temp;
-                parameterVector += gainFactor * prioriPredictionError;
+                    //Phase 2 - Estimate Parameters
+                    prioriPredictionError = series[i] - (Matrix.Transpose(observationVector) * parameterVector)[0, 0];
+                    double temp = 1 + (Matrix.Transpose(observationVector) * invertedCovarianceMatrix * observationVector)[0, 0];
+                    gainFactor = (invertedCovarianceMatrix * observationVector) / temp;
+                    parameterVector += gainFactor * prioriPredictionError;
 
-                //Phase 3 - Prepare for Next Estimation 
-                posterioriPredictionError = series[i] - (Matrix.Transpose(observationVector) * parameterVector)[0, 0];
-                invertedCovarianceMatrix = invertedCovarianceMatrix - gainFactor * Matrix.Transpose(observationVector) * invertedCovarianceMatrix;
-                errors[i] = posterioriPredictionError;
+                    //Phase 3 - Prepare for Next Estimation 
+                    posterioriPredictionError = series[i] - (Matrix.Transpose(observationVector) * parameterVector)[0, 0];
+                    invertedCovarianceMatrix = invertedCovarianceMatrix - gainFactor * Matrix.Transpose(observationVector) * invertedCovarianceMatrix;
+                    errors[i] = posterioriPredictionError;
+                }
             }
-
 
             listArimaCoeff = new List<double>();
             for (int i = 0; i < 1 + pRegular + qRegular + pSeason + qSeason; i++)
@@ -717,6 +718,11 @@ namespace ForecastTimeSeries
         public void DrawSeriesData()
         {
             Algorithm.DrawSeriesData(_processSeries, _startIndex);
+        }
+
+        public void DrawErrorData()
+        {
+            Algorithm.DrawSeriesData(_errorSeries, _startIndex);
         }
 
         public void DrawAutocorrelation()

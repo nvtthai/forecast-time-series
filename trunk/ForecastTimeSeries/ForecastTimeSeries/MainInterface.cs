@@ -40,12 +40,14 @@ namespace ForecastTimeSeries
         {
             radioBtnAutomaticARIMA.Enabled = false;
             radioBtnManualARIMA.Enabled = false;
+
             btnTrainARIMA.Enabled = false;
             btnTestArima.Enabled = false;
             btnForecastARIMA.Enabled = false;
             btnLoadARIMA.Enabled = false;
             btnSaveARIMA.Enabled = false;
             btnPlotDataARIMA.Enabled = false;
+            btnPlotErrorARIMA.Enabled = false;
             btnCorrelogram.Enabled = false;
             btnPartialCorrelation.Enabled = false;
 
@@ -73,12 +75,14 @@ namespace ForecastTimeSeries
             btnLoadARIMA.Enabled = true;
             btnSaveARIMA.Enabled = false;
             btnPlotDataARIMA.Enabled = true;
+            btnPlotErrorARIMA.Enabled = false;
             btnCorrelogram.Enabled = true;
             btnPartialCorrelation.Enabled = true;
         }
 
         private void SettingTrainARIMA()
         {
+            btnPlotErrorARIMA.Enabled = true;
             btnTestArima.Enabled = true;
             btnForecastARIMA.Enabled = true;
             btnLoadARIMA.Enabled = true;
@@ -243,24 +247,10 @@ namespace ForecastTimeSeries
                 ARIMAModel = new ARIMA();
                 NeuralModel = new Neural();
                 ARIMAModel.SetData(_dataSeries);
-                showData();
             }
             else
             {
                 MessageBox.Show("Load data fail", null, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void showData()
-        {
-            this.richTextProcessData.Clear();
-            this.richTextProcessData.AppendText("Time Series\n");
-            this.richTextProcessData.AppendText(String.Format("{0,10}", "TIME"));
-            this.richTextProcessData.AppendText(String.Format("{0,20}", "VALUE\n\n"));
-            for (int t = 0; t < _dataSeries.Count; t++)
-            {
-                this.richTextProcessData.AppendText(String.Format("{0,10}", "[" + (t + 1) + "]"));
-                this.richTextProcessData.AppendText(String.Format("{0,20}", _dataSeries.ElementAt(t)) + "\n");
             }
         }
 
@@ -452,6 +442,11 @@ namespace ForecastTimeSeries
         private void btnPlotDataARIMA_Click(object sender, EventArgs e)
         {
             ARIMAModel.DrawSeriesData();
+        }
+
+        private void btnPlotErrorARIMA_Click(object sender, EventArgs e)
+        {
+            ARIMAModel.DrawErrorData();
         }
 
         private void btnCorrelogram_Click(object sender, EventArgs e)
@@ -654,7 +649,6 @@ namespace ForecastTimeSeries
 
         private void btnTestNeural_Click(object sender, EventArgs e)
         {
-            //neuralModel.Test();
             List<double> testSeries;
             NeuralModel.GetTestSeries(out testSeries);
             Algorithm.DrawTwoSeriesTestData(_errorSeries, 0, testSeries, 0);
@@ -692,6 +686,7 @@ namespace ForecastTimeSeries
         private void buttonForecast_Click(object sender, EventArgs e)
         {
             chartForecast.Series.Clear();
+            richTextForecast.Text = "";
             int nHead = Int16.Parse(textBoxNHead.Text);
             List<double> forecastSeries;
             List<double> forecastErrorSeries;
@@ -726,6 +721,16 @@ namespace ForecastTimeSeries
                 series2.Points.AddXY(_dataSeries.Count + i + 1, forecastSeries[i]);
             }
             chartForecast.Series.Add(series2);
+
+            StringBuilder result = new StringBuilder();
+            result.Append(String.Format("Forecast data for {0} ahead time\n", nHead));
+            for (int i = 0; i < forecastSeries.Count; i++)
+            {
+                result.Append(String.Format("  {0}\t{1}\n", i + 1, forecastSeries[i]));
+            }
+
+            this.richTextForecast.Text = result.ToString();
+
         }
 
         private void buttonTest_Click(object sender, EventArgs e)
@@ -756,23 +761,10 @@ namespace ForecastTimeSeries
                 testSeries[i] += errorSeries[i];
             }
 
-            double MAE = Algorithm.ComputeMAE(_dataSeries, testSeries);
-            double SSE = Algorithm.ComputeSSE(_dataSeries, testSeries);
-            double MSE = Algorithm.ComputeMSE(_dataSeries, testSeries);
-
-            Test_Form form = new Test_Form();
-            form.textBox1.AppendText("Mean Absolute Error MAE =  " + MAE + "\n");
-            form.textBox1.AppendText("Sum Square Error SSE =  " + SSE + "\n");
-            form.textBox1.AppendText("Mean Square Error MSE =  " + MSE + "\n");
-            form.textBox1.ReadOnly = true;
-            for (int t = 0; t < _dataSeries.Count; t++)
-            {
-                form.chart1.Series["Observations"].Points.AddXY(t + 1, _dataSeries.ElementAt(t));
-                form.chart1.Series["Computations"].Points.AddXY(t + 1, testSeries[t]);
-            }
-            form.ShowDialog();
+            Algorithm.DrawTwoSeriesTestData(_dataSeries, 0, testSeries, 0);
         }
 
         #endregion hybrid model event
+
     }
 }
