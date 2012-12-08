@@ -74,7 +74,20 @@ namespace ForecastTimeSeries
             result /= processSeries.Count;
             return result;
         }
-       
+
+        public static double ComputeMAPE(List<double> processSeries, List<double> testSeries)
+        {
+            double result = 0;
+            for (int i = 1; i < processSeries.Count; i++)
+            {
+                double temp = Math.Abs((processSeries[i] - testSeries[i]) / processSeries[i]);
+                temp = Math.Min(temp, 1.0);
+                result += Math.Abs(temp);
+            }
+            result /= processSeries.Count;
+            return result;
+        }
+
         #endregion compute error
 
 
@@ -406,13 +419,15 @@ namespace ForecastTimeSeries
         public static void DrawTwoSeriesTestData(List<double> dataSeries, int firstStartIndex, List<double> testSeries, int secondStartIndex)
         {
             double MAE = Algorithm.ComputeMAE(dataSeries, testSeries);
-            double SSE = Algorithm.ComputeSSE(dataSeries, testSeries);
             double MSE = Algorithm.ComputeMSE(dataSeries, testSeries);
+            double MAPE = Algorithm.ComputeMAPE(dataSeries, testSeries);
 
             Test_Form form = new Test_Form();
             form.textBox1.AppendText("Mean Absolute Error MAE =  " + MAE + "\n");
-            form.textBox1.AppendText("Sum Square Error SSE =  " + SSE + "\n");
             form.textBox1.AppendText("Mean Square Error MSE =  " + MSE + "\n");
+            form.textBox1.AppendText("Mean absolute percentage Error MSE =  " + MAPE + "\n");
+
+            //Mean absolute percentage
             form.textBox1.ReadOnly = true;
             for (int t = firstStartIndex; t < dataSeries.Count; t++)
             {
