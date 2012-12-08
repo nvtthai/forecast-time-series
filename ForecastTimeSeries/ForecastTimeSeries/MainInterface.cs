@@ -38,30 +38,30 @@ namespace ForecastTimeSeries
 
         private void SettingChooseData()
         {
-            radioBtnAutomaticARIMA.Enabled = false;
-            radioBtnManualARIMA.Enabled = false;
+            //radioBtnAutomaticARIMA.Enabled = false;
+            //radioBtnManualARIMA.Enabled = false;
 
-            btnTrainARIMA.Enabled = false;
-            btnTestArima.Enabled = false;
-            btnForecastARIMA.Enabled = false;
-            btnLoadARIMA.Enabled = false;
-            btnSaveARIMA.Enabled = false;
-            btnPlotDataARIMA.Enabled = false;
-            btnPlotErrorARIMA.Enabled = false;
-            btnCorrelogram.Enabled = false;
-            btnPartialCorrelation.Enabled = false;
+            //btnTrainARIMA.Enabled = false;
+            //btnTestArima.Enabled = false;
+            //btnForecastARIMA.Enabled = false;
+            //btnLoadARIMA.Enabled = false;
+            //btnSaveARIMA.Enabled = false;
+            //btnPlotDataARIMA.Enabled = false;
+            //btnPlotErrorARIMA.Enabled = false;
+            //btnCorrelogram.Enabled = false;
+            //btnPartialCorrelation.Enabled = false;
 
-            btnNetworkNew.Enabled = false;
-            btnNetworkLoad.Enabled = false;
-            btnNetworkSave.Enabled = false;
-            btnNetworkClear.Enabled = false;
-            btnTrainNeural.Enabled = false;
-            btnPlotNeural.Enabled = false;
-            btnTestNeural.Enabled = false;
-            btnForecastNeural.Enabled = false;
+            //btnNetworkNew.Enabled = false;
+            //btnNetworkLoad.Enabled = false;
+            //btnNetworkSave.Enabled = false;
+            //btnNetworkClear.Enabled = false;
+            //btnTrainNeural.Enabled = false;
+            //btnPlotNeural.Enabled = false;
+            //btnTestNeural.Enabled = false;
+            //btnForecastNeural.Enabled = false;
 
-            btnForecast.Enabled = false;
-            btnTest.Enabled = false;
+            //btnForecast.Enabled = false;
+            //btnTest.Enabled = false;
         }
 
         private void SettingGetData()
@@ -765,6 +765,11 @@ namespace ForecastTimeSeries
         }
 
         #endregion hybrid model event
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            _errorSeries = _dataSeries.FindAll(item => true);
+        }
 
     }
 }

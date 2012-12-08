@@ -81,10 +81,14 @@ namespace ForecastTimeSeries
             for (int i = 1; i < processSeries.Count; i++)
             {
                 double temp = Math.Abs((processSeries[i] - testSeries[i]) / processSeries[i]);
+                if (double.IsNaN(temp))
+                {
+                    temp = 1.0;
+                }
                 temp = Math.Min(temp, 1.0);
                 result += Math.Abs(temp);
             }
-            result /= processSeries.Count;
+            result = result*100/processSeries.Count;
             return result;
         }
 
@@ -425,7 +429,7 @@ namespace ForecastTimeSeries
             Test_Form form = new Test_Form();
             form.textBox1.AppendText("Mean Absolute Error MAE =  " + MAE + "\n");
             form.textBox1.AppendText("Mean Square Error MSE =  " + MSE + "\n");
-            form.textBox1.AppendText("Mean absolute percentage Error MSE =  " + MAPE + "\n");
+            form.textBox1.AppendText("Mean absolute percentage Error MAPE =  " + MAPE + "\n");
 
             //Mean absolute percentage
             form.textBox1.ReadOnly = true;
