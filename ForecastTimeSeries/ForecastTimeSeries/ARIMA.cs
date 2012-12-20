@@ -195,9 +195,9 @@ namespace ForecastTimeSeries
             List<double> listRegularConfidenceLimit = new List<double>();
             List<double> listRegularPartialCorrelation = new List<double>();
 
-            Algorithm.ComputeAutocorrelation(series, startIndex, out listAutocorrelation);
-            Algorithm.ComputePartialAutocorrelation(listAutocorrelation, out listPartialAutocorrelation);
-            Algorithm.ComputeConfidenceLimit(listAutocorrelation, series.Count - startIndex, out listConfidenceLimit);
+            Statistic.ComputeAutocorrelation(series, startIndex, out listAutocorrelation);
+            Statistic.ComputePartialAutocorrelation(listAutocorrelation, out listPartialAutocorrelation);
+            Statistic.ComputeConfidenceLimit(listAutocorrelation, series.Count - startIndex, out listConfidenceLimit);
             double confidenceLimit = 1.96 / Math.Sqrt(series.Count - startIndex);
 
             int regularAutocorrelationLengh = seasonPartern;
@@ -363,8 +363,8 @@ namespace ForecastTimeSeries
                 listAutocorrelation.Clear();
                 listConfidenceLimit.Clear();
                 dataSize = series.Count - startIndex;
-                Algorithm.ComputeAutocorrelation(series, startIndex, out listAutocorrelation);
-                Algorithm.ComputeConfidenceLimit(listAutocorrelation, dataSize, out listConfidenceLimit);
+                Statistic.ComputeAutocorrelation(series, startIndex, out listAutocorrelation);
+                Statistic.ComputeConfidenceLimit(listAutocorrelation, dataSize, out listConfidenceLimit);
                 //DrawSeriesData(series, startIndex);
                 //DrawAutocorrelation(listAutocorrelation, listConfidenceLimit);
                 DecayPartern decayPartern = ComputeDecayPartern(listAutocorrelation, listConfidenceLimit);
@@ -428,7 +428,7 @@ namespace ForecastTimeSeries
             while (true)
             {
                 listAutocorrelation.Clear();
-                Algorithm.ComputeAutocorrelation(processSeries, startIndex, out listAutocorrelation);
+                Statistic.ComputeAutocorrelation(processSeries, startIndex, out listAutocorrelation);
 
                 //DrawSeriesData(series, startIndex);
                 //DrawAutocorrelation(listAutocorrelation, listConfidenceLimit);
@@ -538,7 +538,7 @@ namespace ForecastTimeSeries
 
                 // add error
             }
-            Algorithm.RevertDifference(ref currentSeries, ref startIndex, regularDifferencingLevel, seasonDifferencingLevel, seasonPartern);
+            Statistic.RevertDifference(ref currentSeries, ref startIndex, regularDifferencingLevel, seasonDifferencingLevel, seasonPartern);
             forecastSeries = new List<double>();
             for (int i = begin; i < currentSeries.Count; i++)
             {
@@ -689,7 +689,7 @@ namespace ForecastTimeSeries
             _regularDifferencingLevel = regularDifferencingLevel;
             _seasonDifferencingLevel = seasonDifferencingLevel;
             _seasonPartern = seasonPartern;
-            Algorithm.ComputeDifference(ref _processSeries, ref _startIndex, _regularDifferencingLevel, _seasonDifferencingLevel, _seasonPartern);
+            Statistic.ComputeDifference(ref _processSeries, ref _startIndex, _regularDifferencingLevel, _seasonDifferencingLevel, _seasonPartern);
         }
 
         public void ManualTraining(int pRegular, int regularDifferencing, int qRegular, int pSeason, int seassonDifferencing, int qSeason, int seasonPartern)
@@ -703,7 +703,7 @@ namespace ForecastTimeSeries
             this._seasonDifferencingLevel = seassonDifferencing;
             this._seasonPartern = seasonPartern;
 
-            Algorithm.ComputeDifference(ref _processSeries, ref _startIndex, _regularDifferencingLevel, _seasonDifferencingLevel, _seasonPartern);
+            Statistic.ComputeDifference(ref _processSeries, ref _startIndex, _regularDifferencingLevel, _seasonDifferencingLevel, _seasonPartern);
             EstimateARIMACoef(_processSeries, _startIndex, _pRegular, _qRegular, _seasonPartern, _pSeason, _qSeason, out _listArimaCoef);
 
             ComputError(_processSeries, _startIndex, _regularDifferencingLevel, _seasonDifferencingLevel, _pRegular, _qRegular, _seasonPartern, _pSeason, _qSeason, _listArimaCoef, out _errorSeries);
@@ -717,32 +717,32 @@ namespace ForecastTimeSeries
 
         public void DrawSeriesData()
         {
-            Algorithm.DrawSeriesData(_processSeries, _startIndex);
+            Statistic.DrawSeriesData(_processSeries, _startIndex);
         }
 
         public void DrawErrorData()
         {
-            Algorithm.DrawSeriesData(_errorSeries, _startIndex);
+            Statistic.DrawSeriesData(_errorSeries, _startIndex);
         }
 
         public void DrawAutocorrelation()
         {
             List<double> listAutocorrelation;
             List<double> listConfidenceLimit;
-            Algorithm.ComputeAutocorrelation(_processSeries, _startIndex, out listAutocorrelation);
-            Algorithm.ComputeConfidenceLimit(listAutocorrelation, _processSeries.Count, out listConfidenceLimit);
-            Algorithm.DrawAutocorrelation(listAutocorrelation, listConfidenceLimit);
-            Algorithm.WriteSeries(_processSeries, "Series.txt");
+            Statistic.ComputeAutocorrelation(_processSeries, _startIndex, out listAutocorrelation);
+            Statistic.ComputeConfidenceLimit(listAutocorrelation, _processSeries.Count, out listConfidenceLimit);
+            Statistic.DrawAutocorrelation(listAutocorrelation, listConfidenceLimit);
+            Statistic.WriteSeries(_processSeries, "Series.txt");
         }
 
         public void DrawPartialAutocorrelation()
         {
             List<double> listAutocorrelation;
             List<double> listPartialAutocorrelation;
-            Algorithm.ComputeAutocorrelation(_processSeries, _startIndex, out listAutocorrelation);
-            Algorithm.ComputePartialAutocorrelation(listAutocorrelation, out listPartialAutocorrelation);
+            Statistic.ComputeAutocorrelation(_processSeries, _startIndex, out listAutocorrelation);
+            Statistic.ComputePartialAutocorrelation(listAutocorrelation, out listPartialAutocorrelation);
             double confidenceLimit = 1.96 / Math.Sqrt(_processSeries.Count);
-            Algorithm.DrawPartialAutocorrelation(listPartialAutocorrelation, confidenceLimit);
+            Statistic.DrawPartialAutocorrelation(listPartialAutocorrelation, confidenceLimit);
         }
 
         public bool Export(string pathFile)
@@ -821,7 +821,7 @@ namespace ForecastTimeSeries
                     _listArimaCoef.Add(temp);
                 }
 
-                Algorithm.ComputeDifference(ref _processSeries, ref _startIndex, _regularDifferencingLevel, _seasonDifferencingLevel, _seasonPartern);
+                Statistic.ComputeDifference(ref _processSeries, ref _startIndex, _regularDifferencingLevel, _seasonDifferencingLevel, _seasonPartern);
                 ComputError(_processSeries, _startIndex, _regularDifferencingLevel, _seasonDifferencingLevel, _pRegular, _qRegular, _seasonPartern, _pSeason, _qSeason, _listArimaCoef, out _errorSeries);
 
             }

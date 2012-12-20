@@ -28,7 +28,7 @@ namespace ForecastTimeSeries
 
         public void DrawSeriesData()
         {
-            Algorithm.DrawSeriesData(_originSeries, 0);
+            Statistic.DrawSeriesData(_originSeries, 0);
         }
 
         public Neural()
