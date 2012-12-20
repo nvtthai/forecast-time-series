@@ -353,7 +353,7 @@ namespace ForecastTimeSeries
         {
             List<double> testSeries;
             ARIMAModel.GetTestSeries(out testSeries);
-            Algorithm.DrawTwoSeriesTestData(_dataSeries, 0, testSeries, 0);
+            Statistic.DrawTwoSeriesTestData(_dataSeries, 0, testSeries, 0);
         }
 
         private void btnForecastARIMA_Click(object sender, EventArgs e)
@@ -370,7 +370,7 @@ namespace ForecastTimeSeries
             if (aHead > 0)
             {
                 ARIMAModel.Forecast(aHead, out forecastSeries);
-                Algorithm.DrawForecastSeriesData(_dataSeries, 0, forecastSeries, 0);
+                Statistic.DrawForecastSeriesData(_dataSeries, 0, forecastSeries, 0);
             }
             else
             {
@@ -651,7 +651,7 @@ namespace ForecastTimeSeries
         {
             List<double> testSeries;
             NeuralModel.GetTestSeries(out testSeries);
-            Algorithm.DrawTwoSeriesTestData(_errorSeries, 0, testSeries, 0);
+            Statistic.DrawTwoSeriesTestData(_errorSeries, 0, testSeries, 0);
         }
 
         private void btnForecastNeural_Click(object sender, EventArgs e)
@@ -670,7 +670,7 @@ namespace ForecastTimeSeries
             if (aHead > 0)
             {
                 NeuralModel.Forecast(aHead, out forecastSeries);
-                Algorithm.DrawForecastSeriesData(_errorSeries, 0, forecastSeries, 0);
+                Statistic.DrawForecastSeriesData(_errorSeries, 0, forecastSeries, 0);
             }
             else
             {
@@ -761,7 +761,7 @@ namespace ForecastTimeSeries
                 testSeries[i] += errorSeries[i];
             }
 
-            Algorithm.DrawTwoSeriesTestData(_dataSeries, 0, testSeries, 0);
+            Statistic.DrawTwoSeriesTestData(_dataSeries, 0, testSeries, 0);
         }
 
         #endregion hybrid model event

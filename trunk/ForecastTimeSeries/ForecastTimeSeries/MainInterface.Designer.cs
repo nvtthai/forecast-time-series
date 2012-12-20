@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.btnPlotErrorARIMA = new System.Windows.Forms.Button();
@@ -77,6 +77,7 @@
             this.btnChooseData = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.button1 = new System.Windows.Forms.Button();
             this.btnForecastNeural = new System.Windows.Forms.Button();
             this.btnTestNeural = new System.Windows.Forms.Button();
             this.btnPlotNeural = new System.Windows.Forms.Button();
@@ -109,7 +110,6 @@
             this.textBoxNHead = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.chartForecast = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.button1 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBoxARIMAParameter.SuspendLayout();
@@ -167,7 +167,7 @@
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage1.Size = new System.Drawing.Size(909, 451);
             this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "ARIMA";
+            this.tabPage1.Text = "SARIMA";
             // 
             // btnPlotErrorARIMA
             // 
@@ -183,7 +183,7 @@
             // btnTestArima
             // 
             this.btnTestArima.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnTestArima.Location = new System.Drawing.Point(486, 247);
+            this.btnTestArima.Location = new System.Drawing.Point(495, 247);
             this.btnTestArima.Name = "btnTestArima";
             this.btnTestArima.Size = new System.Drawing.Size(90, 36);
             this.btnTestArima.TabIndex = 50;
@@ -194,7 +194,7 @@
             // btnForecastARIMA
             // 
             this.btnForecastARIMA.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnForecastARIMA.Location = new System.Drawing.Point(594, 247);
+            this.btnForecastARIMA.Location = new System.Drawing.Point(600, 247);
             this.btnForecastARIMA.Name = "btnForecastARIMA";
             this.btnForecastARIMA.Size = new System.Drawing.Size(90, 36);
             this.btnForecastARIMA.TabIndex = 49;
@@ -220,7 +220,7 @@
             // 
             this.btnSaveARIMA.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSaveARIMA.ForeColor = System.Drawing.Color.Black;
-            this.btnSaveARIMA.Location = new System.Drawing.Point(810, 252);
+            this.btnSaveARIMA.Location = new System.Drawing.Point(810, 247);
             this.btnSaveARIMA.Name = "btnSaveARIMA";
             this.btnSaveARIMA.Size = new System.Drawing.Size(90, 36);
             this.btnSaveARIMA.TabIndex = 47;
@@ -232,7 +232,7 @@
             // 
             this.btnLoadARIMA.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnLoadARIMA.ForeColor = System.Drawing.Color.Black;
-            this.btnLoadARIMA.Location = new System.Drawing.Point(702, 249);
+            this.btnLoadARIMA.Location = new System.Drawing.Point(705, 247);
             this.btnLoadARIMA.Name = "btnLoadARIMA";
             this.btnLoadARIMA.Size = new System.Drawing.Size(90, 36);
             this.btnLoadARIMA.TabIndex = 46;
@@ -261,9 +261,9 @@
             this.btnTrainARIMA.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnTrainARIMA.Location = new System.Drawing.Point(378, 247);
             this.btnTrainARIMA.Name = "btnTrainARIMA";
-            this.btnTrainARIMA.Size = new System.Drawing.Size(90, 36);
+            this.btnTrainARIMA.Size = new System.Drawing.Size(102, 36);
             this.btnTrainARIMA.TabIndex = 43;
-            this.btnTrainARIMA.Text = "Training";
+            this.btnTrainARIMA.Text = "Auto Training";
             this.btnTrainARIMA.UseVisualStyleBackColor = true;
             this.btnTrainARIMA.Click += new System.EventHandler(this.btnAutomaticTrainingARIMA_Click);
             // 
@@ -620,6 +620,17 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Neural Network";
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(128, 159);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(152, 23);
+            this.button1.TabIndex = 9;
+            this.button1.Text = "ChooseData";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Visible = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // btnForecastNeural
             // 
             this.btnForecastNeural.Location = new System.Drawing.Point(384, 341);
@@ -948,30 +959,20 @@
             // 
             // chartForecast
             // 
-            chartArea3.Name = "ChartArea1";
-            this.chartForecast.ChartAreas.Add(chartArea3);
-            legend3.Name = "Legend1";
-            this.chartForecast.Legends.Add(legend3);
+            chartArea1.Name = "ChartArea1";
+            this.chartForecast.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chartForecast.Legends.Add(legend1);
             this.chartForecast.Location = new System.Drawing.Point(6, 66);
             this.chartForecast.Name = "chartForecast";
-            series3.ChartArea = "ChartArea1";
-            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series3.Legend = "Legend1";
-            series3.Name = "Series";
-            this.chartForecast.Series.Add(series3);
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series1.Legend = "Legend1";
+            series1.Name = "Series";
+            this.chartForecast.Series.Add(series1);
             this.chartForecast.Size = new System.Drawing.Size(649, 379);
             this.chartForecast.TabIndex = 0;
             this.chartForecast.Text = "chart1";
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(128, 159);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(152, 23);
-            this.button1.TabIndex = 9;
-            this.button1.Text = "ChooseData";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // MainInterface
             // 
