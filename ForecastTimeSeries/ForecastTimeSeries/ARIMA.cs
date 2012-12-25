@@ -179,7 +179,7 @@ namespace ForecastTimeSeries
             }
         }
 
-        private void EstimateARIMAModel(List<double> series, int startIndex, int seasonPartern, out int pRegular, out int qRegular, out int pSeason, out int qSeason)
+        private void IdentifyARIMAModel(List<double> series, int startIndex, int seasonPartern, out int pRegular, out int qRegular, out int pSeason, out int qSeason)
         {
             pRegular = qRegular = pSeason = qSeason = 0;
 
@@ -536,7 +536,6 @@ namespace ForecastTimeSeries
                     currentSeries[i] += currentSeries[i - j * seasonPartern] * listArimaCoeff[pRegular + qRegular + j];
                 }
 
-                // add error
             }
             Statistic.RevertDifference(ref currentSeries, ref startIndex, regularDifferencingLevel, seasonDifferencingLevel, seasonPartern);
             forecastSeries = new List<double>();
@@ -677,7 +676,7 @@ namespace ForecastTimeSeries
             RemoveNonstationarity(ref _processSeries, ref _startIndex, out _regularDifferencingLevel);
             RemoveSeasonality(ref _processSeries, ref _startIndex, out _seasonPartern, out _seasonDifferencingLevel);
 
-            EstimateARIMAModel(_processSeries, _startIndex, _seasonPartern, out _pRegular, out _qRegular, out _pSeason, out _qSeason);
+            IdentifyARIMAModel(_processSeries, _startIndex, _seasonPartern, out _pRegular, out _qRegular, out _pSeason, out _qSeason);
             EstimateARIMACoef(_processSeries, _startIndex, _pRegular, _qRegular, _seasonPartern, _pSeason, _qSeason, out _listArimaCoef);
 
             ComputError(_processSeries, _startIndex, _regularDifferencingLevel, _seasonDifferencingLevel, _pRegular, _qRegular, _seasonPartern, _pSeason, _qSeason, _listArimaCoef, out _errorSeries);
@@ -732,7 +731,6 @@ namespace ForecastTimeSeries
             Statistic.ComputeAutocorrelation(_processSeries, _startIndex, out listAutocorrelation);
             Statistic.ComputeConfidenceLimit(listAutocorrelation, _processSeries.Count, out listConfidenceLimit);
             Statistic.DrawAutocorrelation(listAutocorrelation, listConfidenceLimit);
-            Statistic.WriteSeries(_processSeries, "Series.txt");
         }
 
         public void DrawPartialAutocorrelation()
