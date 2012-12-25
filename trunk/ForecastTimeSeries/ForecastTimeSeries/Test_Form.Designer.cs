@@ -82,6 +82,8 @@
             this.chart1.Size = new System.Drawing.Size(765, 383);
             this.chart1.TabIndex = 1;
             this.chart1.Text = "chart1";
+            chartArea1.AxisX.MajorGrid.Enabled = false;
+            chartArea1.AxisY.MajorGrid.Enabled = false;
             // 
             // Test_Form
             // 

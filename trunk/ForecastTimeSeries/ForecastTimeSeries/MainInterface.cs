@@ -347,6 +347,7 @@ namespace ForecastTimeSeries
             showARIMAModel();
 
             SettingTrainARIMA();
+            radioBtnAutomaticARIMA.Checked = true;
         }
 
         private void btnTestArima_Click(object sender, EventArgs e)

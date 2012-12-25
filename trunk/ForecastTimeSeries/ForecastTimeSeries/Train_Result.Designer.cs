@@ -59,6 +59,8 @@
             // 
             // chart1
             // 
+            chartArea4.AxisX.MajorGrid.Enabled = false;
+            chartArea4.AxisY.MajorGrid.Enabled = false;
             chartArea4.AxisX.Title = "epoch";
             chartArea4.AxisY.Title = "MAE";
             chartArea4.Name = "ChartArea1";
