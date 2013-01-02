@@ -17,7 +17,9 @@ namespace ForecastTimeSeries
         private ARIMA ARIMAModel;
         private Neural NeuralModel;
         List<double> _dataSeries;
-        List<double> _testSeries;
+        List<double> _testDataSeries;
+        List<double> _dataForTest;
+        List<double> _dataForForecast;
 
         public Main_Form()
         {
@@ -30,7 +32,9 @@ namespace ForecastTimeSeries
         private void InitData()
         {
             _dataSeries = new List<double>();
-            _testSeries = new List<double>();
+            _testDataSeries = new List<double>();
+            _dataForTest = new List<double>();
+            _dataForForecast = new List<double>();
             ARIMAModel = new ARIMA();
             NeuralModel = new Neural();
         }
@@ -277,7 +281,10 @@ namespace ForecastTimeSeries
         private void btnChooseData_Click(object sender, EventArgs e)
         {
             _dataSeries = new List<double>();
-            _testSeries = new List<double>();
+            _testDataSeries = new List<double>();
+            _dataForTest = new List<double>();
+            _dataForForecast = new List<double>();
+
             System.IO.StreamReader trainingFile = null;
             System.IO.StreamReader testingFile = null;
             string lineTrainingFile = null;
@@ -298,21 +305,25 @@ namespace ForecastTimeSeries
                 while ((lineTrainingFile = trainingFile.ReadLine()) != null)
                 {
                     idxRowTrainingFile++;
-                    if (idxRowTrainingFile < beginTrainingDataRow || idxRowTrainingFile > endTrainingDataRow)
-                        continue;
 
                     char[] delimiterChars = { ' ', ',' };
                     List<String> words = new List<string>();
                     words.AddRange(lineTrainingFile.Split(delimiterChars));
                     words.RemoveAll(item => "" == item);
 
-                    if (columnTrainingDataSelected <= words.Count)
+                    if (columnTrainingDataSelected > words.Count)
+                    {
+                        throw new DataException();
+                    }
+
+                    if (idxRowTrainingFile >= beginTrainingDataRow && idxRowTrainingFile <= endTrainingDataRow)
                     {
                         _dataSeries.Add(Double.Parse(words[columnTrainingDataSelected - 1]));
+                        _dataForForecast.Add(Double.Parse(words[columnTrainingDataSelected - 1]));
                     }
                     else
                     {
-                        throw new DataException();
+                        _dataForForecast.Add(Double.Parse(words[columnTrainingDataSelected - 1]));
                     }
                 }
             }
@@ -333,7 +344,7 @@ namespace ForecastTimeSeries
                 while ((lineTestingFile = testingFile.ReadLine()) != null)
                 {
                     idxRowTestingFile++;
-                    if (idxRowTestingFile < beginTestingDataRow || idxRowTestingFile > endTestingDataRow)
+                    if (idxRowTestingFile > endTestingDataRow)
                         continue;
 
                     char[] delimiterChars = { ' ', ',' };
@@ -341,19 +352,24 @@ namespace ForecastTimeSeries
                     words.AddRange(lineTestingFile.Split(delimiterChars));
                     words.RemoveAll(item => "" == item);
 
-                    if (columnTestingDataSelected <= words.Count)
-                    {
-                        _testSeries.Add(Double.Parse(words[columnTestingDataSelected - 1]));
-                    }
-                    else
+                    if (columnTestingDataSelected > words.Count)
                     {
                         throw new DataException();
+                    }
+
+                    if (idxRowTestingFile < beginTestingDataRow)
+                    {
+                        _dataForTest.Add(Double.Parse(words[columnTestingDataSelected - 1]));
+                    }
+                    else if (idxRowTestingFile <= endTestingDataRow)
+                    {
+                        _testDataSeries.Add(Double.Parse(words[columnTestingDataSelected - 1]));
                     }
                 }
             }
             catch (Exception ex)
             {
-                _testSeries = null;
+                _testDataSeries = null;
                 MessageBox.Show("Testing data file does not found or input is wrong format", null, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
@@ -363,7 +379,7 @@ namespace ForecastTimeSeries
             }
 
 
-            if (_dataSeries != null && _testSeries != null)
+            if (_dataSeries != null && _testDataSeries != null)
             {
                 ARIMAModel = new ARIMA();
                 NeuralModel = new Neural();
@@ -494,9 +510,14 @@ namespace ForecastTimeSeries
 
             ARIMAModel.SetData(_dataSeries);
             ARIMAModel.AutomaticTraining();
+
+
             List<double> errorARIMASeries;
             ARIMAModel.GetErrorSeries(out errorARIMASeries);
             NeuralModel.SetData(errorARIMASeries);
+            radioBtnAutomaticARIMA.Checked = true;
+            SettingGUIBeforeNeuralNetwork();
+
             radioBtnAutomaticARIMA.Checked = true;
             SettingGUIBeforeNeuralNetwork();
 
@@ -510,9 +531,19 @@ namespace ForecastTimeSeries
 
         private void btnTestArima_Click(object sender, EventArgs e)
         {
-            List<double> testARIMASeries;
-            ARIMAModel.GetTestSeries(out testARIMASeries);
-            Statistic.DrawTwoSeriesTestData(_dataSeries, 0, testARIMASeries, 0);
+            List<double> testDataARIMASeries = new List<double>();
+            List<double> testResultARIMASeries = new List<double>();
+            int numDataForInput = ARIMAModel.GetNumDataForInput();
+            for (int i = numDataForInput; i > 0; i--)
+            {
+                testDataARIMASeries.Add(_dataForTest[_dataForTest.Count - i]);
+            }
+            for (int i = 0; i < _testDataSeries.Count; i++)
+            {
+                testDataARIMASeries.Add(_testDataSeries[i]);
+            }
+            ARIMAModel.ComputeTestingResult(testDataARIMASeries, out testResultARIMASeries);
+            Statistic.DrawTwoSeriesTestData(testDataARIMASeries, numDataForInput, testResultARIMASeries, numDataForInput);
         }
 
         private void btnForecastARIMA_Click(object sender, EventArgs e)
@@ -529,7 +560,7 @@ namespace ForecastTimeSeries
 
             if (aHead > 0)
             {
-                ARIMAModel.Forecast(aHead, out forecastARIMASeries);
+                ARIMAModel.Forecast(_dataForForecast, aHead, out forecastARIMASeries);
                 Statistic.DrawForecastSeriesData(_dataSeries, 0, forecastARIMASeries, 0);
             }
             else
