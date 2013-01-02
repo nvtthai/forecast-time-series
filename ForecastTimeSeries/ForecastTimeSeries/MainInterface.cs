@@ -373,8 +373,8 @@ namespace ForecastTimeSeries
             aHeadDialog.Dispose();
             if (aHead > 0)
             {
-                ARIMAModel.Forecast(aHead, out forecastSeries);
-                Statistic.DrawForecastSeriesData(_dataSeries, 0, forecastSeries, 0);
+                //ARIMAModel.Forecast(aHead, out forecastSeries);
+                //Statistic.DrawForecastSeriesData(_dataSeries, 0, forecastSeries, 0);
             }
             else
             {
@@ -697,9 +697,9 @@ namespace ForecastTimeSeries
             chartForecast.Series.Clear();
             richTextForecast.Text = "";
             int nHead = Int16.Parse(textBoxNHead.Text);
-            List<double> forecastSeries;
+            List<double> forecastSeries = new List<double>();
             List<double> forecastErrorSeries;
-            ARIMAModel.Forecast(nHead, out forecastSeries);
+            //ARIMAModel.Forecast(nHead, out forecastSeries);
             NeuralModel.Forecast(nHead, out forecastErrorSeries);
             for (int i = 0; i < nHead; i++)
             {

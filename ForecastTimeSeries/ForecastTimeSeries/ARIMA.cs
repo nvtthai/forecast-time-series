@@ -468,10 +468,10 @@ namespace ForecastTimeSeries
             }
         }
 
-        private void ComputTrainingError(List<double> processSeries, int startIndex, int regularDifferencingLevel, int seasonDifferencingLevel, int pRegular, int qRegular, int seasonPartern, int pSeason, int qSeason, List<double> listArimaCoeff, out List<double> errorSeries)
+        private void ComputeTrainingResultData(List<double> processSeries, int startIndex, int regularDifferencingLevel, int seasonDifferencingLevel, int pRegular, int qRegular, int seasonPartern, int pSeason, int qSeason, List<double> listArimaCoeff, out List<double> testSeries)
         {
-            errorSeries = new List<double>();
-            List<double> testSeries = new List<double>();
+            List<double> errorSeries = new List<double>();
+            testSeries = new List<double>();
 
             int begin = ComputeMax(pRegular, qRegular, pSeason * seasonPartern, qSeason * seasonPartern, startIndex);
 
@@ -529,47 +529,74 @@ namespace ForecastTimeSeries
             }
         }
 
-        private void ForecastARIMA(List<double> processSeries, List<double> errors, int startIndex, int regularDifferencingLevel, int seasonDifferencingLevel, int pRegular, int qRegular, int seasonPartern, int pSeason, int qSeason, List<double> listArimaCoeff, int nHead, out List<double> forecastSeries)
+        private void ForecastARIMA(List<double> timeSeries, int regularDifferencingLevel, int seasonDifferencingLevel, int pRegular, int qRegular, int seasonPartern, int pSeason, int qSeason, List<double> listArimaCoeff, int nHead, out List<double> forecastSeries)
         {
-            List<double> currentSeries = processSeries.FindAll(item => true);
-            List<double> currentErrors = errors.FindAll(item => true);
-            int begin = processSeries.Count;
-            for (int i = 0; i < nHead; i++)
+            List<double> currentSeries = timeSeries.FindAll(item => true);
+            List<double> currentErrors = new List<double>();
+            List<double> currentResults = new List<double>();
+            int startIndexForecast = 0;
+
+            Statistic.ComputeDifference(ref currentSeries, ref startIndexForecast, _regularDifferencingLevel, _seasonDifferencingLevel, _seasonPartern);
+
+            int begin = ComputeMax(pRegular, qRegular, pSeason * seasonPartern, qSeason * seasonPartern, startIndexForecast);
+
+            for (int i = 0; i < begin; i++)
             {
-                currentSeries.Add(0);
+                currentResults.Add(currentSeries[i]);
                 currentErrors.Add(0);
             }
             for (int i = begin; i < currentSeries.Count; i++)
             {
-                currentSeries[i] = listArimaCoeff[0];
+                double temp = listArimaCoeff[0];
 
                 for (int j = 1; j <= pRegular; j++)
                 {
-                    currentSeries[i] += currentSeries[i - j] * listArimaCoeff[j];
-                }
-
-                for (int j = 1; j <= qRegular; j++)
-                {
-                    currentSeries[i] += currentErrors[i - j] * listArimaCoeff[pRegular + j];
+                    temp += currentSeries[i - j] * listArimaCoeff[j];
                 }
 
                 for (int j = 1; j <= pSeason; j++)
                 {
-                    currentSeries[i] += currentSeries[i - j * seasonPartern] * listArimaCoeff[pRegular + qRegular + j];
+                    temp += currentSeries[i - j * seasonPartern] * listArimaCoeff[pRegular + qRegular + j];
                 }
 
-                for (int j = 1; j <= qSeason; j++)
-                {
-                    currentSeries[i] += currentErrors[i - j * seasonPartern] * listArimaCoeff[pRegular + qRegular + pSeason + j];
-                }
-
+                currentResults.Add(temp);
+                currentErrors.Add(timeSeries[i] - currentSeries[i]);
             }
-            Statistic.RevertDifference(ref currentSeries, ref startIndex, regularDifferencingLevel, seasonDifferencingLevel, seasonPartern);
-            forecastSeries = new List<double>();
-            for (int i = begin; i < currentSeries.Count; i++)
+
+            for (int i = 0; i < nHead; i++)
             {
-                forecastSeries.Add(currentSeries[i]);
+                double temp = listArimaCoeff[0];
+
+                for (int j = 1; j <= pRegular; j++)
+                {
+                    temp += currentSeries[timeSeries.Count + i - j] * listArimaCoeff[j];
+                }
+
+                for (int j = 1; j <= pSeason; j++)
+                {
+                    temp += currentSeries[timeSeries.Count + i - j * seasonPartern] * listArimaCoeff[pRegular + qRegular + j];
+                }
+
+                currentResults.Add(temp);
+                currentSeries.Add(temp);
+                currentErrors.Add(timeSeries[i] - currentSeries[i]);
             }
+            RevertDiffTestSeries(ref currentSeries, ref currentResults, ref startIndexForecast, regularDifferencingLevel, seasonDifferencingLevel, seasonPartern);
+            forecastSeries = new List<double>();
+            for (int i = 0; i < nHead; i++)
+            {
+                forecastSeries.Add(currentSeries[timeSeries.Count + i]);
+            }
+        }
+
+        public void ComputeTestingResult(List<double> testDataSeries, out List<double> testResultSeries)
+        {
+            List<double> testDataSeriesProcessed = testDataSeries.FindAll(item => true);
+            testResultSeries = new List<double>();
+            int startIndexTest = 0;
+            Statistic.ComputeDifference(ref testDataSeriesProcessed, ref startIndexTest, _regularDifferencingLevel, _seasonDifferencingLevel, _seasonPartern);
+            ComputeTrainingResultData(testDataSeriesProcessed, startIndexTest, _regularDifferencingLevel, _seasonDifferencingLevel, _pRegular, _qRegular, _seasonPartern, _pSeason, _qSeason, _listArimaCoef, out testResultSeries);
+            RevertDiffTestSeries(ref testDataSeriesProcessed, ref testResultSeries, ref startIndexTest, _regularDifferencingLevel, _seasonDifferencingLevel, _seasonPartern);
         }
        
         #endregion ARIMA algorithm
@@ -615,14 +642,7 @@ namespace ForecastTimeSeries
 
         public void  GetErrorSeries(out List<double> errors)
         {
-            errors = new List<double>();
-            List<double> testSeries;
-            GetTestSeries(out testSeries);
-            for(int i= _startIndex; i<_errorARIMASeries.Count; i++)
-            {
-                errors.Add(_originARIMASeries[i]-testSeries[i]);
-            }
-            //errors = _errorSeries.FindAll(item => true);
+            errors = _errorARIMASeries.FindAll(item => true);
         }
 
         public void GetTestSeries(out List<double> testSeries)
@@ -706,7 +726,18 @@ namespace ForecastTimeSeries
             IdentifyARIMAModel(_processARIMASeries, _startIndex, _seasonPartern, out _pRegular, out _qRegular, out _pSeason, out _qSeason);
             EstimateARIMACoef(_processARIMASeries, _startIndex, _pRegular, _qRegular, _seasonPartern, _pSeason, _qSeason, out _listArimaCoef);
 
-            ComputTrainingError(_processARIMASeries, _startIndex, _regularDifferencingLevel, _seasonDifferencingLevel, _pRegular, _qRegular, _seasonPartern, _pSeason, _qSeason, _listArimaCoef, out _errorARIMASeries);
+            List<double> trainingResultSeries = new List<double>();
+            ComputeTrainingResultData(_processARIMASeries, 0, _regularDifferencingLevel, _seasonDifferencingLevel, _pRegular, _qRegular, _seasonPartern, _pSeason, _qSeason, _listArimaCoef, out trainingResultSeries);
+            List<double> currentARIMASeries = _processARIMASeries.FindAll(item => true);
+            int startIndexTraining = _startIndex;
+            RevertDiffTestSeries(ref currentARIMASeries, ref trainingResultSeries, ref startIndexTraining, _regularDifferencingLevel, _seasonDifferencingLevel, _seasonPartern);
+            _errorARIMASeries = new List<double>();         
+            for (int i = 0; i < _originARIMASeries.Count; i++)
+            {
+                _errorARIMASeries.Add(_originARIMASeries[i] - trainingResultSeries[i]);
+            }
+            Statistic.DrawSeriesData(_errorARIMASeries, 0);
+            Statistic.DrawTwoSeriesTestData(_originARIMASeries, 0, trainingResultSeries, 0);
         }
 
         public void RemoveTrendSeasonality(int regularDifferencingLevel, int seasonDifferencingLevel, int seasonPartern)
@@ -732,12 +763,12 @@ namespace ForecastTimeSeries
             Statistic.ComputeDifference(ref _processARIMASeries, ref _startIndex, _regularDifferencingLevel, _seasonDifferencingLevel, _seasonPartern);
             EstimateARIMACoef(_processARIMASeries, _startIndex, _pRegular, _qRegular, _seasonPartern, _pSeason, _qSeason, out _listArimaCoef);
 
-            ComputTrainingError(_processARIMASeries, _startIndex, _regularDifferencingLevel, _seasonDifferencingLevel, _pRegular, _qRegular, _seasonPartern, _pSeason, _qSeason, _listArimaCoef, out _errorARIMASeries);
+            //ComputTrainingError(_processARIMASeries, _startIndex, _regularDifferencingLevel, _seasonDifferencingLevel, _pRegular, _qRegular, _seasonPartern, _pSeason, _qSeason, _listArimaCoef, out _errorARIMASeries);
         }
 
-        public void Forecast(int nHead, out List<double> forecastSeries)
+        public void Forecast(List<double> timeSeries, int nHead, out List<double> forecastSeries)
         {
-            ForecastARIMA(_processARIMASeries, _errorARIMASeries, _startIndex, _regularDifferencingLevel, _seasonDifferencingLevel,
+            ForecastARIMA(timeSeries, _regularDifferencingLevel, _seasonDifferencingLevel,
                 _pRegular, _qRegular, _seasonPartern, _pSeason, _qSeason, _listArimaCoef, nHead, out forecastSeries);
         }
 
@@ -847,7 +878,7 @@ namespace ForecastTimeSeries
                 }
 
                 Statistic.ComputeDifference(ref _processARIMASeries, ref _startIndex, _regularDifferencingLevel, _seasonDifferencingLevel, _seasonPartern);
-                ComputTrainingError(_processARIMASeries, _startIndex, _regularDifferencingLevel, _seasonDifferencingLevel, _pRegular, _qRegular, _seasonPartern, _pSeason, _qSeason, _listArimaCoef, out _errorARIMASeries);
+                //ComputTrainingError(_processARIMASeries, _startIndex, _regularDifferencingLevel, _seasonDifferencingLevel, _pRegular, _qRegular, _seasonPartern, _pSeason, _qSeason, _listArimaCoef, out _errorARIMASeries);
 
             }
             catch
@@ -855,7 +886,12 @@ namespace ForecastTimeSeries
             }
             return true;
         }
-    
+
+        public int GetNumDataForInput()
+        {
+            return ComputeMax(_pRegular, _qRegular, _pSeason * _seasonPartern, _qSeason * _seasonPartern, _startIndex);
+        }
+
     }
 
 }
