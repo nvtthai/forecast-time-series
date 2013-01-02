@@ -46,6 +46,11 @@ namespace ForecastTimeSeries
             _originSeries = new List<double>();
             _processSeries = new List<double>();
 
+            SettingNeuralNetwork(inputNodes, hiddenNodes, outputNodes);
+        }
+
+        public void SettingNeuralNetwork(int inputNodes, int hiddenNodes, int outputNodes)
+        {
             m_iNumInputNodes = inputNodes;
             m_iNumHiddenNodes = hiddenNodes;
             m_iNumOutputNodes = outputNodes;
@@ -91,7 +96,7 @@ namespace ForecastTimeSeries
                 }
             }
         }
-
+       
         private void InitForTrain()
         {
             Backup_m_arInputHiddenConn = new double[m_iNumInputNodes + 1, m_iNumHiddenNodes];
