@@ -355,9 +355,9 @@ namespace ForecastTimeSeries
 
         private void btnTestArima_Click(object sender, EventArgs e)
         {
-            List<double> testSeries;
-            ARIMAModel.GetTestSeries(out testSeries);
-            Statistic.DrawTwoSeriesTestData(_dataSeries, 0, testSeries, 0);
+            //List<double> testSeries;
+            //ARIMAModel.GetTestSeries(out testSeries);
+            //Statistic.DrawTwoSeriesTestData(_dataSeries, 0, testSeries, 0);
         }
 
         private void btnForecastARIMA_Click(object sender, EventArgs e)
@@ -658,9 +658,9 @@ namespace ForecastTimeSeries
 
         private void btnTestNeural_Click(object sender, EventArgs e)
         {
-            List<double> testSeries;
-            NeuralModel.GetTestSeries(out testSeries);
-            Statistic.DrawTwoSeriesTestData(_errorSeries, 0, testSeries, 0);
+            //List<double> testSeries;
+            //NeuralModel.GetTestSeries(out testSeries);
+            //Statistic.DrawTwoSeriesTestData(_errorSeries, 0, testSeries, 0);
         }
 
         private void btnForecastNeural_Click(object sender, EventArgs e)
@@ -744,33 +744,33 @@ namespace ForecastTimeSeries
 
         private void buttonTest_Click(object sender, EventArgs e)
         {
-            List<double> testSeries;
-            List<double> errorSeries;
+            //List<double> testSeries;
+            //List<double> errorSeries;
 
-            ARIMAModel.GetTestSeries(out testSeries);
-            NeuralModel.GetTestSeries(out errorSeries);
+            //ARIMAModel.GetTestSeries(out testSeries);
+            //NeuralModel.GetTestSeries(out errorSeries);
 
-            if (testSeries.Count > errorSeries.Count)
-            {
-                List<double> temp = new List<double>();
-                int n = testSeries.Count - errorSeries.Count;
-                for (int i = 0; i < n; i++)
-                {
-                    temp.Add(0);
-                }
-                foreach (int item in errorSeries)
-                {
-                    temp.Add(item);
-                }
-                errorSeries = temp;
-            }
+            //if (testSeries.Count > errorSeries.Count)
+            //{
+            //    List<double> temp = new List<double>();
+            //    int n = testSeries.Count - errorSeries.Count;
+            //    for (int i = 0; i < n; i++)
+            //    {
+            //        temp.Add(0);
+            //    }
+            //    foreach (int item in errorSeries)
+            //    {
+            //        temp.Add(item);
+            //    }
+            //    errorSeries = temp;
+            //}
 
-            for (int i = 0; i < testSeries.Count; i++)
-            {
-                testSeries[i] += errorSeries[i];
-            }
+            //for (int i = 0; i < testSeries.Count; i++)
+            //{
+            //    testSeries[i] += errorSeries[i];
+            //}
 
-            Statistic.DrawTwoSeriesTestData(_dataSeries, 0, testSeries, 0);
+            //Statistic.DrawTwoSeriesTestData(_dataSeries, 0, testSeries, 0);
         }
 
         #endregion hybrid model event

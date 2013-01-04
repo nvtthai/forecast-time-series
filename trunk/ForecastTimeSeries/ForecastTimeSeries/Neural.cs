@@ -674,29 +674,69 @@ namespace ForecastTimeSeries
             }
         }
 
-        public void GetTestSeries(out List<double> testSeries)
+        public int GetNumDataForInput()
         {
-            testSeries = new List<double>();
-            for (int i = 0; i < m_iNumInputNodes; i++)
-            {
-                testSeries.Add(_originSeries[i]);
-            }
-            double min = _originSeries.Min();
+            return m_iNumInputNodes;
+        }
+
+        public void ComputeTestingResult(List<double> testDataSeries, out List<double> testResultSeries)
+        {
+            List<double> testDataSeriesProcessed = new List<double>();
+            testResultSeries = new List<double>();
+
             double max = _originSeries.Max();
-            for (int i = m_iNumInputNodes; i < _processSeries.Count; i++)
+            double min = _originSeries.Min();
+            int count = testDataSeries.Count;
+            for (int i = 0; i < count; i++)
+            {
+                double a = testDataSeries.ElementAt(i);
+                double b = (a - min) / (max - min) * (0.99 - 0.01) + 0.01;
+                testDataSeriesProcessed.Add(b);
+            }
+
+            for (int i = m_iNumInputNodes; i < testDataSeriesProcessed.Count; i++)
             {
                 double[] input = new double[m_iNumInputNodes];
                 for (int j = m_iNumInputNodes; j > 0; j--)
                 {
-                    input[m_iNumInputNodes - j] = _processSeries[i - j];
+                    input[m_iNumInputNodes - j] = testDataSeriesProcessed[i - j];
                 }
                 CalculateOutput(input);
                 double temp = m_arOutputNodes[0].GetOutput();
                 temp = (temp - 0.01) / (0.99 - 0.01) * (max - min) + min;
-                testSeries.Add(temp);
+                testResultSeries.Add(temp);
+            }
+         }
+
+        public void Forecast(List<double> forecastDataSeries, int nHead, out List<double> forecastResultSeries)
+        {
+            List<double> forecastDataSeriesProcessed = new List<double>();
+            forecastResultSeries = new List<double>();
+
+            double max = _originSeries.Max();
+            double min = _originSeries.Min();
+            int count = forecastDataSeries.Count;
+            for (int i = 0; i < count; i++)
+            {
+                double a = forecastDataSeries.ElementAt(i);
+                double b = (a - min) / (max - min) * (0.99 - 0.01) + 0.01;
+                forecastDataSeriesProcessed.Add(b);
+            }
+
+            for (int i = 0; i < nHead; i++)
+            {
+                double[] input = new double[m_iNumInputNodes];
+                for (int j = m_iNumInputNodes; j > 0; j--)
+                {
+                    input[m_iNumInputNodes - j] = forecastDataSeriesProcessed[forecastDataSeriesProcessed.Count - j];
+                }
+                CalculateOutput(input);
+                double temp = m_arOutputNodes[0].GetOutput();
+                forecastDataSeriesProcessed.Add(temp);
+                temp = (temp - 0.01) / (0.99 - 0.01) * (max - min) + min;
+                forecastResultSeries.Add(temp);
             }
         }
-        
     }
 
 }

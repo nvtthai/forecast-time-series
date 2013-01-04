@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea9 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend9 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series9 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.tabCreateModel = new System.Windows.Forms.TabControl();
             this.tabChooseData = new System.Windows.Forms.TabPage();
             this.txtTestDataToRow = new System.Windows.Forms.TextBox();
@@ -781,6 +781,7 @@
             // radioRPROP
             // 
             this.radioRPROP.AutoSize = true;
+            this.radioRPROP.Checked = true;
             this.radioRPROP.Location = new System.Drawing.Point(193, 35);
             this.radioRPROP.Name = "radioRPROP";
             this.radioRPROP.Size = new System.Drawing.Size(74, 20);
@@ -797,7 +798,6 @@
             this.radioBackPropagation.Name = "radioBackPropagation";
             this.radioBackPropagation.Size = new System.Drawing.Size(134, 20);
             this.radioBackPropagation.TabIndex = 0;
-            this.radioBackPropagation.TabStop = true;
             this.radioBackPropagation.Text = "Back Propagation";
             this.radioBackPropagation.UseVisualStyleBackColor = true;
             this.radioBackPropagation.Click += new System.EventHandler(this.radioBackPropagation_Click);
@@ -1080,17 +1080,17 @@
             // 
             // chartForecast
             // 
-            chartArea9.Name = "ChartArea1";
-            this.chartForecast.ChartAreas.Add(chartArea9);
-            legend9.Name = "Legend1";
-            this.chartForecast.Legends.Add(legend9);
+            chartArea1.Name = "ChartArea1";
+            this.chartForecast.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chartForecast.Legends.Add(legend1);
             this.chartForecast.Location = new System.Drawing.Point(6, 61);
             this.chartForecast.Name = "chartForecast";
-            series9.ChartArea = "ChartArea1";
-            series9.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series9.Legend = "Legend1";
-            series9.Name = "Data";
-            this.chartForecast.Series.Add(series9);
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series1.Legend = "Legend1";
+            series1.Name = "Data";
+            this.chartForecast.Series.Add(series1);
             this.chartForecast.Size = new System.Drawing.Size(501, 300);
             this.chartForecast.TabIndex = 0;
             this.chartForecast.Text = "chart1";
