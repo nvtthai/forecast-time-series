@@ -501,8 +501,7 @@ namespace ForecastTimeSeries
                     temp += listArimaCoeff[pRegular + qRegular + pSeason + j] * errorSeries[i - j * seasonPartern];
                 }
                 testSeries.Add(temp);
-                errorSeries.Add(testSeries[i] - processSeries[i]);
-
+                errorSeries.Add(processSeries[i] - testSeries[i]);
             }
         }
 
@@ -588,17 +587,7 @@ namespace ForecastTimeSeries
                 forecastSeries.Add(currentSeries[timeSeries.Count + i]);
             }
         }
-
-        public void ComputeTestingResult(List<double> testDataSeries, out List<double> testResultSeries)
-        {
-            List<double> testDataSeriesProcessed = testDataSeries.FindAll(item => true);
-            testResultSeries = new List<double>();
-            int startIndexTest = 0;
-            Statistic.ComputeDifference(ref testDataSeriesProcessed, ref startIndexTest, _regularDifferencingLevel, _seasonDifferencingLevel, _seasonPartern);
-            ComputeTrainingResultData(testDataSeriesProcessed, startIndexTest, _regularDifferencingLevel, _seasonDifferencingLevel, _pRegular, _qRegular, _seasonPartern, _pSeason, _qSeason, _listArimaCoef, out testResultSeries);
-            RevertDiffTestSeries(ref testDataSeriesProcessed, ref testResultSeries, ref startIndexTest, _regularDifferencingLevel, _seasonDifferencingLevel, _seasonPartern);
-        }
-       
+    
         #endregion ARIMA algorithm
 
 
@@ -643,22 +632,10 @@ namespace ForecastTimeSeries
         public void  GetErrorSeries(out List<double> errors)
         {
             errors = _errorARIMASeries.FindAll(item => true);
-        }
-
-        public void GetTestSeries(out List<double> testSeries)
-        {
-            testSeries = new List<double>();
-
-            List<double> currentSeries = _processARIMASeries.FindAll(item => true);
-            for (int i = 0; i < _processARIMASeries.Count; i++)
+            for (int i = 0; i < _startIndex; i++)
             {
-                testSeries.Add(_processARIMASeries[i] + _errorARIMASeries[i]);
+                errors.RemoveAt(0);
             }
-            //DrawTwoSeriesData(currentSeries, _startIndex, testSeries, _startIndex);
-
-            int startIndex = _startIndex;
-            RevertDiffTestSeries(ref currentSeries, ref testSeries, ref startIndex, _regularDifferencingLevel, _seasonDifferencingLevel, _seasonPartern);
-            //DrawTwoSeriesData(currentSeries, startIndex, testSeries, startIndex);
         }
 
         public void GetModel(out string model)
@@ -736,8 +713,6 @@ namespace ForecastTimeSeries
             {
                 _errorARIMASeries.Add(_originARIMASeries[i] - trainingResultSeries[i]);
             }
-            Statistic.DrawSeriesData(_errorARIMASeries, 0);
-            Statistic.DrawTwoSeriesTestData(_originARIMASeries, 0, trainingResultSeries, 0);
         }
 
         public void RemoveTrendSeasonality(int regularDifferencingLevel, int seasonDifferencingLevel, int seasonPartern)
@@ -770,6 +745,16 @@ namespace ForecastTimeSeries
         {
             ForecastARIMA(timeSeries, _regularDifferencingLevel, _seasonDifferencingLevel,
                 _pRegular, _qRegular, _seasonPartern, _pSeason, _qSeason, _listArimaCoef, nHead, out forecastSeries);
+        }
+
+        public void ComputeTestingResult(List<double> testDataSeries, out List<double> testResultSeries)
+        {
+            List<double> testDataSeriesProcessed = testDataSeries.FindAll(item => true);
+            testResultSeries = new List<double>();
+            int startIndexTest = 0;
+            Statistic.ComputeDifference(ref testDataSeriesProcessed, ref startIndexTest, _regularDifferencingLevel, _seasonDifferencingLevel, _seasonPartern);
+            ComputeTrainingResultData(testDataSeriesProcessed, startIndexTest, _regularDifferencingLevel, _seasonDifferencingLevel, _pRegular, _qRegular, _seasonPartern, _pSeason, _qSeason, _listArimaCoef, out testResultSeries);
+            RevertDiffTestSeries(ref testDataSeriesProcessed, ref testResultSeries, ref startIndexTest, _regularDifferencingLevel, _seasonDifferencingLevel, _seasonPartern);
         }
 
         public void DrawSeriesData()

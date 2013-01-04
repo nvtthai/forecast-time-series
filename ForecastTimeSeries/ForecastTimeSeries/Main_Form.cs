@@ -27,6 +27,10 @@ namespace ForecastTimeSeries
             this.CenterToScreen();
             InitData();
             SettingGUIBeforeChooseData();
+            txtConfig1.Text = 0.1.ToString();
+            txtConfigEpoches.Text = 1000.ToString();
+            txtConfig2.Text = 10.ToString();
+            txtConfigErrors.Text = 0.000001.ToString();
         }
 
         private void InitData()
@@ -385,6 +389,7 @@ namespace ForecastTimeSeries
                 NeuralModel = new Neural();
                 ARIMAModel.SetData(_dataSeries);
                 SettingGUIBeforeARIMAModel();
+                MessageBox.Show("Load data successful", null, MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
@@ -543,7 +548,13 @@ namespace ForecastTimeSeries
                 testDataARIMASeries.Add(_testDataSeries[i]);
             }
             ARIMAModel.ComputeTestingResult(testDataARIMASeries, out testResultARIMASeries);
-            Statistic.DrawTwoSeriesTestData(testDataARIMASeries, numDataForInput, testResultARIMASeries, numDataForInput);
+
+            for (int i = numDataForInput; i > 0; i--)
+            {
+                testDataARIMASeries.RemoveAt(0);
+                testResultARIMASeries.RemoveAt(0);
+            }
+            Statistic.DrawTwoSeriesTestData(testDataARIMASeries, 0, testResultARIMASeries, 0);
         }
 
         private void btnForecastARIMA_Click(object sender, EventArgs e)
@@ -825,27 +836,65 @@ namespace ForecastTimeSeries
 
         private void btnTestNeural_Click(object sender, EventArgs e)
         {
-            List<double> testSeries;
-            NeuralModel.GetTestSeries(out testSeries);
-            //Statistic.DrawTwoSeriesTestData(_errorSeries, 0, testSeries, 0);
+            List<double> testDataARIMASeries = new List<double>();
+            List<double> testResultARIMASeries = new List<double>();
+            int numDataForInput = ARIMAModel.GetNumDataForInput() + NeuralModel.GetNumDataForInput();
+            for (int i = numDataForInput; i > 0; i--)
+            {
+                testDataARIMASeries.Add(_dataForTest[_dataForTest.Count - i]);
+            }
+            for (int i = 0; i < _testDataSeries.Count; i++)
+            {
+                testDataARIMASeries.Add(_testDataSeries[i]);
+            }
+            ARIMAModel.ComputeTestingResult(testDataARIMASeries, out testResultARIMASeries);
+
+            List<double> testDataNeuralSeries = new List<double>();
+            List<double> testResultNeuralSeries = new List<double>();
+
+            for (int i = ARIMAModel.GetNumDataForInput(); i < _testDataSeries.Count + numDataForInput; i++)
+            {
+                testDataNeuralSeries.Add(testDataARIMASeries[i] - testResultARIMASeries[i]);
+            }
+
+            NeuralModel.ComputeTestingResult(testDataNeuralSeries, out testResultNeuralSeries);
+            for (int i = 0; i < NeuralModel.GetNumDataForInput(); i++)
+            {
+                testDataNeuralSeries.RemoveAt(0);
+            }
+            Statistic.DrawTwoSeriesTestData(testDataNeuralSeries, NeuralModel.GetNumDataForInput(), testResultNeuralSeries, NeuralModel.GetNumDataForInput());
+
         }
 
         private void btnForecastNeural_Click(object sender, EventArgs e)
         {
-            List<double> forecastSeries;
+            List<double> forecastResultNeuralSeries = new List<double>();
+            List<double> forecastDataNeuralSeries = new List<double>();
+            List<double> testResultARIMASeries = new List<double>();
+            List<double> testErrorARIMASeries = new List<double>();
             int aHead = 0;
             AHead_Form aHeadDialog = new AHead_Form();
 
             if (aHeadDialog.ShowDialog() == DialogResult.OK)
             {
-                // Read the contents of testDialog's TextBox.
                 aHead = aHeadDialog.GetAHead();
             }
             aHeadDialog.Dispose();
             if (aHead > 0)
             {
-                NeuralModel.Forecast(aHead, out forecastSeries);
-                //Statistic.DrawForecastSeriesData(_errorSeries, 0, forecastSeries, 0);
+                ARIMAModel.ComputeTestingResult(_dataForForecast, out testResultARIMASeries);
+                for (int i = 0; i < _dataForForecast.Count; i++)
+                {
+                    testErrorARIMASeries.Add(_dataForForecast[i] - testResultARIMASeries[i]);
+                }
+
+                for (int i = 0; i < NeuralModel.GetNumDataForInput(); i++)
+                {
+                    forecastDataNeuralSeries.Add(testErrorARIMASeries[testErrorARIMASeries.Count - NeuralModel.GetNumDataForInput() + i]);
+                }
+
+                NeuralModel.Forecast(forecastDataNeuralSeries, aHead, out forecastResultNeuralSeries);
+                Statistic.DrawForecastSeriesData(testErrorARIMASeries, 0, forecastResultNeuralSeries, 0);
             }
             else
             {
@@ -857,12 +906,124 @@ namespace ForecastTimeSeries
 
         private void btnForecast_Click(object sender, EventArgs e)
         {
+            List<double> forecastResultARIMASeries = new List<double>();
+            List<double> testResultARIMASeries = new List<double>();
+            List<double> testErrorARIMASeries = new List<double>();
+            List<double> forecastResultNeuralSeries = new List<double>();
+            List<double> forecastDataNeuralSeries = new List<double>();
 
+            List<double> forecastResultSeries = new List<double>();
+            int aHead = 0;
+            AHead_Form aHeadDialog = new AHead_Form();
+
+            if (aHeadDialog.ShowDialog() == DialogResult.OK)
+            {
+                aHead = aHeadDialog.GetAHead();
+            }
+            aHeadDialog.Dispose();
+
+            if (aHead <= 0)
+            {
+                MessageBox.Show(this, "Please enter input in correct format", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            ARIMAModel.Forecast(_dataForForecast, aHead, out forecastResultARIMASeries);
+
+            ARIMAModel.ComputeTestingResult(_dataForForecast, out testResultARIMASeries);
+            for (int i = 0; i < _dataForForecast.Count; i++)
+            {
+                testErrorARIMASeries.Add(_dataForForecast[i] - testResultARIMASeries[i]);
+            }
+
+            for (int i = 0; i < NeuralModel.GetNumDataForInput(); i++)
+            {
+                forecastDataNeuralSeries.Add(testErrorARIMASeries[testErrorARIMASeries.Count - NeuralModel.GetNumDataForInput() + i]);
+            }
+
+            NeuralModel.Forecast(forecastDataNeuralSeries, aHead, out forecastResultNeuralSeries);
+            for (int i = 0; i < forecastResultARIMASeries.Count; i++)
+            {
+                forecastResultSeries.Add(forecastResultARIMASeries[i] + forecastResultNeuralSeries[i]);
+            }
+
+
+            //Draw forecast result
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series1.Color = System.Drawing.Color.Blue;
+            series1.IsVisibleInLegend = false;
+
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series2.Color = System.Drawing.Color.Red;
+            series2.IsVisibleInLegend = false;
+
+            for (int i = 0; i < _dataForForecast.Count; i++)
+            {
+                series1.Points.AddXY(i + 1, _dataForForecast[i]);
+            }
+            chartForecast.Series.Add(series1);
+
+            series2.Points.AddXY(_dataForForecast.Count, _dataForForecast[_dataForForecast.Count - 1]);
+            for (int i = 0; i < forecastResultSeries.Count; i++)
+            {
+                series2.Points.AddXY(_dataForForecast.Count + i + 1, forecastResultSeries[i]);
+            }
+            chartForecast.Series.Add(series2);
+
+            StringBuilder result = new StringBuilder();
+            result.Append(String.Format("Forecast data for {0} ahead time\n", aHead));
+            for (int i = 0; i < forecastResultSeries.Count; i++)
+            {
+                result.Append(String.Format("  {0}\t{1}\n", i+1, String.Format("{0:0.###}", forecastResultSeries[i])));
+            }
+
+            this.richTextForecast.Text = result.ToString();
         }
 
         private void btnTest_Click(object sender, EventArgs e)
         {
+            List<double> testDataARIMASeries = new List<double>();
+            List<double> testResultARIMASeries = new List<double>();
 
+            List<double> testDataNeuralSeries = new List<double>();
+            List<double> testResultNeuralSeries = new List<double>();
+
+            int numDataForInput = ARIMAModel.GetNumDataForInput() + NeuralModel.GetNumDataForInput();
+            for (int i = numDataForInput; i > 0; i--)
+            {
+                testDataARIMASeries.Add(_dataForTest[_dataForTest.Count - i]);
+            }
+            for (int i = 0; i < _testDataSeries.Count; i++)
+            {
+                testDataARIMASeries.Add(_testDataSeries[i]);
+            }
+            ARIMAModel.ComputeTestingResult(testDataARIMASeries, out testResultARIMASeries);
+
+            for (int i = ARIMAModel.GetNumDataForInput(); i < _testDataSeries.Count + numDataForInput; i++)
+            {
+                testDataNeuralSeries.Add(testDataARIMASeries[i] - testResultARIMASeries[i]);
+            }
+
+            NeuralModel.ComputeTestingResult(testDataNeuralSeries, out testResultNeuralSeries);
+
+            for (int i = numDataForInput; i > 0; i--)
+            {
+                testDataARIMASeries.RemoveAt(0);
+                testResultARIMASeries.RemoveAt(0);
+            }
+            for (int i = 0; i < NeuralModel.GetNumDataForInput(); i++)
+            {
+                testDataNeuralSeries.RemoveAt(0);
+            }
+            for (int i = 0; i < testDataARIMASeries.Count; i++)
+            {
+                testResultARIMASeries[i] += testResultNeuralSeries[i];
+            }
+
+            Statistic.DrawTwoSeriesTestData(testDataARIMASeries, 0, testResultARIMASeries, 0);
         }
     }
 }
