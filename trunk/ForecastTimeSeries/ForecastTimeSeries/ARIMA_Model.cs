@@ -15,6 +15,7 @@ namespace ForecastTimeSeries
         public ARIMA_Model()
         {
             InitializeComponent();
+            this.CenterToScreen();
         }
 
         public void SetResult(string result)

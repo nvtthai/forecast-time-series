@@ -28,9 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Train_Result));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.trainResult = new System.Windows.Forms.TextBox();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -59,21 +60,21 @@
             // 
             // chart1
             // 
-            chartArea4.AxisX.MajorGrid.Enabled = false;
-            chartArea4.AxisY.MajorGrid.Enabled = false;
-            chartArea4.AxisX.Title = "epoch";
-            chartArea4.AxisY.Title = "MAE";
-            chartArea4.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea4);
-            legend4.Name = "Legend1";
-            this.chart1.Legends.Add(legend4);
+            chartArea1.AxisX.MajorGrid.Enabled = false;
+            chartArea1.AxisX.Title = "epoch";
+            chartArea1.AxisY.MajorGrid.Enabled = false;
+            chartArea1.AxisY.Title = "MAE";
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
             this.chart1.Location = new System.Drawing.Point(10, 25);
             this.chart1.Name = "chart1";
-            series4.ChartArea = "ChartArea1";
-            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series4.Legend = "Legend1";
-            series4.Name = "MAE";
-            this.chart1.Series.Add(series4);
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series1.Legend = "Legend1";
+            series1.Name = "MAE";
+            this.chart1.Series.Add(series1);
             this.chart1.Size = new System.Drawing.Size(714, 309);
             this.chart1.TabIndex = 1;
             this.chart1.Text = "chart1";
@@ -97,6 +98,7 @@
             this.Controls.Add(this.chart1);
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Train_Result";
             this.Text = "Train_Result";
             this.groupBox1.ResumeLayout(false);

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AHead_Form));
             this.label1 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.btnOK = new System.Windows.Forms.Button();
@@ -79,6 +80,7 @@
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "AHead_Form";
             this.Text = "A Head Forecast";
             this.ResumeLayout(false);

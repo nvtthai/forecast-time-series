@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ARIMA_Model));
             this.richTextBoxResult = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
@@ -45,6 +46,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(472, 261);
             this.Controls.Add(this.richTextBoxResult);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ARIMA_Model";
             this.Text = "ARIMA_Model";
             this.ResumeLayout(false);
