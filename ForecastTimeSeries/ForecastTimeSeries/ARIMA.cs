@@ -644,7 +644,10 @@ namespace ForecastTimeSeries
             StringBuilder result = new StringBuilder();
             result.Append(String.Format("ARIMA({0}, {1}, {2})({3}, {4}, {5}){6}\n", 
                 _pRegular, _regularDifferencingLevel, _qRegular, _pSeason, _seasonDifferencingLevel, _qSeason, _seasonPartern));
-            result.Append(String.Format("Perception\t|{0}\n", _listArimaCoef[0]));
+            string perception = String.Format("{0:0.000}", _listArimaCoef[0]);
+            if (perception == "0.000")
+                perception = "0.001";
+            result.Append(String.Format("Perception\t|{0}\n", perception));
             result.Append(String.Format("Order\t\t|"));
             for (int i = 0; i < ComputeMax(_pRegular, _qRegular, _pSeason, _qSeason); i++)
             {
@@ -737,6 +740,17 @@ namespace ForecastTimeSeries
 
             Statistic.ComputeDifference(ref _processARIMASeries, ref _startIndex, _regularDifferencingLevel, _seasonDifferencingLevel, _seasonPartern);
             EstimateARIMACoef(_processARIMASeries, _startIndex, _pRegular, _qRegular, _seasonPartern, _pSeason, _qSeason, out _listArimaCoef);
+
+            List<double> trainingResultSeries = new List<double>();
+            ComputeTrainingResultData(_processARIMASeries, 0, _regularDifferencingLevel, _seasonDifferencingLevel, _pRegular, _qRegular, _seasonPartern, _pSeason, _qSeason, _listArimaCoef, out trainingResultSeries);
+            List<double> currentARIMASeries = _processARIMASeries.FindAll(item => true);
+            int startIndexTraining = _startIndex;
+            RevertDiffTestSeries(ref currentARIMASeries, ref trainingResultSeries, ref startIndexTraining, _regularDifferencingLevel, _seasonDifferencingLevel, _seasonPartern);
+            _errorARIMASeries = new List<double>();
+            for (int i = 0; i < _originARIMASeries.Count; i++)
+            {
+                _errorARIMASeries.Add(_originARIMASeries[i] - trainingResultSeries[i]);
+            }
 
             //ComputTrainingError(_processARIMASeries, _startIndex, _regularDifferencingLevel, _seasonDifferencingLevel, _pRegular, _qRegular, _seasonPartern, _pSeason, _qSeason, _listArimaCoef, out _errorARIMASeries);
         }

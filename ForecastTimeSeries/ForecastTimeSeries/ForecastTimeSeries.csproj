@@ -146,6 +146,9 @@
     <EmbeddedResource Include="Test_Form.resx">
       <DependentUpon>Test_Form.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Train_Result.resx">
+      <DependentUpon>Train_Result.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">

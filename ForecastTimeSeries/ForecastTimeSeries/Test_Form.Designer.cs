@@ -32,6 +32,7 @@
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Test_Form));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -59,7 +60,9 @@
             // 
             // chart1
             // 
+            chartArea1.AxisX.MajorGrid.Enabled = false;
             chartArea1.AxisX.Title = "time";
+            chartArea1.AxisY.MajorGrid.Enabled = false;
             chartArea1.AxisY.Title = "value";
             chartArea1.Name = "ChartArea1";
             this.chart1.ChartAreas.Add(chartArea1);
@@ -82,8 +85,6 @@
             this.chart1.Size = new System.Drawing.Size(765, 383);
             this.chart1.TabIndex = 1;
             this.chart1.Text = "chart1";
-            chartArea1.AxisX.MajorGrid.Enabled = false;
-            chartArea1.AxisY.MajorGrid.Enabled = false;
             // 
             // Test_Form
             // 
@@ -93,6 +94,7 @@
             this.Controls.Add(this.chart1);
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Test_Form";
             this.Text = "Test_Form";
             this.groupBox1.ResumeLayout(false);

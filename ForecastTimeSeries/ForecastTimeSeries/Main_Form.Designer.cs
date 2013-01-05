@@ -28,11 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            this.tabCreateModel = new System.Windows.Forms.TabControl();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main_Form));
+            this.tabControlModel = new System.Windows.Forms.TabControl();
             this.tabChooseData = new System.Windows.Forms.TabPage();
+            this.comboBoxModel = new System.Windows.Forms.ComboBox();
+            this.label15 = new System.Windows.Forms.Label();
             this.txtTestDataToRow = new System.Windows.Forms.TextBox();
             this.label24 = new System.Windows.Forms.Label();
             this.txtTestDataFromRow = new System.Windows.Forms.TextBox();
@@ -43,7 +46,6 @@
             this.txtTrainDataFromRow = new System.Windows.Forms.TextBox();
             this.label21 = new System.Windows.Forms.Label();
             this.labelNumRowDataTraining = new System.Windows.Forms.Label();
-            this.btnChooseData = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.btnChooseTestingData = new System.Windows.Forms.Button();
             this.textDataFileTesting = new System.Windows.Forms.TextBox();
@@ -63,6 +65,7 @@
             this.labelNumColumnDataTesting = new System.Windows.Forms.Label();
             this.label25 = new System.Windows.Forms.Label();
             this.tabSARIMAModel = new System.Windows.Forms.TabPage();
+            this.btnResetDataARIMA = new System.Windows.Forms.Button();
             this.btnSaveARIMA = new System.Windows.Forms.Button();
             this.btnLoadARIMA = new System.Windows.Forms.Button();
             this.btnForecastARIMA = new System.Windows.Forms.Button();
@@ -125,9 +128,7 @@
             this.btnForecast = new System.Windows.Forms.Button();
             this.richTextForecast = new System.Windows.Forms.RichTextBox();
             this.chartForecast = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.label15 = new System.Windows.Forms.Label();
-            this.comboBoxModel = new System.Windows.Forms.ComboBox();
-            this.tabCreateModel.SuspendLayout();
+            this.tabControlModel.SuspendLayout();
             this.tabChooseData.SuspendLayout();
             this.groupBoxTrainingData.SuspendLayout();
             this.groupBoxTestingData.SuspendLayout();
@@ -141,26 +142,27 @@
             ((System.ComponentModel.ISupportInitialize)(this.chartForecast)).BeginInit();
             this.SuspendLayout();
             // 
-            // tabCreateModel
+            // tabControlModel
             // 
-            this.tabCreateModel.Controls.Add(this.tabChooseData);
-            this.tabCreateModel.Controls.Add(this.tabSARIMAModel);
-            this.tabCreateModel.Controls.Add(this.tabNeuralNetwork);
-            this.tabCreateModel.Controls.Add(this.tabForecast);
-            this.tabCreateModel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tabCreateModel.Location = new System.Drawing.Point(4, 5);
-            this.tabCreateModel.Name = "tabCreateModel";
-            this.tabCreateModel.SelectedIndex = 0;
-            this.tabCreateModel.Size = new System.Drawing.Size(664, 397);
-            this.tabCreateModel.TabIndex = 0;
+            this.tabControlModel.Controls.Add(this.tabChooseData);
+            this.tabControlModel.Controls.Add(this.tabSARIMAModel);
+            this.tabControlModel.Controls.Add(this.tabNeuralNetwork);
+            this.tabControlModel.Controls.Add(this.tabForecast);
+            this.tabControlModel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tabControlModel.Location = new System.Drawing.Point(4, 5);
+            this.tabControlModel.Name = "tabControlModel";
+            this.tabControlModel.SelectedIndex = 0;
+            this.tabControlModel.Size = new System.Drawing.Size(664, 397);
+            this.tabControlModel.TabIndex = 0;
+            this.tabControlModel.SelectedIndexChanged += new System.EventHandler(this.tabControlModel_SelectedIndexChanged);
             // 
             // tabChooseData
             // 
             this.tabChooseData.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.tabChooseData.Controls.Add(this.comboBoxModel);
-            this.tabChooseData.Controls.Add(this.label15);
             this.tabChooseData.Controls.Add(this.txtTestDataToRow);
             this.tabChooseData.Controls.Add(this.label24);
+            this.tabChooseData.Controls.Add(this.label15);
             this.tabChooseData.Controls.Add(this.txtTestDataFromRow);
             this.tabChooseData.Controls.Add(this.label23);
             this.tabChooseData.Controls.Add(this.labelNumRowDataTesting);
@@ -169,7 +171,6 @@
             this.tabChooseData.Controls.Add(this.txtTrainDataFromRow);
             this.tabChooseData.Controls.Add(this.label21);
             this.tabChooseData.Controls.Add(this.labelNumRowDataTraining);
-            this.tabChooseData.Controls.Add(this.btnChooseData);
             this.tabChooseData.Controls.Add(this.label5);
             this.tabChooseData.Controls.Add(this.btnChooseTestingData);
             this.tabChooseData.Controls.Add(this.textDataFileTesting);
@@ -187,18 +188,41 @@
             this.tabChooseData.TabIndex = 0;
             this.tabChooseData.Text = "Data";
             // 
+            // comboBoxModel
+            // 
+            this.comboBoxModel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxModel.FormattingEnabled = true;
+            this.comboBoxModel.Items.AddRange(new object[] {
+            "SARIMA",
+            "ANN",
+            "SARIMA-ANN"});
+            this.comboBoxModel.Location = new System.Drawing.Point(126, 16);
+            this.comboBoxModel.Name = "comboBoxModel";
+            this.comboBoxModel.Size = new System.Drawing.Size(121, 24);
+            this.comboBoxModel.TabIndex = 24;
+            this.comboBoxModel.Tag = "";
+            this.comboBoxModel.SelectedIndexChanged += new System.EventHandler(this.comboBoxModel_SelectedIndexChanged);
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(24, 19);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(96, 16);
+            this.label15.TabIndex = 23;
+            this.label15.Text = "Choose model";
+            // 
             // txtTestDataToRow
             // 
-            this.txtTestDataToRow.Location = new System.Drawing.Point(415, 222);
+            this.txtTestDataToRow.Location = new System.Drawing.Point(415, 284);
             this.txtTestDataToRow.Name = "txtTestDataToRow";
             this.txtTestDataToRow.Size = new System.Drawing.Size(100, 22);
             this.txtTestDataToRow.TabIndex = 20;
-            this.txtTestDataToRow.TextChanged += new System.EventHandler(this.txtTestDataToRow_TextChanged);
             // 
             // label24
             // 
             this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(356, 227);
+            this.label24.Location = new System.Drawing.Point(356, 289);
             this.label24.Name = "label24";
             this.label24.Size = new System.Drawing.Size(25, 16);
             this.label24.TabIndex = 19;
@@ -206,16 +230,15 @@
             // 
             // txtTestDataFromRow
             // 
-            this.txtTestDataFromRow.Location = new System.Drawing.Point(122, 223);
+            this.txtTestDataFromRow.Location = new System.Drawing.Point(122, 285);
             this.txtTestDataFromRow.Name = "txtTestDataFromRow";
             this.txtTestDataFromRow.Size = new System.Drawing.Size(100, 22);
             this.txtTestDataFromRow.TabIndex = 18;
-            this.txtTestDataFromRow.TextChanged += new System.EventHandler(this.txtTestDataFromRow_TextChanged);
             // 
             // label23
             // 
             this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(23, 225);
+            this.label23.Location = new System.Drawing.Point(23, 287);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(35, 16);
             this.label23.TabIndex = 17;
@@ -224,23 +247,22 @@
             // labelNumRowDataTesting
             // 
             this.labelNumRowDataTesting.AutoSize = true;
-            this.labelNumRowDataTesting.Location = new System.Drawing.Point(119, 197);
+            this.labelNumRowDataTesting.Location = new System.Drawing.Point(119, 259);
             this.labelNumRowDataTesting.Name = "labelNumRowDataTesting";
             this.labelNumRowDataTesting.Size = new System.Drawing.Size(0, 16);
             this.labelNumRowDataTesting.TabIndex = 16;
             // 
             // txtTrainDataToRow
             // 
-            this.txtTrainDataToRow.Location = new System.Drawing.Point(415, 78);
+            this.txtTrainDataToRow.Location = new System.Drawing.Point(415, 128);
             this.txtTrainDataToRow.Name = "txtTrainDataToRow";
             this.txtTrainDataToRow.Size = new System.Drawing.Size(100, 22);
             this.txtTrainDataToRow.TabIndex = 15;
-            this.txtTrainDataToRow.TextChanged += new System.EventHandler(this.txtTrainDataToRow_TextChanged);
             // 
             // label22
             // 
             this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(331, 81);
+            this.label22.Location = new System.Drawing.Point(331, 131);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(25, 16);
             this.label22.TabIndex = 14;
@@ -248,16 +270,15 @@
             // 
             // txtTrainDataFromRow
             // 
-            this.txtTrainDataFromRow.Location = new System.Drawing.Point(122, 81);
+            this.txtTrainDataFromRow.Location = new System.Drawing.Point(122, 131);
             this.txtTrainDataFromRow.Name = "txtTrainDataFromRow";
             this.txtTrainDataFromRow.Size = new System.Drawing.Size(100, 22);
             this.txtTrainDataFromRow.TabIndex = 13;
-            this.txtTrainDataFromRow.TextChanged += new System.EventHandler(this.txtTrainDataFromRow_TextChanged);
             // 
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(24, 84);
+            this.label21.Location = new System.Drawing.Point(24, 134);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(35, 16);
             this.label21.TabIndex = 12;
@@ -266,26 +287,16 @@
             // labelNumRowDataTraining
             // 
             this.labelNumRowDataTraining.AutoSize = true;
-            this.labelNumRowDataTraining.Location = new System.Drawing.Point(119, 55);
+            this.labelNumRowDataTraining.Location = new System.Drawing.Point(119, 105);
             this.labelNumRowDataTraining.Name = "labelNumRowDataTraining";
             this.labelNumRowDataTraining.Size = new System.Drawing.Size(15, 16);
             this.labelNumRowDataTraining.TabIndex = 11;
             this.labelNumRowDataTraining.Text = "0";
             // 
-            // btnChooseData
-            // 
-            this.btnChooseData.Location = new System.Drawing.Point(259, 288);
-            this.btnChooseData.Name = "btnChooseData";
-            this.btnChooseData.Size = new System.Drawing.Size(138, 23);
-            this.btnChooseData.TabIndex = 10;
-            this.btnChooseData.Text = "Choose data";
-            this.btnChooseData.UseVisualStyleBackColor = true;
-            this.btnChooseData.Click += new System.EventHandler(this.btnChooseData_Click);
-            // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(23, 197);
+            this.label5.Location = new System.Drawing.Point(23, 259);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(67, 16);
             this.label5.TabIndex = 8;
@@ -293,7 +304,7 @@
             // 
             // btnChooseTestingData
             // 
-            this.btnChooseTestingData.Location = new System.Drawing.Point(550, 160);
+            this.btnChooseTestingData.Location = new System.Drawing.Point(550, 222);
             this.btnChooseTestingData.Name = "btnChooseTestingData";
             this.btnChooseTestingData.Size = new System.Drawing.Size(75, 23);
             this.btnChooseTestingData.TabIndex = 7;
@@ -303,7 +314,7 @@
             // 
             // textDataFileTesting
             // 
-            this.textDataFileTesting.Location = new System.Drawing.Point(122, 162);
+            this.textDataFileTesting.Location = new System.Drawing.Point(122, 224);
             this.textDataFileTesting.Name = "textDataFileTesting";
             this.textDataFileTesting.ReadOnly = true;
             this.textDataFileTesting.Size = new System.Drawing.Size(393, 22);
@@ -312,7 +323,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(23, 165);
+            this.label4.Location = new System.Drawing.Point(23, 227);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(57, 16);
             this.label4.TabIndex = 5;
@@ -321,7 +332,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(23, 53);
+            this.label3.Location = new System.Drawing.Point(23, 103);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(67, 16);
             this.label3.TabIndex = 4;
@@ -329,7 +340,7 @@
             // 
             // btnChooseTrainingData
             // 
-            this.btnChooseTrainingData.Location = new System.Drawing.Point(550, 22);
+            this.btnChooseTrainingData.Location = new System.Drawing.Point(550, 72);
             this.btnChooseTrainingData.Name = "btnChooseTrainingData";
             this.btnChooseTrainingData.Size = new System.Drawing.Size(75, 23);
             this.btnChooseTrainingData.TabIndex = 2;
@@ -339,7 +350,7 @@
             // 
             // textDataFileTraining
             // 
-            this.textDataFileTraining.Location = new System.Drawing.Point(122, 24);
+            this.textDataFileTraining.Location = new System.Drawing.Point(122, 74);
             this.textDataFileTraining.Name = "textDataFileTraining";
             this.textDataFileTraining.ReadOnly = true;
             this.textDataFileTraining.Size = new System.Drawing.Size(393, 22);
@@ -348,7 +359,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(23, 27);
+            this.label1.Location = new System.Drawing.Point(23, 77);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(57, 16);
             this.label1.TabIndex = 0;
@@ -360,7 +371,7 @@
             this.groupBoxTrainingData.Controls.Add(this.label6);
             this.groupBoxTrainingData.Controls.Add(this.labelNumColumnDataTraining);
             this.groupBoxTrainingData.Controls.Add(this.label2);
-            this.groupBoxTrainingData.Location = new System.Drawing.Point(17, 3);
+            this.groupBoxTrainingData.Location = new System.Drawing.Point(17, 53);
             this.groupBoxTrainingData.Name = "groupBoxTrainingData";
             this.groupBoxTrainingData.Size = new System.Drawing.Size(618, 134);
             this.groupBoxTrainingData.TabIndex = 21;
@@ -373,7 +384,6 @@
             this.txtTrainDataColumn.Name = "txtTrainDataColumn";
             this.txtTrainDataColumn.Size = new System.Drawing.Size(100, 22);
             this.txtTrainDataColumn.TabIndex = 14;
-            this.txtTrainDataColumn.TextChanged += new System.EventHandler(this.txtTrainDataColumn_TextChanged);
             // 
             // label6
             // 
@@ -408,7 +418,7 @@
             this.groupBoxTestingData.Controls.Add(this.label26);
             this.groupBoxTestingData.Controls.Add(this.labelNumColumnDataTesting);
             this.groupBoxTestingData.Controls.Add(this.label25);
-            this.groupBoxTestingData.Location = new System.Drawing.Point(17, 141);
+            this.groupBoxTestingData.Location = new System.Drawing.Point(17, 203);
             this.groupBoxTestingData.Name = "groupBoxTestingData";
             this.groupBoxTestingData.Size = new System.Drawing.Size(618, 145);
             this.groupBoxTestingData.TabIndex = 22;
@@ -421,7 +431,6 @@
             this.txtTestDataColumn.Name = "txtTestDataColumn";
             this.txtTestDataColumn.Size = new System.Drawing.Size(100, 22);
             this.txtTestDataColumn.TabIndex = 15;
-            this.txtTestDataColumn.TextChanged += new System.EventHandler(this.txtTestDataColumn_TextChanged);
             // 
             // label26
             // 
@@ -453,6 +462,7 @@
             // tabSARIMAModel
             // 
             this.tabSARIMAModel.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.tabSARIMAModel.Controls.Add(this.btnResetDataARIMA);
             this.tabSARIMAModel.Controls.Add(this.btnSaveARIMA);
             this.tabSARIMAModel.Controls.Add(this.btnLoadARIMA);
             this.tabSARIMAModel.Controls.Add(this.btnForecastARIMA);
@@ -471,6 +481,16 @@
             this.tabSARIMAModel.Size = new System.Drawing.Size(656, 368);
             this.tabSARIMAModel.TabIndex = 1;
             this.tabSARIMAModel.Text = "SARIMA";
+            // 
+            // btnResetDataARIMA
+            // 
+            this.btnResetDataARIMA.Location = new System.Drawing.Point(282, 275);
+            this.btnResetDataARIMA.Name = "btnResetDataARIMA";
+            this.btnResetDataARIMA.Size = new System.Drawing.Size(101, 23);
+            this.btnResetDataARIMA.TabIndex = 12;
+            this.btnResetDataARIMA.Text = "Reset data";
+            this.btnResetDataARIMA.UseVisualStyleBackColor = true;
+            this.btnResetDataARIMA.Click += new System.EventHandler(this.btnResetDataARIMA_Click);
             // 
             // btnSaveARIMA
             // 
@@ -524,9 +544,9 @@
             // 
             // btnPlotErrorARIMA
             // 
-            this.btnPlotErrorARIMA.Location = new System.Drawing.Point(534, 275);
+            this.btnPlotErrorARIMA.Location = new System.Drawing.Point(152, 275);
             this.btnPlotErrorARIMA.Name = "btnPlotErrorARIMA";
-            this.btnPlotErrorARIMA.Size = new System.Drawing.Size(111, 23);
+            this.btnPlotErrorARIMA.Size = new System.Drawing.Size(101, 23);
             this.btnPlotErrorARIMA.TabIndex = 6;
             this.btnPlotErrorARIMA.Text = "Plot error";
             this.btnPlotErrorARIMA.UseVisualStyleBackColor = true;
@@ -534,21 +554,21 @@
             // 
             // btnPartialCorrelation
             // 
-            this.btnPartialCorrelation.Location = new System.Drawing.Point(334, 275);
+            this.btnPartialCorrelation.Location = new System.Drawing.Point(542, 275);
             this.btnPartialCorrelation.Name = "btnPartialCorrelation";
-            this.btnPartialCorrelation.Size = new System.Drawing.Size(157, 23);
+            this.btnPartialCorrelation.Size = new System.Drawing.Size(97, 23);
             this.btnPartialCorrelation.TabIndex = 5;
-            this.btnPartialCorrelation.Text = "Partial autocorrelation";
+            this.btnPartialCorrelation.Text = "PACF";
             this.btnPartialCorrelation.UseVisualStyleBackColor = true;
             this.btnPartialCorrelation.Click += new System.EventHandler(this.btnPartialCorrelation_Click);
             // 
             // btnCorrelogram
             // 
-            this.btnCorrelogram.Location = new System.Drawing.Point(173, 275);
+            this.btnCorrelogram.Location = new System.Drawing.Point(412, 275);
             this.btnCorrelogram.Name = "btnCorrelogram";
-            this.btnCorrelogram.Size = new System.Drawing.Size(111, 23);
+            this.btnCorrelogram.Size = new System.Drawing.Size(101, 23);
             this.btnCorrelogram.TabIndex = 4;
-            this.btnCorrelogram.Text = "Autocorrelation";
+            this.btnCorrelogram.Text = "ACF";
             this.btnCorrelogram.UseVisualStyleBackColor = true;
             this.btnCorrelogram.Click += new System.EventHandler(this.btnCorrelogram_Click);
             // 
@@ -556,7 +576,7 @@
             // 
             this.btnPlotDataARIMA.Location = new System.Drawing.Point(22, 275);
             this.btnPlotDataARIMA.Name = "btnPlotDataARIMA";
-            this.btnPlotDataARIMA.Size = new System.Drawing.Size(111, 23);
+            this.btnPlotDataARIMA.Size = new System.Drawing.Size(101, 23);
             this.btnPlotDataARIMA.TabIndex = 3;
             this.btnPlotDataARIMA.Text = "Plot data";
             this.btnPlotDataARIMA.UseVisualStyleBackColor = true;
@@ -1084,53 +1104,32 @@
             // 
             // chartForecast
             // 
-            chartArea2.Name = "ChartArea1";
-            this.chartForecast.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.chartForecast.Legends.Add(legend2);
+            chartArea1.Name = "ChartArea1";
+            this.chartForecast.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chartForecast.Legends.Add(legend1);
             this.chartForecast.Location = new System.Drawing.Point(6, 61);
             this.chartForecast.Name = "chartForecast";
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series2.Legend = "Legend1";
-            series2.Name = "Data";
-            this.chartForecast.Series.Add(series2);
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series1.Legend = "Legend1";
+            series1.Name = "Data";
+            this.chartForecast.Series.Add(series1);
             this.chartForecast.Size = new System.Drawing.Size(501, 300);
             this.chartForecast.TabIndex = 0;
             this.chartForecast.Text = "chart1";
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(25, 325);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(96, 16);
-            this.label15.TabIndex = 23;
-            this.label15.Text = "Choose model";
-            // 
-            // comboBoxModel
-            // 
-            this.comboBoxModel.FormattingEnabled = true;
-            this.comboBoxModel.Items.AddRange(new object[] {
-            "SARIMA",
-            "ANN",
-            "SARIMA-ANN"});
-            this.comboBoxModel.Location = new System.Drawing.Point(122, 317);
-            this.comboBoxModel.Name = "comboBoxModel";
-            this.comboBoxModel.Size = new System.Drawing.Size(121, 24);
-            this.comboBoxModel.TabIndex = 24;
-            this.comboBoxModel.Tag = "";
-            this.comboBoxModel.Text = "SARIMA-ANN";
             // 
             // Main_Form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(671, 403);
-            this.Controls.Add(this.tabCreateModel);
+            this.Controls.Add(this.tabControlModel);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Main_Form";
             this.Text = "Forecast Time Series Model";
-            this.tabCreateModel.ResumeLayout(false);
+            this.Load += new System.EventHandler(this.Main_Form_Load);
+            this.tabControlModel.ResumeLayout(false);
             this.tabChooseData.ResumeLayout(false);
             this.tabChooseData.PerformLayout();
             this.groupBoxTrainingData.ResumeLayout(false);
@@ -1156,7 +1155,7 @@
 
         #endregion
 
-        private System.Windows.Forms.TabControl tabCreateModel;
+        private System.Windows.Forms.TabControl tabControlModel;
         private System.Windows.Forms.TabPage tabChooseData;
         private System.Windows.Forms.TabPage tabSARIMAModel;
         private System.Windows.Forms.Label label1;
@@ -1229,7 +1228,6 @@
         private System.Windows.Forms.RadioButton radioRPROP;
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Label label19;
-        private System.Windows.Forms.Button btnChooseData;
         private System.Windows.Forms.Label labelNumRowDataTraining;
         private System.Windows.Forms.Label label23;
         private System.Windows.Forms.Label labelNumRowDataTesting;
@@ -1252,5 +1250,6 @@
         private System.Windows.Forms.Label label26;
         private System.Windows.Forms.ComboBox comboBoxModel;
         private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Button btnResetDataARIMA;
     }
 }
