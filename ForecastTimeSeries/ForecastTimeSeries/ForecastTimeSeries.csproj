@@ -71,6 +71,12 @@
     <Compile Include="ARIMA_Model.Designer.cs">
       <DependentUpon>ARIMA_Model.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forecast_Form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forecast_Form.Designer.cs">
+      <DependentUpon>Forecast_Form.cs</DependentUpon>
+    </Compile>
     <Compile Include="Main_Form.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -121,6 +127,9 @@
   <ItemGroup>
     <EmbeddedResource Include="ARIMA_Model.resx">
       <DependentUpon>ARIMA_Model.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forecast_Form.resx">
+      <DependentUpon>Forecast_Form.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainInterface.resx">
       <DependentUpon>MainInterface.cs</DependentUpon>

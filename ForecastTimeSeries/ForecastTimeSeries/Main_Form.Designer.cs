@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.tabCreateModel = new System.Windows.Forms.TabControl();
             this.tabChooseData = new System.Windows.Forms.TabPage();
             this.txtTestDataToRow = new System.Windows.Forms.TextBox();
@@ -125,6 +125,8 @@
             this.btnForecast = new System.Windows.Forms.Button();
             this.richTextForecast = new System.Windows.Forms.RichTextBox();
             this.chartForecast = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.label15 = new System.Windows.Forms.Label();
+            this.comboBoxModel = new System.Windows.Forms.ComboBox();
             this.tabCreateModel.SuspendLayout();
             this.tabChooseData.SuspendLayout();
             this.groupBoxTrainingData.SuspendLayout();
@@ -155,6 +157,8 @@
             // tabChooseData
             // 
             this.tabChooseData.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.tabChooseData.Controls.Add(this.comboBoxModel);
+            this.tabChooseData.Controls.Add(this.label15);
             this.tabChooseData.Controls.Add(this.txtTestDataToRow);
             this.tabChooseData.Controls.Add(this.label24);
             this.tabChooseData.Controls.Add(this.txtTestDataFromRow);
@@ -185,7 +189,7 @@
             // 
             // txtTestDataToRow
             // 
-            this.txtTestDataToRow.Location = new System.Drawing.Point(415, 255);
+            this.txtTestDataToRow.Location = new System.Drawing.Point(415, 222);
             this.txtTestDataToRow.Name = "txtTestDataToRow";
             this.txtTestDataToRow.Size = new System.Drawing.Size(100, 22);
             this.txtTestDataToRow.TabIndex = 20;
@@ -194,7 +198,7 @@
             // label24
             // 
             this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(356, 260);
+            this.label24.Location = new System.Drawing.Point(356, 227);
             this.label24.Name = "label24";
             this.label24.Size = new System.Drawing.Size(25, 16);
             this.label24.TabIndex = 19;
@@ -202,7 +206,7 @@
             // 
             // txtTestDataFromRow
             // 
-            this.txtTestDataFromRow.Location = new System.Drawing.Point(122, 256);
+            this.txtTestDataFromRow.Location = new System.Drawing.Point(122, 223);
             this.txtTestDataFromRow.Name = "txtTestDataFromRow";
             this.txtTestDataFromRow.Size = new System.Drawing.Size(100, 22);
             this.txtTestDataFromRow.TabIndex = 18;
@@ -211,7 +215,7 @@
             // label23
             // 
             this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(23, 258);
+            this.label23.Location = new System.Drawing.Point(23, 225);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(35, 16);
             this.label23.TabIndex = 17;
@@ -220,14 +224,14 @@
             // labelNumRowDataTesting
             // 
             this.labelNumRowDataTesting.AutoSize = true;
-            this.labelNumRowDataTesting.Location = new System.Drawing.Point(119, 230);
+            this.labelNumRowDataTesting.Location = new System.Drawing.Point(119, 197);
             this.labelNumRowDataTesting.Name = "labelNumRowDataTesting";
             this.labelNumRowDataTesting.Size = new System.Drawing.Size(0, 16);
             this.labelNumRowDataTesting.TabIndex = 16;
             // 
             // txtTrainDataToRow
             // 
-            this.txtTrainDataToRow.Location = new System.Drawing.Point(415, 99);
+            this.txtTrainDataToRow.Location = new System.Drawing.Point(415, 78);
             this.txtTrainDataToRow.Name = "txtTrainDataToRow";
             this.txtTrainDataToRow.Size = new System.Drawing.Size(100, 22);
             this.txtTrainDataToRow.TabIndex = 15;
@@ -236,7 +240,7 @@
             // label22
             // 
             this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(331, 102);
+            this.label22.Location = new System.Drawing.Point(331, 81);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(25, 16);
             this.label22.TabIndex = 14;
@@ -244,7 +248,7 @@
             // 
             // txtTrainDataFromRow
             // 
-            this.txtTrainDataFromRow.Location = new System.Drawing.Point(122, 102);
+            this.txtTrainDataFromRow.Location = new System.Drawing.Point(122, 81);
             this.txtTrainDataFromRow.Name = "txtTrainDataFromRow";
             this.txtTrainDataFromRow.Size = new System.Drawing.Size(100, 22);
             this.txtTrainDataFromRow.TabIndex = 13;
@@ -253,7 +257,7 @@
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(24, 105);
+            this.label21.Location = new System.Drawing.Point(24, 84);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(35, 16);
             this.label21.TabIndex = 12;
@@ -262,7 +266,7 @@
             // labelNumRowDataTraining
             // 
             this.labelNumRowDataTraining.AutoSize = true;
-            this.labelNumRowDataTraining.Location = new System.Drawing.Point(119, 76);
+            this.labelNumRowDataTraining.Location = new System.Drawing.Point(119, 55);
             this.labelNumRowDataTraining.Name = "labelNumRowDataTraining";
             this.labelNumRowDataTraining.Size = new System.Drawing.Size(15, 16);
             this.labelNumRowDataTraining.TabIndex = 11;
@@ -270,18 +274,18 @@
             // 
             // btnChooseData
             // 
-            this.btnChooseData.Location = new System.Drawing.Point(259, 321);
+            this.btnChooseData.Location = new System.Drawing.Point(259, 288);
             this.btnChooseData.Name = "btnChooseData";
-            this.btnChooseData.Size = new System.Drawing.Size(75, 23);
+            this.btnChooseData.Size = new System.Drawing.Size(138, 23);
             this.btnChooseData.TabIndex = 10;
-            this.btnChooseData.Text = "Choose";
+            this.btnChooseData.Text = "Choose data";
             this.btnChooseData.UseVisualStyleBackColor = true;
             this.btnChooseData.Click += new System.EventHandler(this.btnChooseData_Click);
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(23, 230);
+            this.label5.Location = new System.Drawing.Point(23, 197);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(67, 16);
             this.label5.TabIndex = 8;
@@ -289,7 +293,7 @@
             // 
             // btnChooseTestingData
             // 
-            this.btnChooseTestingData.Location = new System.Drawing.Point(550, 193);
+            this.btnChooseTestingData.Location = new System.Drawing.Point(550, 160);
             this.btnChooseTestingData.Name = "btnChooseTestingData";
             this.btnChooseTestingData.Size = new System.Drawing.Size(75, 23);
             this.btnChooseTestingData.TabIndex = 7;
@@ -299,7 +303,7 @@
             // 
             // textDataFileTesting
             // 
-            this.textDataFileTesting.Location = new System.Drawing.Point(122, 195);
+            this.textDataFileTesting.Location = new System.Drawing.Point(122, 162);
             this.textDataFileTesting.Name = "textDataFileTesting";
             this.textDataFileTesting.ReadOnly = true;
             this.textDataFileTesting.Size = new System.Drawing.Size(393, 22);
@@ -308,7 +312,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(23, 198);
+            this.label4.Location = new System.Drawing.Point(23, 165);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(57, 16);
             this.label4.TabIndex = 5;
@@ -317,7 +321,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(23, 74);
+            this.label3.Location = new System.Drawing.Point(23, 53);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(67, 16);
             this.label3.TabIndex = 4;
@@ -325,7 +329,7 @@
             // 
             // btnChooseTrainingData
             // 
-            this.btnChooseTrainingData.Location = new System.Drawing.Point(550, 43);
+            this.btnChooseTrainingData.Location = new System.Drawing.Point(550, 22);
             this.btnChooseTrainingData.Name = "btnChooseTrainingData";
             this.btnChooseTrainingData.Size = new System.Drawing.Size(75, 23);
             this.btnChooseTrainingData.TabIndex = 2;
@@ -335,7 +339,7 @@
             // 
             // textDataFileTraining
             // 
-            this.textDataFileTraining.Location = new System.Drawing.Point(122, 45);
+            this.textDataFileTraining.Location = new System.Drawing.Point(122, 24);
             this.textDataFileTraining.Name = "textDataFileTraining";
             this.textDataFileTraining.ReadOnly = true;
             this.textDataFileTraining.Size = new System.Drawing.Size(393, 22);
@@ -344,7 +348,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(23, 48);
+            this.label1.Location = new System.Drawing.Point(23, 27);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(57, 16);
             this.label1.TabIndex = 0;
@@ -356,7 +360,7 @@
             this.groupBoxTrainingData.Controls.Add(this.label6);
             this.groupBoxTrainingData.Controls.Add(this.labelNumColumnDataTraining);
             this.groupBoxTrainingData.Controls.Add(this.label2);
-            this.groupBoxTrainingData.Location = new System.Drawing.Point(17, 20);
+            this.groupBoxTrainingData.Location = new System.Drawing.Point(17, 3);
             this.groupBoxTrainingData.Name = "groupBoxTrainingData";
             this.groupBoxTrainingData.Size = new System.Drawing.Size(618, 134);
             this.groupBoxTrainingData.TabIndex = 21;
@@ -404,7 +408,7 @@
             this.groupBoxTestingData.Controls.Add(this.label26);
             this.groupBoxTestingData.Controls.Add(this.labelNumColumnDataTesting);
             this.groupBoxTestingData.Controls.Add(this.label25);
-            this.groupBoxTestingData.Location = new System.Drawing.Point(17, 170);
+            this.groupBoxTestingData.Location = new System.Drawing.Point(17, 141);
             this.groupBoxTestingData.Name = "groupBoxTestingData";
             this.groupBoxTestingData.Size = new System.Drawing.Size(618, 145);
             this.groupBoxTestingData.TabIndex = 22;
@@ -1080,20 +1084,43 @@
             // 
             // chartForecast
             // 
-            chartArea1.Name = "ChartArea1";
-            this.chartForecast.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.chartForecast.Legends.Add(legend1);
+            chartArea2.Name = "ChartArea1";
+            this.chartForecast.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.chartForecast.Legends.Add(legend2);
             this.chartForecast.Location = new System.Drawing.Point(6, 61);
             this.chartForecast.Name = "chartForecast";
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series1.Legend = "Legend1";
-            series1.Name = "Data";
-            this.chartForecast.Series.Add(series1);
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series2.Legend = "Legend1";
+            series2.Name = "Data";
+            this.chartForecast.Series.Add(series2);
             this.chartForecast.Size = new System.Drawing.Size(501, 300);
             this.chartForecast.TabIndex = 0;
             this.chartForecast.Text = "chart1";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(25, 325);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(96, 16);
+            this.label15.TabIndex = 23;
+            this.label15.Text = "Choose model";
+            // 
+            // comboBoxModel
+            // 
+            this.comboBoxModel.FormattingEnabled = true;
+            this.comboBoxModel.Items.AddRange(new object[] {
+            "SARIMA",
+            "ANN",
+            "SARIMA-ANN"});
+            this.comboBoxModel.Location = new System.Drawing.Point(122, 317);
+            this.comboBoxModel.Name = "comboBoxModel";
+            this.comboBoxModel.Size = new System.Drawing.Size(121, 24);
+            this.comboBoxModel.TabIndex = 24;
+            this.comboBoxModel.Tag = "";
+            this.comboBoxModel.Text = "SARIMA-ANN";
             // 
             // Main_Form
             // 
@@ -1223,5 +1250,7 @@
         private System.Windows.Forms.Label label25;
         private System.Windows.Forms.TextBox txtTestDataColumn;
         private System.Windows.Forms.Label label26;
+        private System.Windows.Forms.ComboBox comboBoxModel;
+        private System.Windows.Forms.Label label15;
     }
 }

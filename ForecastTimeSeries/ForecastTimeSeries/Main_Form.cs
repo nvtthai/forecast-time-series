@@ -389,7 +389,7 @@ namespace ForecastTimeSeries
                 NeuralModel = new Neural();
                 ARIMAModel.SetData(_dataSeries);
                 SettingGUIBeforeARIMAModel();
-                MessageBox.Show("Load data successful", null, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Load data successful", string.Empty, MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
