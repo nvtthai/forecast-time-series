@@ -30,5 +30,6 @@ namespace ForecastTimeSeries
             }
             return aHead;
         }
+
     }
 }
