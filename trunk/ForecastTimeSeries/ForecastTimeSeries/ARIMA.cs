@@ -113,7 +113,7 @@ namespace ForecastTimeSeries
                 {
                     begin++;
                 }
-                else if (listAutocorrelation[begin + 1] * 1.3 < listAutocorrelation[begin])
+                else if (listAutocorrelation[begin + 1] * 1.1 < listAutocorrelation[begin])
                 {
                     listHighestCorrelationIndex.Add(begin);
                     break;
@@ -148,17 +148,17 @@ namespace ForecastTimeSeries
                 {
                     begin++;
                 }
-                else if (listAutocorrelation[begin + 1] < listAutocorrelation[begin])
-                {
-                    begin++;
-                }
-                else if (listAutocorrelation[begin + 1] * 1.3 > listAutocorrelation[begin])
+                else if (listAutocorrelation[begin + 1] > listAutocorrelation[begin] * 1.1)
                 {
                     break;
                 }
                 else if ((begin + 2) == listAutocorrelation.Count || (listAutocorrelation[begin + 2] > listAutocorrelation[begin]))
                 {
                     break;
+                }
+                else if (listAutocorrelation[begin + 1] < listAutocorrelation[begin])
+                {
+                    begin++;
                 }
                 else
                 {
@@ -679,12 +679,21 @@ namespace ForecastTimeSeries
         {
             model = string.Empty;
             StringBuilder result = new StringBuilder();
-            result.Append(String.Format("ARIMA({0}, {1}, {2})({3}, {4}, {5}){6}\n", 
+            result.Append(String.Format("SARIMA({0}, {1}, {2})({3}, {4}, {5}){6}\n", 
                 _pRegular, _regularDifferencingLevel, _qRegular, _pSeason, _seasonDifferencingLevel, _qSeason, _seasonPartern));
-            string perception = String.Format("{0:0.000}", _listArimaCoef[0]);
-            if (perception == "0.000")
-                perception = "0.001";
-            result.Append(String.Format("Perception\t|{0}\n", perception));
+            if (_regularDifferencingLevel > 0)
+            {
+                result.Append(String.Format("Number of difference to remove trend:  {0}\n", _regularDifferencingLevel));
+            }
+            if (_seasonDifferencingLevel > 0)
+            {
+                result.Append(String.Format("Length of season:  {0}\n", _seasonPartern));
+                result.Append(String.Format("Number of difference to remove season:  {0}\n", _seasonDifferencingLevel));
+            }
+            string value = String.Format("{0:0.000}", _listArimaCoef[0]);
+            if (value == "0.000")
+                value = "0.001";
+            result.Append(String.Format("Perception\t|{0}\n", value));
             result.Append(String.Format("Order\t\t|"));
             for (int i = 0; i < ComputeMax(_pRegular, _qRegular, _pSeason, _qSeason); i++)
             {
@@ -695,28 +704,40 @@ namespace ForecastTimeSeries
             result.Append(String.Format("AR Regular coef\t|"));
             for (int i = 0; i < _pRegular; i++)
             {
-                result.Append(String.Format("  {0:0.000}\t|", _listArimaCoef[i + 1]));
+                value = String.Format("{0:0.000}", _listArimaCoef[i + 1]);
+                if (value == "0.000")
+                    value = "0.001";
+                result.Append(String.Format("  {0}\t|", value));
             }
             result.Append("\n");
 
             result.Append(String.Format("MA Regular coef\t|"));
             for (int i = 0; i < _qRegular; i++)
             {
-                result.Append(String.Format("  {0:0.000}\t|", _listArimaCoef[i + _pRegular + 1]));
+                value = String.Format("{0:0.000}", _listArimaCoef[i + _pRegular + 1]);
+                if (value == "0.000")
+                    value = "0.001";
+                result.Append(String.Format("  {0}\t|", value));
             }
             result.Append("\n");
 
             result.Append(String.Format("AR Season coef\t|"));
             for (int i = 0; i < _pSeason; i++)
             {
-                result.Append(String.Format("  {0:0.000}\t|", _listArimaCoef[i + _pRegular + _qRegular + 1]));
+                value = String.Format("{0:0.000}", _listArimaCoef[i + _pRegular + _qRegular + 1]);
+                if (value == "0.000")
+                    value = "0.001";
+                result.Append(String.Format("  {0}\t|", value));
             }
             result.Append("\n");
 
             result.Append(String.Format("MA Season coef\t|"));
             for (int i = 0; i < _qSeason; i++)
             {
-                result.Append(String.Format("  {0:0.000}\t|", _listArimaCoef[i + _pRegular + _qRegular + _pSeason + 1]));
+                value = String.Format("{0:0.000}", _listArimaCoef[i + _pRegular + _qRegular + _pSeason + 1]);
+                if (value == "0.000")
+                    value = "0.001";
+                result.Append(String.Format("  {0}\t|", value));
             }
 
             model = result.ToString();
@@ -788,7 +809,6 @@ namespace ForecastTimeSeries
             {
                 _errorARIMASeries.Add(_originARIMASeries[i] - trainingResultSeries[i]);
             }
-
             //ComputTrainingError(_processARIMASeries, _startIndex, _regularDifferencingLevel, _seasonDifferencingLevel, _pRegular, _qRegular, _seasonPartern, _pSeason, _qSeason, _listArimaCoef, out _errorARIMASeries);
         }
 

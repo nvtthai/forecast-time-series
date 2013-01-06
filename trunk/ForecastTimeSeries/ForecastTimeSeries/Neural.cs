@@ -169,6 +169,14 @@ namespace ForecastTimeSeries
             }
         }
 
+        private double RevertScale(double value)
+        {
+            double max = _originSeries.Max();
+            double min = _originSeries.Min();
+            double newValue = (value - 0.01) / (0.99 - 0.01) * (max - min) + min;
+            return newValue;
+        }
+
         public void SetData(List<double> series)
         {
             _originSeries.Clear();
@@ -387,7 +395,8 @@ namespace ForecastTimeSeries
                     CalculateOutput(lstTemp);
                     for (k = 0; k < m_iNumOutputNodes; k++)
                     {
-                        MAE += Math.Abs(_processSeries.ElementAt(n + k) - m_arOutputNodes[k].GetOutput());
+                        
+                        MAE += Math.Abs(_originSeries.ElementAt(n + k) - RevertScale(m_arOutputNodes[k].GetOutput()));
                     }
 
                     // backward
@@ -534,7 +543,7 @@ namespace ForecastTimeSeries
                     /*calculate abs error*/
                     for (k = 0; k < m_iNumOutputNodes; k++)
                     {
-                        MAE += Math.Abs(_processSeries.ElementAt(n) - m_arOutputNodes[k].GetOutput());
+                        MAE += Math.Abs(_originSeries.ElementAt(n + k) - RevertScale(m_arOutputNodes[k].GetOutput()));
                     }
                     // backward
                     /*calculate weight-step for weights connecting from hidden nodes to output nodes*/
@@ -694,6 +703,11 @@ namespace ForecastTimeSeries
                 testDataSeriesProcessed.Add(b);
             }
 
+            for (int i = 0; i < m_iNumInputNodes; i++)
+            {
+                testResultSeries.Add(testDataSeries[i]);
+            }
+
             for (int i = m_iNumInputNodes; i < testDataSeriesProcessed.Count; i++)
             {
                 double[] input = new double[m_iNumInputNodes];
@@ -737,6 +751,6 @@ namespace ForecastTimeSeries
                 forecastResultSeries.Add(temp);
             }
         }
+    
     }
-
 }

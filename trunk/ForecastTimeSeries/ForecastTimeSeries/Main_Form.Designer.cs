@@ -35,9 +35,9 @@
             this.tabControlModel = new System.Windows.Forms.TabControl();
             this.tabChooseData = new System.Windows.Forms.TabPage();
             this.comboBoxModel = new System.Windows.Forms.ComboBox();
-            this.label15 = new System.Windows.Forms.Label();
             this.txtTestDataToRow = new System.Windows.Forms.TextBox();
             this.label24 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
             this.txtTestDataFromRow = new System.Windows.Forms.TextBox();
             this.label23 = new System.Windows.Forms.Label();
             this.labelNumRowDataTesting = new System.Windows.Forms.Label();
@@ -203,21 +203,14 @@
             this.comboBoxModel.Tag = "";
             this.comboBoxModel.SelectedIndexChanged += new System.EventHandler(this.comboBoxModel_SelectedIndexChanged);
             // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(24, 19);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(96, 16);
-            this.label15.TabIndex = 23;
-            this.label15.Text = "Choose model";
-            // 
             // txtTestDataToRow
             // 
+            this.txtTestDataToRow.Enabled = false;
             this.txtTestDataToRow.Location = new System.Drawing.Point(415, 284);
             this.txtTestDataToRow.Name = "txtTestDataToRow";
             this.txtTestDataToRow.Size = new System.Drawing.Size(100, 22);
             this.txtTestDataToRow.TabIndex = 20;
+            this.txtTestDataToRow.TextChanged += new System.EventHandler(this.txtTestDataToRow_TextChanged);
             // 
             // label24
             // 
@@ -228,12 +221,23 @@
             this.label24.TabIndex = 19;
             this.label24.Text = "To";
             // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(24, 19);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(96, 16);
+            this.label15.TabIndex = 23;
+            this.label15.Text = "Choose model";
+            // 
             // txtTestDataFromRow
             // 
+            this.txtTestDataFromRow.Enabled = false;
             this.txtTestDataFromRow.Location = new System.Drawing.Point(122, 285);
             this.txtTestDataFromRow.Name = "txtTestDataFromRow";
             this.txtTestDataFromRow.Size = new System.Drawing.Size(100, 22);
             this.txtTestDataFromRow.TabIndex = 18;
+            this.txtTestDataFromRow.TextChanged += new System.EventHandler(this.txtTestDataFromRow_TextChanged);
             // 
             // label23
             // 
@@ -254,10 +258,12 @@
             // 
             // txtTrainDataToRow
             // 
+            this.txtTrainDataToRow.Enabled = false;
             this.txtTrainDataToRow.Location = new System.Drawing.Point(415, 128);
             this.txtTrainDataToRow.Name = "txtTrainDataToRow";
             this.txtTrainDataToRow.Size = new System.Drawing.Size(100, 22);
             this.txtTrainDataToRow.TabIndex = 15;
+            this.txtTrainDataToRow.TextChanged += new System.EventHandler(this.txtTrainDataToRow_TextChanged);
             // 
             // label22
             // 
@@ -270,10 +276,12 @@
             // 
             // txtTrainDataFromRow
             // 
+            this.txtTrainDataFromRow.Enabled = false;
             this.txtTrainDataFromRow.Location = new System.Drawing.Point(122, 131);
             this.txtTrainDataFromRow.Name = "txtTrainDataFromRow";
             this.txtTrainDataFromRow.Size = new System.Drawing.Size(100, 22);
             this.txtTrainDataFromRow.TabIndex = 13;
+            this.txtTrainDataFromRow.TextChanged += new System.EventHandler(this.txtTrainDataFromRow_TextChanged);
             // 
             // label21
             // 
@@ -380,10 +388,12 @@
             // 
             // txtTrainDataColumn
             // 
+            this.txtTrainDataColumn.Enabled = false;
             this.txtTrainDataColumn.Location = new System.Drawing.Point(105, 108);
             this.txtTrainDataColumn.Name = "txtTrainDataColumn";
             this.txtTrainDataColumn.Size = new System.Drawing.Size(100, 22);
             this.txtTrainDataColumn.TabIndex = 14;
+            this.txtTrainDataColumn.TextChanged += new System.EventHandler(this.txtTrainDataColumn_TextChanged);
             // 
             // label6
             // 
@@ -427,10 +437,12 @@
             // 
             // txtTestDataColumn
             // 
+            this.txtTestDataColumn.Enabled = false;
             this.txtTestDataColumn.Location = new System.Drawing.Point(105, 113);
             this.txtTestDataColumn.Name = "txtTestDataColumn";
             this.txtTestDataColumn.Size = new System.Drawing.Size(100, 22);
             this.txtTestDataColumn.TabIndex = 15;
+            this.txtTestDataColumn.TextChanged += new System.EventHandler(this.txtTestDataColumn_TextChanged);
             // 
             // label26
             // 
@@ -1118,6 +1130,10 @@
             this.chartForecast.Size = new System.Drawing.Size(501, 300);
             this.chartForecast.TabIndex = 0;
             this.chartForecast.Text = "chart1";
+
+            chartArea1.AxisX.MajorGrid.Enabled = false;
+            chartArea1.AxisY.MajorGrid.Enabled = false;
+
             // 
             // Main_Form
             // 
