@@ -106,7 +106,14 @@ namespace ForecastTimeSeries
         {
             radioBtnAutomaticARIMA.Enabled = true;
             radioBtnManualARIMA.Enabled = true;
-            groupBoxARIMAParameter.Enabled = false;
+            if (radioBtnAutomaticARIMA.Checked)
+            {
+                groupBoxARIMAParameter.Enabled = false;
+            }
+            else
+            {
+                groupBoxARIMAParameter.Enabled = true;
+            }
 
             btnTrainARIMA.Enabled = true;
             btnTestArima.Enabled = false;
@@ -115,6 +122,7 @@ namespace ForecastTimeSeries
             btnSaveARIMA.Enabled = false;
 
             btnPlotDataARIMA.Enabled = true;
+            btnResetDataARIMA.Enabled = true;
             btnPlotErrorARIMA.Enabled = false;
             btnCorrelogram.Enabled = true;
             btnPartialCorrelation.Enabled = true;

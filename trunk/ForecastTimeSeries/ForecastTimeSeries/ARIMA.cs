@@ -96,7 +96,7 @@ namespace ForecastTimeSeries
             return decayPartern;
         }
 
-        private void GetHighCorrelationLocation(List<double> listAutocorrelation, int begin, ref List<int> listHighestCorrelationIndex)
+        private void GetHighCorrelationLocation(List<double> listAutocorrelation, List<double> listConfidenceLimit, int begin, ref List<int> listHighestCorrelationIndex)
         {
             if (begin >= listAutocorrelation.Count)
             {
@@ -105,7 +105,7 @@ namespace ForecastTimeSeries
 
             while (begin < listAutocorrelation.Count - 1)
             {
-                if (listAutocorrelation[begin] <= 0)
+                if (listAutocorrelation[begin] <= 0 || listAutocorrelation[begin] < listConfidenceLimit[begin])
                 {
                     begin++;
                 }
@@ -113,23 +113,38 @@ namespace ForecastTimeSeries
                 {
                     begin++;
                 }
+                else if (listAutocorrelation[begin + 1] * 1.3 < listAutocorrelation[begin])
+                {
+                    listHighestCorrelationIndex.Add(begin);
+                    break;
+                }
+                else if ((begin + 2) == listAutocorrelation.Count || (listAutocorrelation[begin + 2] < listAutocorrelation[begin]))
+                {
+                    listHighestCorrelationIndex.Add(begin);
+                    break;
+                }
                 else
                 {
-                    if ((begin + 2) == listAutocorrelation.Count || (listAutocorrelation[begin + 2] < listAutocorrelation[begin]))
-                    {
-                        listHighestCorrelationIndex.Add(begin);
-                        break;
-                    }
-                    else
-                    {
-                        begin = begin + 2;
-                    }
+                    begin++;
                 }
+                //else
+                //{
+                //    if ((begin + 2) == listAutocorrelation.Count || (listAutocorrelation[begin + 2] < listAutocorrelation[begin]))
+                //    {
+                //        listHighestCorrelationIndex.Add(begin);
+                //        break;
+                //    }
+                //    else
+                //    {
+                //        begin = begin + 2;
+                //    }
+                //}
+
             }
 
             while (begin < listAutocorrelation.Count - 1)
             {
-                if (listAutocorrelation[begin] <= 0)
+                if (listAutocorrelation[begin] <= 0 || listAutocorrelation[begin] < listConfidenceLimit[begin])
                 {
                     begin++;
                 }
@@ -137,20 +152,32 @@ namespace ForecastTimeSeries
                 {
                     begin++;
                 }
+                else if (listAutocorrelation[begin + 1] * 1.3 > listAutocorrelation[begin])
+                {
+                    break;
+                }
+                else if ((begin + 2) == listAutocorrelation.Count || (listAutocorrelation[begin + 2] > listAutocorrelation[begin]))
+                {
+                    break;
+                }
                 else
                 {
-                    if ((begin + 2) == listAutocorrelation.Count || (listAutocorrelation[begin + 2] > listAutocorrelation[begin]))
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        begin = begin + 2;
-                    }
+                    begin++;
                 }
+                //else
+                //{
+                //    if ((begin + 2) == listAutocorrelation.Count || (listAutocorrelation[begin + 2] > listAutocorrelation[begin]))
+                //    {
+                //        break;
+                //    }
+                //    else
+                //    {
+                //        begin = begin + 2;
+                //    }
+                //}
             }
 
-            GetHighCorrelationLocation(listAutocorrelation, begin + 1, ref listHighestCorrelationIndex);
+            GetHighCorrelationLocation(listAutocorrelation, listConfidenceLimit, begin + 1, ref listHighestCorrelationIndex);
 
         }
 
@@ -389,24 +416,34 @@ namespace ForecastTimeSeries
 
         private void EstimateSeasonPartern(List<double> listAutocorrelation, List<double> listConfidenceLimit, out int seasonPartern)
         {
+            //seasonPartern = 0;
+            //List<int> listHighestCorrelationIndex = new List<int>();
+            //List<double> listAutocorrelationNew = new List<double>();
+            //List<int> listAutocorrelationNewIndex = new List<int>();
+            //for (int i = 0; i < listAutocorrelation.Count; i++)
+            //{
+            //    if (listAutocorrelation[i] > 0 && listAutocorrelation[i] > listConfidenceLimit[i])
+            //    {
+            //        listAutocorrelationNew.Add(listAutocorrelation[i]);
+            //        listAutocorrelationNewIndex.Add(i);
+            //    }
+            //}
+
+            //GetHighCorrelationLocation(listAutocorrelationNew, 0, ref listHighestCorrelationIndex);
+            //List<int> levelOneDistance = new List<int>();
+            //for (int i = 0; i < listHighestCorrelationIndex.Count - 1; i++)
+            //{
+            //    levelOneDistance.Add(listAutocorrelationNewIndex[listHighestCorrelationIndex[i + 1]] - listAutocorrelationNewIndex[listHighestCorrelationIndex[i]]);
+            //}
+
+
             seasonPartern = 0;
             List<int> listHighestCorrelationIndex = new List<int>();
-            List<double> listAutocorrelationNew = new List<double>();
-            List<int> listAutocorrelationNewIndex = new List<int>();
-            for (int i = 0; i < listAutocorrelation.Count; i++)
-            {
-                if (listAutocorrelation[i] > 0 && listAutocorrelation[i] > listConfidenceLimit[i])
-                {
-                    listAutocorrelationNew.Add(listAutocorrelation[i]);
-                    listAutocorrelationNewIndex.Add(i);
-                }
-            }
-
-            GetHighCorrelationLocation(listAutocorrelationNew, 0, ref listHighestCorrelationIndex);
+            GetHighCorrelationLocation(listAutocorrelation, listConfidenceLimit, 0, ref listHighestCorrelationIndex);
             List<int> levelOneDistance = new List<int>();
             for (int i = 0; i < listHighestCorrelationIndex.Count - 1; i++)
             {
-                levelOneDistance.Add(listAutocorrelationNewIndex[listHighestCorrelationIndex[i + 1]] - listAutocorrelationNewIndex[listHighestCorrelationIndex[i]]);
+                levelOneDistance.Add(listHighestCorrelationIndex[i + 1] - listHighestCorrelationIndex[i]);
             }
 
             List<int> listDistinctLocation = levelOneDistance.Distinct().ToList();
