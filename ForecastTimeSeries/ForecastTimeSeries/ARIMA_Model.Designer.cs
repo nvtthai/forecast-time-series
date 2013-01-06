@@ -48,7 +48,7 @@
             this.Controls.Add(this.richTextBoxResult);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ARIMA_Model";
-            this.Text = "ARIMA_Model";
+            this.Text = "SARIMA Model";
             this.ResumeLayout(false);
 
         }

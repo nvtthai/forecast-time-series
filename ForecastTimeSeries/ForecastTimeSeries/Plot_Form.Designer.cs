@@ -68,7 +68,7 @@
             this.Controls.Add(this.chart1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Plot_Form";
-            this.Text = "Plot_Form";
+            this.Text = "Plot Form";
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.ResumeLayout(false);
 
